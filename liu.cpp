@@ -1,4 +1,4 @@
-//#define LIU_CATCH_EXCEPTIONS
+#define LIU_CATCH_EXCEPTIONS
 
 #include <QtCore/QFile>
 
