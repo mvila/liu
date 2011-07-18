@@ -1,0 +1,31 @@
+Body                     = { Statement (semicolon | newline | eof ) }
+Statement                = LabeledStatement | SimpleStatement | Block
+LabeledStatement         = Label ":" Statement
+SimpleStatement          = Expression | Declaration | Assignment | PostfixOperatorStatement | EmptyStatement
+Block                    = "{" Body "}"
+PostfixOperatorStatement = Expression postfix_operator
+EmptyStatement           =
+Declaration              = ExpressionList ":=" ExpressionList
+Assignment               = ExpressionList assign_operator ExpressionList
+Expression               = UnaryExpression | Expression binary_operator UnaryExpression
+ExpressionList           = Expression { "," Expression }
+UnaryExpression          = PrimaryExpression | unary_operator UnaryExpression
+PrimaryExpression        = Operand | Conversion | PrimaryExpression Call | PrimaryExpression Index
+Operand                  = Literal | identifier | "(" Expression ")"
+Literal                  = BasicLiteral | CompositeLiteral
+BasicLiteral             = boolean | number | character | text
+CompositeLiteral         = List | Dictionary
+List                     = "[" [ Expression { "," Expression } ] "]"
+Dictionary               = "[" DictionaryElement { "," DictionaryElement } ] "]"
+DictionaryItem           = LabeledExpression | Expression
+LabeledExpression        = Label ":" Expression
+LabeledExpressionList    = LabeledExpression { "," LabeledExpression }
+Conversion               = identifier "<" identifier ">"
+Index                    = "[" Expression "]"
+Call                     = "(" [ ArgumentList [ "," ] ] ")" [ Block ]
+ArgumentList             = LabeledExpressionList [ "..." ]
+Label                    = identifier
+
+Expression = { unary_operator } Operand { binary_operator Expression }
+
+Expression = { Message | "(" Expression ")" }

@@ -1,0 +1,143 @@
+Enumerable := Object() {
+    each(\value_argument: value, \key_argument: key) code... := {
+//        meth := Method(code, [value_argument, key_argument])
+//        \meth inspect
+        i := Iterator()
+        while(i value?) {
+//            meth(i value)
+            ++i
+        }
+    }
+}
+
+txt := "Yes"
+txt extensions << Enumerable
+txt each "*" print
+
+/*
+name := ""
+until(name !empty?) {
+    name = read("Name? ")
+between:
+    "Name cannot be empty!" alert
+}
+age := 0
+until(age > 0) {
+    age = Number?(read("Age? "))
+between:
+    "Age must be more than 0!" alert
+}
+"Hello {name capitalize} ({age})!" print
+
+Stack := List() {
+    push(val) := { parent << val }
+    pop := { parent[size - 1] >> }
+    taille := { size }
+}
+
+s := Stack()
+s push(3)
+s push(2)
+s push(1)
+s print
+s pop
+s print
+s pop
+s print
+s pop
+s print
+
+// s := Stack()
+// s push(3)
+
+/*
+T := Text("Arf") {
+    up := { uppercase }
+}
+
+T up
+
+
+meth := Object() {
+doc:
+    "Hello ici et là"
+body:
+    if(true)
+
+    i := 0
+    loop {
+        ++i
+        if(i <= 3) continue
+        if(i > 5) break
+        i print
+    }
+test:
+    n := Node()
+    n extensions << "ext1" << "ext2"
+    i := 0
+    n extensions[i]
+}
+
+Hello(@what: "World") := Object() {
+    say := { ("Hello, " + what capitalized + "!") print }
+}
+
+Hello() say // -> "Hello, World!"
+Hello("manu") say // -> "Hello, Manu!"
+
+Person(@name: "", @age: 0) := Object() {
+    imprimer := {
+        (name + " (" + age + ")") print
+    }
+}
+
+mvila := Person("Manu", 38)
+bgonod := Person("Boris", 28)
+
+mvila imprimer
+bgonod imprimer
+
+n := Node()
+n extensions << "ext1" << "ext2"
+i := 0
+n extensions[i]
+
+Person := Object() {
+    name := Text()
+    age := Number()
+    country := "France"
+
+    essai := { name = name uppercased; }
+
+    set(n, a) := { name = n; age = a }
+
+    describe := {
+        txt := name + ", " + country + " (" + age + ")"
+        txt print
+    }
+}
+
+mvila := Person() {
+    name = "Manu"
+    age = 38
+}
+
+bgonod := Person() {
+    name = "Boris"
+}
+
+mvila describe
+mvila essai
+mvila describe
+mvila set("Manuel Vila", 15)
+mvila describe
+
+bgonod describe
+bgonod country = "UK"
+bgonod describe
+
+bgirou := Person()
+bgirou set("Benoit", 38)
+bgirou describe
+bgirou \describe txt print
+*/

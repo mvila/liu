@@ -1,0 +1,91 @@
+Object Text {
+    \fork {
+    test:
+        txt := "Hello"
+        ?: txt origin == Text
+        new_txt := txt fork
+        ?: new_txt origin == txt
+        ?: new_txt == "Hello"
+    }
+
+    \uppercase {
+    test:
+        txt := "Hello"
+        ?: txt uppercase == "HELLO"
+        ?: txt == "Hello"
+        txt uppercase!
+        ?: txt == "HELLO"
+    }
+
+    \lowercase {
+    test:
+        txt := "HELLO"
+        ?: txt lowercase == "hello"
+        ?: txt == "HELLO"
+        txt lowercase!
+        ?: txt == "hello"
+    }
+
+    \capitalize {
+    test:
+        txt := "hello"
+        ?: txt capitalize == "Hello"
+        ?: txt == "hello"
+        txt capitalize!
+        ?: txt == "Hello"
+    }
+
+    \size {
+    test:
+        ?: "" size == 0
+        ?: "a" size == 1
+        ?: "\r\n" size == 2
+    }
+
+    \empty? {
+    test:
+        ?: "" empty?
+        !: "a" empty?
+    }
+
+    \`==` {
+    test:
+        ?: "" == ""
+        !: "a" == ""
+        ?: "a" != ""
+        ?: "a" == "a"
+        ?: "a" != "A"
+        ?: "abc" == "abc"
+        ?: "1" == 1
+        ?: "3.14" == 3.14
+        ?: "3.14" != 3.15
+        ?: 3.14 == "3.14"
+        ?: 3.14 != "3.15"
+        ?: "true" != true
+        ?: "yes" == true
+    }
+
+    \`<=>` {
+    test:
+        ?: ("" <=> "") == 0
+        ?: ("abc" <=> "abc") == 0
+        ?: "abc" >= "abc"
+        ?: "abc" <= "abc"
+        ?: ("a" <=> "b") == -1
+        ?: "a" < "b"
+        ?: ("b" <=> "a") == 1
+        ?: "b" > "a"
+        ?: ("abc" <=> "def") == -1
+        ?: "abc" < "def"
+    }
+test:
+    ?: origin == Object Element
+    ?: parent == Object
+
+    // interpolating...
+    ?: "{}" == ""
+    ?: "\{Hi there}" == "\{Hi there}"
+    name := "manu"
+    age := 38
+    ?: "{name capitalize} is {age} years old" == "Manu is 38 years old"
+}

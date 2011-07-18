@@ -1,0 +1,485 @@
+i := "Hello" Iterator()
+
+---
+
+i := "Hello" iterator
+while(i value?) {
+    i value print
+    i next
+}
+
+---
+
+i := "Hello" iterator
+while(v := i next) { v print }
+while(i next?) { i current print }
+
+---
+
+a[0..2] << "i" // remplace les 3 premiers éléments par "i"
+
+a[-1] >> v // supprime le dernier élément en l'assignant à v (équivalent à un pop)
+
+---
+
+a each {}     // each
+
+a << "Yo"     // append
+a["Yo"] >>    // remove
+
+a["k1"]       // get
+a["k1"] = 7   // set
+a["k1"] >>    // delete
+a indexes     // indexes or keys
+
+a[3] << "Ya"  // insert
+
+-------------------------------------------------
+
+Enumerable := Object()
+require: each (Iterator?)
+
+Collection := Object(extension: Enumerable)
+require: append, remove
+
+Set := Collection()
+
+Indexable := Object()
+require: get, set, delete, indexes
+
+Dictionary := Collection(extension: Indexable)
+
+Orderable := Indexable()
+require: insert
+
+List := Collection(extension: Orderable)
+
+---
+
+Person := Object() {
+    extensions << Archivable
+}
+
+---
+
+Person := Object() {
+    age := Number() {
+    set(age):
+        if(age < 0) Exception throw
+        @age = age
+    }
+
+    print := {
+        "Yo" print
+    }
+}
+
+---
+
+Language.Parser // équivalent à \Language Parser
+
+meth.enable! // équivalent à \meth enable!
+
+---
+
+Person := Object {
+    age := Number {
+    set(age):
+        if(age < 0) Exception throw
+        value = age
+    }
+
+    print := {
+        "Yo" print
+    }
+}
+
+---
+
+Person := Object() {
+body:
+    age := Number() {
+    set(age):
+        if(age < 0) Exception throw
+        @age = age
+    }
+run(name: "", age: 0) code... -> f:
+    f = fork
+    f name = name
+    f age = age
+    ?code run(f)
+}
+
+Person := Object() {
+    age := Number() {
+    validate(age):
+        if(age < 0) Exception throw
+    spy:
+        "age changed!" print
+    }
+}
+
+---
+
+Node {
+    origin := {
+    doc:
+        "Blabla bla..."
+    get:
+        _origin
+    set(origin):
+        _origin = origin
+    }
+    run:
+        "called with parameters" log
+}
+
+---
+
+Person := Object() {
+doc:
+    "A simple person..."
+body:
+    print := {
+    doc:
+        "Blabla bla..."
+    run:
+        "{name} ({age})" print
+    }
+}
+
+---
+
+Node {
+    \fork {
+    inputs:
+        [virtual?: no]
+    outputs:
+        forked_node
+    doc:
+        "Fork the receiver."
+    test:
+        "Yo" print
+    }
+}
+
+---
+
+Person(name) := Object()
+
+mvila := Person("Manu Vila")
+
+meth(a, b) -> r := \{ r = a + b }
+
+---
+
+Window(title: "Hello") {
+    Row() {
+        Text("Name:")
+        Field()
+    }
+}
+
+---
+
+Window(title: "Hello") {
+    Row {
+        Text("Name:")
+        Field
+    }
+}
+
+---
+
+window("Hello") {
+    row {
+        text("Name:")
+        field
+    }
+}
+
+---
+
+meth(\test)... -> r := { "Hi" print }
+
+meth(\test) code... -> r := { "Hi" print }
+
+---
+
+Person := Object() {
+    name := Text()
+    age := Number()
+    country := "France" abstract!
+    description := { "{name} ({age})" }
+}
+
+if(mvila is(\Person)) return
+
+---
+
+if(1 < 2) "OK" print
+
+if(1 < 2) {
+    "OK" print
+else:
+    "Deadcode" print
+}
+
+positive := if(i > 0) // positive est un object "if"
+positive is(\if) // true
+
+positive "Positive!" print
+
+positive {
+    "Hi there" print
+    "And there..." print
+}
+
+if(positive) { "Yo" print }
+
+if(1 < 2, "Arf") // raccourci, inutile de créer un object "if", retourne directement "Arf"
+
+sweeping := list each
+sweeping { it inspect }
+
+if(sweeping, "Une itération ou plus") print
+
+---
+
+meth := Method
+meth { "Yo" print }
+
+---
+
+body:
+    Text {
+    test:
+        ?: "" empty?
+        ?: "hello" uppercased == "HELLO"
+    }
+
+    Number {
+    test:
+        ?: 1 + 2 == 3
+        ?: throwed?(MathException, 1 / 0)
+    }
+test:
+    ?: "1" + 1 == 2
+
+meth1(a) := Method { ... }
+
+meth2(a, b) := \meth1 fork
+
+Envelope : Primitive
+    sender
+    receiver
+    contents (alias de value)
+
+NodeData
+    Node _origin
+    QList<Node> *_extensions;
+    QHash<QString, Node> *_children;
+    QHash<NodePointer, uint> *_parents;
+    uint _refCount;
+
+    const Node &appendChild(const QString &name, const Node &node);
+    const Node &child(const QString &name) const;
+
+app.appendChild("name", "Kindasoft"); // est équivalent à :
+app.appendChild("name", Text("Kindasoft"));
+
+"Text" est en réalité un "TextRef", la classe réelle est nommée "TextData".
+
+Text() renvoie une référence vers un fork de TextData dans le context courant.
+Text("Yoyo") renvoie un fork avec le texte initialisé à "Yoyo".
+
+class Node {
+public:
+    NodeData *node;
+
+    const Node &appendChild(const QString &name, const Node &node);
+    const Node &child(const QString &name) const;
+}
+
+class Text : public Node {
+    Text() {
+           node = new TextData();
+           node->_refCount++;
+    }
+    Text(const QString &text) {
+           node = new TextData(text);
+           node->_refCount++;
+    }
+    Text(const Node &other) {
+           node = static_cast<TextData *>(other.node);
+           node->_refCount++;
+    }
+}
+
+app.appendChild("lexer", Lexer());
+app.appendChild("parser", Parser());
+app.appendChild("operators", OperatorTable());
+
+// Si le parser a besoin d'un lexer, il peut faire :
+Lexer(child("lexer"));
+
+OperatorTable ops = OperatorTable(child("operators"));
+ops.append("+");
+
+
+Dictionary
+    QHash<NodeRef, NodeRef> *_items;
+
+List
+    QList<NodeRef> *_items;
+
+***
+
+* "objets persistants" pour gérer les watchers sur des objets changeants
+
+if(name == "Vila") { "Yo there!"; else: "Too bad..." } print
+
+if(name == "Vila") { "Yo there!" } else { "Too bad..." } print
+
+if(name == "Vila") {
+    "Yo there!" print
+else:
+    "Too bad..." print
+}
+
+Hello(@what: "World") := Object {
+    say := { "Hello, \{what capitalized}!" print }
+}
+
+Hello(@what: "World") := Object {
+    "A cool class"
+use:
+    [Archivable, AutoRunnable]
+init:
+    log write("...")
+body:
+    say := { "Hello, \{what}!" print }
+}
+
+full_name(capitalize<Boolean>: false) -> result: "", ok: true := {
+    "Return the concatenation of first_name and last_name"
+meta:
+    inline!
+    no_autorun!
+check:
+    ...
+before:
+    "full_name" log
+body:
+    str := [first_name, last_name] join(" ")
+    if(capitalize) { str captitalize } else { str }
+after:
+    everyting clean!
+test:
+    p := Person()
+    assert(p full_name == "Manuel Vila")
+}
+
+Person("Manu") \full_name test
+
+***
+
+"7" <Number>
+
+("5" + "8") <Number>
+
+f(str<Number>)
+
+***
+
+meth(a<Text>:
+
+***
+
+message(name<Text>, \inputs:, \outputs:)
+
+message("meth", inputs: (x: default_x, y: default_y), outputs: r)
+
+l := list(1, 2, 3, 4) \\ [1, 2, 3, 4] ou (1, 2, 3, 4)
+d := hash(a: 3, b: 4, c: 5) \\ [a: 3, b: 4, c: 5]
+
+items,... = load_items // items est une énumération
+
+save_items(items)
+
+catch_all(inputs,...) := {
+    resend(inputs)
+}
+
+On peut transformer un tableau en énumération :
+
+a = [1, 2, 3]
+
+meth(a<Enumeration>)
+
+Le moyen le plus simple pour créer une énumération est de placer les éléments entre parenthèses :
+
+(1, 2, 3) // Enumeration
+
+Paire :
+
+label: 1 + 1
+
+Seule la partie droite d'une paire est évaluée à la création :
+
+a = label: 2 * 3
+
+... est équivalent à :
+
+a = Pair(Message("label"), 6)
+
+Remarquez qu'une paire peut contenir n'importe quoi :
+
+Pair("Yo", "Ya")
+Pair(1, 2)
+
+Mais lorsquelle elle est créée à partir d'une litérale dans un code source,
+la Key n'est pas évaluée, elle reste une Primitive ou une PrimitiveChain. Par exemple,
+
+"Text": 23.22
+4: "Four"
+a b c: "Arf"
+Exception(e): { ... }
+Name<Text>: ""
+else: { ... }
+false : { ... }
+
+class Block : List<Section>
+class Section : PrimitiveChain, List<PrimitiveChain>
+class PrimitiveChain : List<Primitive>
+
+Message:
+    name
+    inputs (Bunch<Pair<PrimitiveChain, PrimitiveChain>>)
+    outputs (Bunch<Pair<PrimitiveChain, PrimitiveChain>>)
+    block
+
+(result: value, ok: succeeded) = meth(1, 2)
+
+full_name(first: "", last: "", items..., error: 0} = {}
+
+full_name(f: "M", l: "V")
+
+Language
+    Interpreter
+    Lexer
+    Operator
+    OperatorTable
+    Parser
+    Primitive
+    PrimitiveChain
+    PrimitiveChainList
+    Section
+    SourceCode
+    Token
+
+OperatorTable
+    List<OperatorPointer>
+    Hash<Pair<String, Type>, OperatorPointer> textsAndTypes
+    Set<String> texts
+    String firstChars

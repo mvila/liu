@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd">
+<!-- Author: Manuel Vila <mvila@3base.com> -->
+<language name="Liu" version="0.1" kateversion="2.4" section="Scripts" extensions="*.liu"
+          mimetype="text/x-liu;application/x-liu" indenter="cstyle"
+          author="Manuel Vila (mvila@3base.com)" license="">
+    <highlighting>
+        <list name="Keywords">
+            <item>if</item>
+            <item>unless</item>
+            <item>switch</item>
+            <item>loop</item>
+            <item>while</item>
+            <item>until</item>
+            <item>continue</item>
+            <item>break</item>
+            <item>return</item>
+        </list>
+        <contexts>
+            <context attribute="Normal" lineEndContext="#stay" name="Normal">
+                <keyword attribute="Keyword" context="#stay" String="Keywords"/>
+                <StringDetect attribute="Keyword" context="#stay" String="throw?"/>
+                <StringDetect attribute="Keyword" context="#stay" String="throw"/>
+                <RegExpr attribute="Data Type" context="#stay" String="\\?@?[A-Z][a-zA-Z0-9_]*[!\?]?"/>
+                <RegExpr attribute="Label" context="#stay" String="[a-zA-Z][a-zA-Z0-9_]*:" firstNonSpace="true"/>
+                <RegExpr attribute="Identifier" context="#stay" String="\\?@?[a-zA-Z][a-zA-Z0-9_]*[!\?]?"/>
+                <Int attribute="Decimal" context="#stay"/>
+                <HlCOct attribute="Decimal" context="#stay"/>
+                <HlCHex attribute="Decimal" context="#stay"/>
+                <Float attribute="Float" context="#stay"/>
+                <DetectChar attribute="String" context="String" char="&quot;"/>
+                <DetectChar attribute="String" context="String" char="'"/>
+                <DetectChar attribute="Identifier" context="Backquoted" char="`"/>
+                <Detect2Chars attribute="Comment" context="Comment" char="/" char1="/"/>
+                <Detect2Chars attribute="Comment" context="Multiline Comment" char="/" char1="*" beginRegion="Comment"/>
+                <DetectChar attribute="Symbol" context="#stay" char="{" beginRegion="Brace" />
+                <DetectChar attribute="Symbol" context="#stay" char="}" endRegion="Brace" />
+                <AnyChar attribute="Symbol" context="#stay" String="()[]"/>
+                <AnyChar attribute="Symbol" context="#stay" String="@#&amp;!-^$*%?,;.:/=+&lt;&gt;"/>
+            </context>
+            <context attribute="String" lineEndContext="#pop" name="String">
+                <HlCStringChar attribute="String Char" context="#stay"/>
+                <DetectChar attribute="String" context="#pop" char="&quot;"/>
+                <DetectChar attribute="String" context="#pop" char="'"/>
+            </context>
+            <context attribute="Identifier" lineEndContext="#pop" name="Backquoted">
+                <HlCStringChar attribute="String Char" context="#stay"/>
+                <DetectChar attribute="Identifier" context="#pop" char="`"/>
+            </context>
+            <context attribute="Comment" lineEndContext="#pop" name="Comment">
+            </context>
+            <context attribute="Comment" lineEndContext="#stay" name="Multiline Comment">
+                <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" endRegion="Comment"/>
+            </context>
+        </contexts>
+        <itemDatas>
+            <itemData name="Normal" defStyleNum="dsNormal"/>
+            <itemData name="Keyword" defStyleNum="dsKeyword"/>
+            <itemData name="Data Type" defStyleNum="dsDataType"/>
+            <itemData name="Label" defStyleNum="dsKeyword"/>
+            <itemData name="Identifier" defStyleNum="dsNormal"/>
+            <itemData name="String" defStyleNum="dsString"/>
+            <itemData name="String Char" defStyleNum="dsChar"/>
+            <itemData name="Decimal" defStyleNum="dsDecVal"/>
+            <itemData name="Float" defStyleNum="dsFloat"/>
+            <itemData name="Symbol" defStyleNum="dsKeyword" color="#3399CC"/>
+            <itemData name="Comment" defStyleNum="dsComment"/>
+        </itemDatas>
+    </highlighting>
+    <general>
+        <comments>
+            <comment name="singleLine" start="//"/>
+            <comment name="multiLine" start="/*" end="*/"/>
+        </comments>
+        <keywords casesensitive="1"/>
+    </general>
+</language>
