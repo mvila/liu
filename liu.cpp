@@ -93,9 +93,9 @@ QString concatenateStrings(const QString &first, const QString &separator, const
 }
 
 QString escapeTabsAndNewlines(QString text) {
+    text.replace('\t', "\\t");
     text.replace('\r', "\\r");
     text.replace('\n', "\\n");
-    text.replace('\t', "\\t");
     return text;
 }
 
