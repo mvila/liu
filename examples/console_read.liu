@@ -1,13 +1,31 @@
-name := ""
+while((name := read("Name? ")) empty?) "Name cannot be empty!" alert
+while((age := Number?(read("Age? "))) <= 0) "Age must be more than 0!" alert
+"Hello {name capitalize} ({age})!" print
+
+/*
+loop {
+    name := read("Name? ")
+    if(name !empty?) break;
+    "Name cannot be empty!" alert
+}
+loop {
+    age := Number?(read("Age? "))
+    if(age > 0) break;
+    "Age must be more than 0!" alert
+}
+"Hello {name capitalize} ({age})!" print
+*/
+
+/*
 until(name !empty?) {
-    name = read("Name? ")
+    name := read("Name? ")
 between:
     "Name cannot be empty!" alert
 }
-age := 0
 until(age > 0) {
-    age = Number?(read("Age? "))
+    age := Number?(read("Age? "))
 between:
     "Age must be more than 0!" alert
 }
 "Hello {name capitalize} ({age})!" print
+/*

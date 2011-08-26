@@ -1,3 +1,18 @@
+file := "file:///Network/Servers/serveur.bureau.alphavisa.com/Users/mvila/Desktop/Heures_Alpha_Visa.ics"
+source := Resource(file) get
+while(event := source extract_between!("BEGIN:VEVENT\r\n", "END:VEVENT\r\n")) {
+    fields := Dictionary(event, "\r\n", ":") map(key, value) {
+        if(key contain?(";")) key = key extract_before(";")
+        key, value
+    }
+    fields["DTSTART"] print
+}
+
+/*
+while((name := read("Name? ")) empty?) "Name cannot be empty!" alert
+while((age := Number?(read("Age? "))) <= 0) "Age must be more than 0!" alert
+"Hello {name capitalize} ({age})!" print
+
 Enumerable := Object() {
     each(\value_argument: value, \key_argument: key) code... := {
 //        meth := Method(code, [value_argument, key_argument])
@@ -13,21 +28,6 @@ Enumerable := Object() {
 txt := "Yes"
 txt extensions << Enumerable
 txt each "*" print
-
-/*
-name := ""
-until(name !empty?) {
-    name = read("Name? ")
-between:
-    "Name cannot be empty!" alert
-}
-age := 0
-until(age > 0) {
-    age = Number?(read("Age? "))
-between:
-    "Age must be more than 0!" alert
-}
-"Hello {name capitalize} ({age})!" print
 
 Stack := List() {
     push(val) := { parent << val }
