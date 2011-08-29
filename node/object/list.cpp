@@ -1,5 +1,6 @@
 #include "node/object/list.h"
 #include "node/object/number.h"
+#include "node/object/text.h"
 
 LIU_BEGIN
 
@@ -114,22 +115,32 @@ LIU_DEFINE(List, AbstractList, Object);
 
 void List::initRoot() {
     LIU_ADD_NATIVE_METHOD(List, init);
+    LIU_ADD_NATIVE_METHOD(List, make);
 }
 
 LIU_DEFINE_NATIVE_METHOD(List, init) {
     LIU_FIND_LAST_MESSAGE;
-    for(int i = 0; i < message->numInputs(); ++i)
-        append(message->runInput(i));
-
-    // === TODO: DRY ===
-    LIU_FIND_LAST_PRIMITIVE;
-    Primitive *nextPrimitive = primitive->next();
-    if(nextPrimitive) {
-        nextPrimitive->run(this);
-        Primitive::skip(this);
+    if(!message->hasAnInput()) return this;
+    LIU_CHECK_INPUT_SIZE(1, 2);
+    Text *text = Text::dynamicCast(message->runFirstInput());
+    if(text) {
+        LIU_CHECK_INPUT_SIZE(2);
+        QString source = text->value();
+        QString separator = message->runSecondInput()->toString();
+        QStringList list = source.split(separator);
+        QStringListIterator i(list);
+        while (i.hasNext()) append(LIU_TEXT(i.next()));
+        return this;
     }
+    LIU_THROW_CONVERSION_EXCEPTION("cannot build a List with these arguments");
+}
 
-    return this;
+LIU_DEFINE_NATIVE_METHOD(List, make) {
+    LIU_FIND_LAST_MESSAGE;
+    List *list = fork();
+    for(int i = 0; i < message->numInputs(); ++i)
+        list->append(message->runInput(i));
+    return list;
 }
 
 LIU_DEFINE(VirtualList, AbstractList, Object);

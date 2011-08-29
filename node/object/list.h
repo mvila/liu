@@ -320,6 +320,7 @@ public:
     LIU_DECLARE_AND_DEFINE_FORK_METHOD(List);
 
     LIU_DECLARE_NATIVE_METHOD(init);
+    LIU_DECLARE_NATIVE_METHOD(make);
 };
 
 // === GenericVirtualList ===
