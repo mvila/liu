@@ -27,6 +27,8 @@ void Text::initRoot() {
     LIU_ADD_NATIVE_METHOD(Text, lowercase);
     LIU_ADD_NATIVE_METHOD(Text, capitalize);
 
+    LIU_ADD_NATIVE_METHOD(Text, extract_between);
+
     LIU_ADD_NATIVE_METHOD(Text, size);
     LIU_ADD_NATIVE_METHOD(Text, empty);
 
@@ -117,6 +119,32 @@ LIU_DEFINE_NATIVE_METHOD(Text, capitalize) {
         setValue(capitalize(value()));
         return this;
     }
+}
+
+LIU_DEFINE_NATIVE_METHOD(Text, extract_between) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(2);
+    QString text = value();
+    QString after = message->runFirstInput()->toString();
+    QString before = message->runSecondInput()->toString();
+    int from = 0;
+    if(!after.isEmpty()) {
+        from = text.indexOf(after);
+        if(from == -1) return LIU_BOOLEAN(false);
+    }
+    int to;
+    if(!before.isEmpty()) {
+        to = text.indexOf(before, from);
+        if(to == -1) return LIU_BOOLEAN(false);
+        to += before.size() - 1;
+    } else {
+        to = text.size() - 1;
+    }
+    Node *result = LIU_TEXT(text.mid(from + after.size(),
+                         (to - before.size()) - (from + after.size()) + 1));
+    if(message->isExclaimed())
+        setValue(text.remove(from, to - from + 1));
+    return result;
 }
 
 LIU_DEFINE_NATIVE_METHOD(Text, size) {

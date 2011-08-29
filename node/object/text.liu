@@ -35,6 +35,19 @@ Object Text {
         ?: txt == "Hello"
     }
 
+    \extract_between {
+    test:
+        txt := "This is a beautiful world!"
+        ?: txt extract_between("a ", " world") == "beautiful"
+        ?: txt extract_between("", " world") == "This is a beautiful"
+        ?: txt extract_between("a ", "") == "beautiful world!"
+        ?: txt extract_between("", "") == txt
+        ?: txt extract_between("a ", " world")
+        !: txt extract_between("yop", "yap")
+        ?: txt extract_between!("a ", " world") == "beautiful"
+        ?: txt == "This is !"
+    }
+
     \size {
     test:
         ?: "" size == 0

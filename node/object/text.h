@@ -46,6 +46,8 @@ public:
     static QString capitalize(QString text);
     LIU_DECLARE_NATIVE_METHOD(capitalize);
 
+    LIU_DECLARE_NATIVE_METHOD(extract_between);
+
     LIU_DECLARE_NATIVE_METHOD(size);
     LIU_DECLARE_NATIVE_METHOD(empty);
 

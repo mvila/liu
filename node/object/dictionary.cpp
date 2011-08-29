@@ -17,21 +17,22 @@ void Dictionary::initRoot() {
 
 LIU_DEFINE_NATIVE_METHOD(Dictionary, init) {
     LIU_FIND_LAST_MESSAGE;
-    for(int i = 0; i < message->numInputs(); ++i) {
-        Node *key = NULL;
-        Primitive *primitive = message->input(i)->label();
-        if(!primitive) LIU_THROW(ArgumentException, "missing key in Dictionary initialization");
-        if(primitive->hasNext()) LIU_THROW(ArgumentException, "invalid key in Dictionary initialization");
-        Message *msg = Message::dynamicCast(primitive->value());
-        if(msg) {
-            if(msg->inputs(false) || msg->outputs(false) || msg->isEscaped() || msg->isParented()
-                    || msg->isEllipsed() || msg->hasCodeInput())
-                LIU_THROW(ArgumentException, "invalid key in Dictionary initialization");
-            key = LIU_TEXT(msg->name());
-        } else
-            key = primitive->run();
-        set(key, message->runInput(i));
-    }
+    LIU_CHECK_INPUT_SIZE(0, 3);
+//    for(int i = 0; i < message->numInputs(); ++i) {
+//        Node *key = NULL;
+//        Primitive *primitive = message->input(i)->label();
+//        if(!primitive) LIU_THROW(ArgumentException, "missing key in Dictionary initialization");
+//        if(primitive->hasNext()) LIU_THROW(ArgumentException, "invalid key in Dictionary initialization");
+//        Message *msg = Message::dynamicCast(primitive->value());
+//        if(msg) {
+//            if(msg->inputs(false) || msg->outputs(false) || msg->isEscaped() || msg->isParented()
+//                    || msg->isEllipsed() || msg->hasCodeInput())
+//                LIU_THROW(ArgumentException, "invalid key in Dictionary initialization");
+//            key = LIU_TEXT(msg->name());
+//        } else
+//            key = primitive->run();
+//        set(key, message->runInput(i));
+//    }
     return this;
 }
 

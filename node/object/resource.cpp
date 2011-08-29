@@ -10,14 +10,12 @@ Resource::Resource(Node *origin, const QString &url) : Object(origin) {
     setUrl(url);
 }
 
-Resource::Resource(const Resource &other) : Object(other) {
-    setUrl(other.url());
-}
-
 void Resource::initRoot() {
     LIU_ADD_NATIVE_METHOD(Resource, init);
 
     LIU_ADD_NATIVE_METHOD(Resource, equal_to, ==);
+
+    LIU_ADD_NATIVE_METHOD(Resource, get);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Resource, init) {
@@ -25,15 +23,24 @@ LIU_DEFINE_NATIVE_METHOD(Resource, init) {
     LIU_CHECK_INPUT_SIZE(0, 1);
     if(message->hasInput(0)) setUrl(message->runFirstInput()->toString());
 
-    // === TODO: DRY ===
-    LIU_FIND_LAST_PRIMITIVE;
-    Primitive *nextPrimitive = primitive->next();
-    if(nextPrimitive) {
-        nextPrimitive->run(this);
-        Primitive::skip(this);
-    }
+//    // === TODO: DRY ===
+//    LIU_FIND_LAST_PRIMITIVE;
+//    Primitive *nextPrimitive = primitive->next();
+//    if(nextPrimitive) {
+//        nextPrimitive->run(this);
+//        Primitive::skip(this);
+//    }
 
     return this;
+}
+
+LIU_DEFINE_NATIVE_METHOD(Resource, get) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0);
+    if(url().isEmpty()) LIU_THROW_RUNTIME_EXCEPTION("'url' is empty");
+    QString theUrl = normalizeUrl(url());
+    if(theUrl.startsWith("file://")) return LIU_TEXT(readTextFile(theUrl.mid(7)));
+    LIU_THROW_RUNTIME_EXCEPTION("unknown protocol");
 }
 
 bool Resource::isEqualTo(const Node *other) const {

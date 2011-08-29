@@ -3,6 +3,7 @@
 
 #include "node/object/message.h"
 #include "node/object/boolean.h"
+#include "node/object/text.h"
 
 LIU_BEGIN
 
@@ -13,24 +14,22 @@ class Resource : public Object {
 public:
     explicit Resource(Node *origin, const QString &url = "");
 
-    Resource(const Resource &other);
-
     virtual ~Resource() {}
 
     LIU_DECLARE_AND_DEFINE_COPY_METHOD(Resource);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Resource, url());
+    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Resource);
 
     LIU_DECLARE_NATIVE_METHOD(init);
 
-    const QString &url() const { return _url; }
-    void setUrl(const QString &url) { _url = url; }
+    const QString url() const { return child("url")->toString(); }
+    void setUrl(const QString &url) { addOrSetChild("url", LIU_TEXT(url)); }
+
+    LIU_DECLARE_NATIVE_METHOD(get);
 
     virtual bool isEqualTo(const Node *other) const;
     LIU_DECLARE_NATIVE_METHOD(equal_to);
 
     virtual QString toString(bool debug = false, short level = 0) const;
-private:
-    QString _url;
 };
 
 LIU_END
