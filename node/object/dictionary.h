@@ -134,6 +134,8 @@ public:
 
     LIU_DECLARE_NATIVE_METHOD(size);
     LIU_DECLARE_NATIVE_METHOD(empty);
+
+    LIU_DECLARE_NATIVE_METHOD(each);
 };
 
 LIU_END

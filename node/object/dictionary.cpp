@@ -14,6 +14,8 @@ void Dictionary::initRoot() {
 
     LIU_ADD_NATIVE_METHOD(Dictionary, size);
     LIU_ADD_NATIVE_METHOD(Dictionary, empty);
+
+    LIU_ADD_NATIVE_METHOD(Dictionary, each);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Dictionary, init) {
@@ -77,4 +79,25 @@ LIU_DEFINE_NATIVE_METHOD(Dictionary, empty) {
     return LIU_BOOLEAN(isEmpty());
 }
 
+LIU_DEFINE_NATIVE_METHOD(Dictionary, each) {
+    LIU_FIND_LAST_PRIMITIVE;
+    Primitive *nextPrimitive = primitive->next();
+    if(!nextPrimitive) LIU_THROW(InterpreterException, QString("missing code after an each statement"));
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(2);
+    Message *msg = Message::dynamicCast(message->firstInput()->value()->value());
+    if(!msg) LIU_THROW(ArgumentException, "first argument should be a message");
+    QString valueName = msg->name();
+    msg = Message::dynamicCast(message->secondInput()->value()->value());
+    if(!msg) LIU_THROW(ArgumentException, "second argument should be a message");
+    QString keyName = msg->name();
+    Iterator i(this);
+    while(i.hasNext()) {
+        i.next();
+        context()->addOrSetChild(keyName, i.key());
+        context()->addOrSetChild(valueName, i.value());
+        nextPrimitive->run();
+    }
+    Primitive::skip(this);
+}
 LIU_END

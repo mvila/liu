@@ -28,6 +28,7 @@ void Text::initRoot() {
     LIU_ADD_NATIVE_METHOD(Text, capitalize);
 
     LIU_ADD_NATIVE_METHOD(Text, extract_between);
+    LIU_ADD_NATIVE_METHOD(Text, remove_after);
 
     LIU_ADD_NATIVE_METHOD(Text, size);
     LIU_ADD_NATIVE_METHOD(Text, empty);
@@ -145,6 +146,22 @@ LIU_DEFINE_NATIVE_METHOD(Text, extract_between) {
     if(message->isExclaimed())
         setValue(text.remove(from, to - from + 1));
     return result;
+}
+
+LIU_DEFINE_NATIVE_METHOD(Text, remove_after) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(1);
+    QString text = value();
+    QString after = message->runFirstInput()->toString();
+    if(!after.isEmpty()) {
+        int index = text.indexOf(after);
+        if(index != -1) text.remove(index, text.size() - index);
+    }
+    if(message->isExclaimed()) {
+        setValue(text);
+        return this;
+    } else
+        return LIU_TEXT(text);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Text, size) {
