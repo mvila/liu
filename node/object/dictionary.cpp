@@ -11,6 +11,8 @@ void Dictionary::initRoot() {
     LIU_ADD_NATIVE_METHOD(Dictionary, make);
 
     LIU_ADD_NATIVE_METHOD(Dictionary, get, []);
+    LIU_ADD_NATIVE_METHOD(Dictionary, set, []=);
+    LIU_ADD_NATIVE_METHOD(Dictionary, append_or_set, []:=);
 
     LIU_ADD_NATIVE_METHOD(Dictionary, size);
     LIU_ADD_NATIVE_METHOD(Dictionary, empty);
@@ -64,7 +66,26 @@ LIU_DEFINE_NATIVE_METHOD(Dictionary, make) {
 LIU_DEFINE_NATIVE_METHOD(Dictionary, get) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
-    return get(message->runFirstInput());
+    Node *key = message->runFirstInput();
+    if(message->isQuestioned() && !hasKey(key))
+        return LIU_BOOLEAN(false);
+    else
+        return get(key);
+}
+
+LIU_DEFINE_NATIVE_METHOD(Dictionary, set) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(2);
+    Node *key = message->runFirstInput();
+    if(!hasKey(key)) LIU_THROW(NotFoundException, "key not found");
+    return set(key, message->runSecondInput());
+}
+
+LIU_DEFINE_NATIVE_METHOD(Dictionary, append_or_set) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(2);
+    Node *key = message->runFirstInput();
+    return set(key, message->runSecondInput());
 }
 
 LIU_DEFINE_NATIVE_METHOD(Dictionary, size) {

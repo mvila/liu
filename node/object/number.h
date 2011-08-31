@@ -30,13 +30,13 @@ public:
             if(ok) setValue(value);
         }
 
-        // === TODO: DRY ===
-        LIU_FIND_LAST_PRIMITIVE;
-        Primitive *nextPrimitive = primitive->next();
-        if(nextPrimitive) {
-            nextPrimitive->run(this);
-            Primitive::skip(this);
-        }
+//        // === TODO: DRY ===
+//        LIU_FIND_LAST_PRIMITIVE;
+//        Primitive *nextPrimitive = primitive->next();
+//        if(nextPrimitive) {
+//            nextPrimitive->run(this);
+//            Primitive::skip(this);
+//        }
 
         return this;
     }

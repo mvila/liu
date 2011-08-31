@@ -37,6 +37,8 @@ public:
 
     virtual Node *run(Node *receiver = context());
 
+    LIU_DECLARE_NATIVE_METHOD(get);
+
     LIU_DECLARE_NATIVE_METHOD(concatenate);
     LIU_DECLARE_NATIVE_METHOD(multiply);
 

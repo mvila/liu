@@ -20,6 +20,8 @@ Text::Text(const Text &other) : GenericElement<QString>(other), _isTranslatable(
 void Text::initRoot() {
     LIU_ADD_NATIVE_METHOD(Text, init);
 
+    LIU_ADD_NATIVE_METHOD(Text, get, []);
+
     LIU_ADD_NATIVE_METHOD(Text, concatenate, +);
     LIU_ADD_NATIVE_METHOD(Text, multiply, *);
 
@@ -70,6 +72,19 @@ Node *Text::run(Node *receiver) {
         return LIU_TEXT(result);
     } else
         return this;
+}
+
+LIU_DEFINE_NATIVE_METHOD(Text, get) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(1, 2);
+    int index = message->runFirstInput()->toDouble();
+    int max = value().size();
+    if(index < 0) index = max + index;
+    if(index < 0 || index >= max) LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+    int size = message->hasASecondInput() ? message->runSecondInput()->toDouble() : 1;
+    if(size < 0) size = max + (size + 1) - index;
+    if(size < 0 || index + size > max) LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+    return LIU_TEXT(value().mid(index, size));
 }
 
 LIU_DEFINE_NATIVE_METHOD(Text, concatenate) {
