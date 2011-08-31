@@ -1,5 +1,5 @@
-file := "file:///Network/Servers/serveur.bureau.alphavisa.com/Users/mvila/Desktop/Heures_Alpha_Visa.ics"
-//file := "file:///Users/mvila/Desktop/Heures_Alpha_Visa.ics"
+//file := "file:///Network/Servers/serveur.bureau.alphavisa.com/Users/mvila/Desktop/Heures_Alpha_Visa.ics"
+file := "file:///Users/mvila/Desktop/Heures_Alpha_Visa.ics"
 days := Dictionary()
 source := Resource(file) get
 while(event := source extract_between!("BEGIN:VEVENT\r\n", "END:VEVENT\r\n")) {
@@ -24,9 +24,13 @@ while(event := source extract_between!("BEGIN:VEVENT\r\n", "END:VEVENT\r\n")) {
     days[day] = days[day] + hours
 //    fields inspect
 }
+20110201
+01234567
 days each(value, key) {
-    "{key}: {value}" print
+    date := "{key[6, 2]}/{key[4, 2]}/{key[0, 4]}"
+    "{date}\t{value}" print
 }
+"[end]"
 /*
 while((name := read("Name? ")) empty?) "Name cannot be empty!" alert
 while((age := Number?(read("Age? "))) <= 0) "Age must be more than 0!" alert
