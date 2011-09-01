@@ -24,8 +24,6 @@ while(event := source extract_between!("BEGIN:VEVENT\r\n", "END:VEVENT\r\n")) {
     days[day] = days[day] + hours
 //    fields inspect
 }
-20110201
-01234567
 days each(value, key) {
     date := "{key[6, 2]}/{key[4, 2]}/{key[0, 4]}"
     "{date}\t{value}" print
