@@ -29,8 +29,11 @@ void Text::initRoot() {
     LIU_ADD_NATIVE_METHOD(Text, lowercase);
     LIU_ADD_NATIVE_METHOD(Text, capitalize);
 
+    LIU_ADD_NATIVE_METHOD(Text, contains);
+    LIU_ADD_NATIVE_METHOD(Text, count);
     LIU_ADD_NATIVE_METHOD(Text, extract_between);
     LIU_ADD_NATIVE_METHOD(Text, remove_after);
+    LIU_ADD_NATIVE_METHOD(Text, replace);
 
     LIU_ADD_NATIVE_METHOD(Text, size);
     LIU_ADD_NATIVE_METHOD(Text, empty);
@@ -137,6 +140,23 @@ LIU_DEFINE_NATIVE_METHOD(Text, capitalize) {
     }
 }
 
+LIU_DEFINE_NATIVE_METHOD(Text, contains) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_QUESTION_MARK;
+    LIU_CHECK_INPUT_SIZE(1);
+    QString what = message->runFirstInput()->toString();
+    if(what.isEmpty()) LIU_THROW(ArgumentException, "first argument is an empty text");
+    return LIU_BOOLEAN(value().contains(what));
+}
+
+LIU_DEFINE_NATIVE_METHOD(Text, count) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(1);
+    QString what = message->runFirstInput()->toString();
+    if(what.isEmpty()) LIU_THROW(ArgumentException, "first argument is an empty text");
+    return LIU_NUMBER(value().count(what));
+}
+
 LIU_DEFINE_NATIVE_METHOD(Text, extract_between) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(2);
@@ -177,6 +197,21 @@ LIU_DEFINE_NATIVE_METHOD(Text, remove_after) {
         return this;
     } else
         return LIU_TEXT(text);
+}
+
+LIU_DEFINE_NATIVE_METHOD(Text, replace) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(2);
+    QString oldText = message->runFirstInput()->toString();
+    if(oldText.isEmpty()) LIU_THROW(ArgumentException, "first argument is empty");
+    QString newText = message->runSecondInput()->toString();
+    QString source = value();
+    source.replace(oldText, newText);
+    if(message->isExclaimed()) {
+        setValue(source);
+        return this;
+    } else
+        return LIU_TEXT(source);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Text, size) {

@@ -8,6 +8,48 @@ Object Text {
         ?: new_txt == "Hello"
     }
 
+    \`[]` {
+    test:
+        txt := "Hello"
+        ?: txt[0] == "H"
+        ?: txt[1] == "e"
+        ?: IndexOutOfBoundsException throw? { txt[5] }
+        ?: txt[-1] == "o"
+        ?: txt[-2] == "l"
+        ?: IndexOutOfBoundsException throw? { txt[-6] }
+        ?: txt[0, 0] == ""
+        ?: txt[0, 3] == "Hel"
+        ?: txt[1, 3] == "ell"
+        ?: txt[0, -1] == "Hello"
+        ?: txt[0, -2] == "Hell"
+        ?: txt[0, -5] == "H"
+        ?: txt[0, -6] == ""
+        ?: IndexOutOfBoundsException throw? { txt[0, -7] }
+        ?: txt[-1, 1] == "o"
+        ?: txt[-1, -1] == "o"
+    }
+
+    \`+` {
+    test:
+        ?: "" + "" == ""
+        ?: "abc" + "" == "abc"
+        ?: "" + "def" == "def"
+        ?: "abc" + "def" == "abcdef"
+    }
+
+    \`*` {
+    test:
+        ?: "" * 0 == ""
+        ?: "" * 1 == ""
+        ?: "" * 2 == ""
+        ?: "a" * 0 == ""
+        ?: "a" * 1 == "a"
+        ?: "a" * 2 == "aa"
+        ?: "ab" * 0 == ""
+        ?: "ab" * 1 == "ab"
+        ?: "ab" * 2 == "abab"
+    }
+
     \uppercase {
     test:
         txt := "Hello"
@@ -35,6 +77,21 @@ Object Text {
         ?: txt == "Hello"
     }
 
+    \contains {
+    test:
+        txt := "This is a beautiful world!"
+        ?: txt contains?("beautiful")
+        !: txt contains?("wonderful")
+    }
+
+    \count {
+    test:
+        txt := "This is a beautiful world!"
+        ?: txt count("beautiful") == 1
+        ?: txt count("wonderful") == 0
+        ?: txt count("i") == 3
+    }
+
     \extract_between {
     test:
         txt := "This is a beautiful world!"
@@ -46,6 +103,15 @@ Object Text {
         !: txt extract_between("yop", "yap")
         ?: txt extract_between!("a ", " world") == "beautiful"
         ?: txt == "This is !"
+    }
+
+    \replace {
+    test:
+        txt := "This is a beautiful world!"
+        ?: txt replace("beautiful", "wonderful") == "This is a wonderful world!"
+        ?: txt == "This is a beautiful world!"
+        ?: txt replace!("beautiful", "wonderful") == "This is a wonderful world!"
+        ?: txt == "This is a wonderful world!"
     }
 
     \size {

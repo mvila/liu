@@ -66,6 +66,7 @@ LIU_EXCEPTION_DECLARATION(DuplicateException, RuntimeException);
 LIU_EXCEPTION_DECLARATION(TypecastException, RuntimeException);
 LIU_EXCEPTION_DECLARATION(ConversionException, RuntimeException);
 LIU_EXCEPTION_DECLARATION(AssertionException, RuntimeException);
+LIU_EXCEPTION_DECLARATION(MathException, RuntimeException);
 LIU_EXCEPTION_DECLARATION(OperatingSystemException, Exception);
 LIU_EXCEPTION_DECLARATION(FileSystemException, OperatingSystemException);
 

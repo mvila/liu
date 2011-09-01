@@ -28,6 +28,7 @@ LIU_EXCEPTION_DEFINITION(DuplicateException, RuntimeException);
 LIU_EXCEPTION_DEFINITION(TypecastException, RuntimeException);
 LIU_EXCEPTION_DEFINITION(ConversionException, RuntimeException);
 LIU_EXCEPTION_DEFINITION(AssertionException, RuntimeException);
+LIU_EXCEPTION_DEFINITION(MathException, RuntimeException);
 LIU_EXCEPTION_DEFINITION(OperatingSystemException, Exception);
 LIU_EXCEPTION_DEFINITION(FileSystemException, OperatingSystemException);
 

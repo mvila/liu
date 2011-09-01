@@ -68,7 +68,10 @@ public:
     LIU_DECLARE_NATIVE_METHOD(modulo) {
         LIU_FIND_LAST_MESSAGE;
         LIU_CHECK_INPUT_SIZE(1);
-        return LIU_NUMBER(llround(value()) % llround(message->runFirstInput()->toDouble()));
+        long long left = llround(value());
+        long long right = llround(message->runFirstInput()->toDouble());
+        if(right == 0) LIU_THROW(MathException, "right-hand side cannot be 0");
+        return LIU_NUMBER(left % right);
     }
 
     LIU_DECLARE_NATIVE_METHOD(unary_plus) {
@@ -95,6 +98,21 @@ public:
         LIU_CHECK_INPUT_SIZE(0);
         setValue(value() - 1);
         return this;
+    }
+
+    LIU_DECLARE_NATIVE_METHOD(nan) {
+        LIU_FIND_LAST_MESSAGE;
+        LIU_CHECK_QUESTION_MARK;
+        LIU_CHECK_INPUT_SIZE(0);
+        return LIU_BOOLEAN(value() != value());
+    }
+
+    LIU_DECLARE_NATIVE_METHOD(inf) {
+        LIU_FIND_LAST_MESSAGE;
+        LIU_CHECK_QUESTION_MARK;
+        LIU_CHECK_INPUT_SIZE(0);
+        return LIU_BOOLEAN(value() > std::numeric_limits<qreal>::max() ||
+                           value() < -std::numeric_limits<qreal>::max());
     }
 
     virtual bool isEqualTo(const Node *other) const {

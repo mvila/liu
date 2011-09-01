@@ -19,6 +19,9 @@ void Number::initRoot() {
     LIU_ADD_NATIVE_METHOD(Number, prefix_increment, prefix++);
     LIU_ADD_NATIVE_METHOD(Number, prefix_decrement, prefix--);
 
+    LIU_ADD_NATIVE_METHOD(Number, nan);
+    LIU_ADD_NATIVE_METHOD(Number, inf);
+
     LIU_ADD_NATIVE_METHOD(Number, equal_to, ==);
     LIU_ADD_NATIVE_METHOD(Number, compare, <=>);
 }

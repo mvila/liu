@@ -129,4 +129,5 @@ OTHER_FILES += \
     node/object/text.liu \
     node/object/abstractlist.liu \
     misc/kate/liu.xml \
-    examples/console_read.liu
+    examples/console_read.liu \
+    node/object/number.liu
