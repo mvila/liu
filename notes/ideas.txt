@@ -36,10 +36,10 @@ a[3] << "Ya"  // insert
 
 -------------------------------------------------
 
-Enumerable := Object()
+Iterable := Object()
 require: each (Iterator?)
 
-Collection := Object(extension: Enumerable)
+Collection := Object(extension: Iterable)
 require: append, remove
 
 Set := Collection()
@@ -49,10 +49,10 @@ require: get, set, delete, indexes
 
 Dictionary := Collection(extension: Indexable)
 
-Orderable := Indexable()
+Insertable := Indexable()
 require: insert
 
-List := Collection(extension: Orderable)
+List := Collection(extension: Insertable)
 
 ---
 

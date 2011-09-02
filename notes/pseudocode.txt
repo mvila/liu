@@ -1,52 +1,32 @@
-findChildInSelfAndParents(tag) {
-    moduleSeen = []
-    parentQueue = [this]
-    parentTree = []
-    for(i = 0; i++; i < parentQueue.size()) {
-        parent = parentQueue[i]
-        if(child = parent.module.findChildInSelfAndModules(tag, moduleSeen, parentQueue, parentTree)) {
-            parentPath = []
-            while(parent != this) {
-                parent = parentTree[parent]
-                parentPath.prepend(pair(parent.tag, parent.module))
-            }
-            mustClone = false
-            currentParent = this
-            foreach(parent, parentPath) {
-                if(!mustClone && !parent.module.childs.contains(currentParent)) mustClone = true
-                if(mustClone) {
-                    virtualParent = parent.module.clone().setIsVirtual(true)
-                    currentParent.addParent(parent.tag, virtualParent)
-                    currentParent = virtualParent
-                }
-            }
-            if(mustClone || !currentParent.childs.contains(child)) {
-                child = child.clone().setIsVirtual(true)
-                currentParent.addChild(tag, child)
-            }
-            return child
-        }
+Iterable := Object()
+require: each (Iterator?)
+
+Collection := Object(extension: Iterable)
+require: append, remove
+
+Set := Collection()
+
+Indexable := Object()
+require: get, set, delete, indexes
+
+Dictionary := Collection(extension: Indexable)
+
+Insertable := Indexable()
+require: insert
+
+List := Collection(extension: Insertable)
+
+--------------
+
+class Iterable {
+    iterator: pure virtual function
+
+    print {
+        i = iterator
+        while(i hasnext) next print
     }
-    return NULL
 }
 
-findChildInSelfAndModules(tag, &moduleSeen, &parentQueue, &parentTree) {
-    moduleQueue = [this]
-    for(i = 0; i++; i < moduleQueue.size()) {
-        module = moduleQueue[i]
-        if(module.hasDirectChild(tag)) return module.directChild(tag)
-        foreach(mod, module.modules()) {
-            if(!moduleSeen.contains(mod)) {
-                moduleSeen.insert(mod)
-                moduleQueue << mod
-            }
-        }
-        foreach(parent, mod.parents()) {
-            if(!parentTree.contains(parent.module)) {
-                parentTree[parent.module] = pair(parent.tag, this)
-                parentQueue << parent.module
-            }
-        }
-    }
-    return NULL
+class Text : public Iterable {
+    iterator: ...
 }
