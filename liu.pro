@@ -60,7 +60,8 @@ SOURCES += main.cpp \
     tests/texttest.cpp \
     tests/listtest.cpp \
     tests/dictionarytest.cpp \
-    node/object/resource.cpp
+    node/object/resource.cpp \
+    node/object/iterable.cpp
 
 HEADERS += \
     liu.h \
@@ -111,7 +112,8 @@ HEADERS += \
     tests/texttest.h \
     tests/listtest.h \
     tests/dictionarytest.h \
-    node/object/resource.h
+    node/object/resource.h \
+    node/object/iterable.h
 
 OTHER_FILES += \
     README.txt \

@@ -37,22 +37,25 @@ a[3] << "Ya"  // insert
 -------------------------------------------------
 
 Iterable := Object()
-require: each (Iterator?)
+require: iterator
+provide: each, first, second, third, last, contains?, count(value), size, empty?,
+         find(item) -> iterator
+         sort, min, max (items must respond to <=>)
 
-Collection := Object(extension: Iterable)
+Collection := Iterable()
 require: append, remove
+attribute: uniqueValue?
+provide: append(iterable), remove_all(value), remove(iterable), replace
 
-Set := Collection()
+Indexable := Collection() // Dictionary
+require: get, set, unset, indexes
+attribute: uniqueIndex?
+provide: unset(iterable -> ex. : range), index_of(item, from, reverse?), slice,
+         swap, take, unite(indexable), first_index, last_index
 
-Indexable := Object()
-require: get, set, delete, indexes
-
-Dictionary := Collection(extension: Indexable)
-
-Insertable := Indexable()
+Insertable := Indexable() // List
 require: insert
-
-List := Collection(extension: Insertable)
+provide: move(from, to), prepend, push, pop
 
 ---
 
