@@ -35,7 +35,7 @@ public:
 
     virtual T doGet(int i) const {
         Q_UNUSED(i);
-        LIU_THROW(RuntimeException, "abstract method called");
+        LIU_ABSTRACT_CALL;
     }
 
     T first() const { return get(0); }
@@ -79,7 +79,7 @@ public:
     virtual void doSet(int i, const T &value) {
         Q_UNUSED(i);
         Q_UNUSED(value);
-        LIU_THROW(RuntimeException, "abstract method called");
+        LIU_ABSTRACT_CALL;
     }
 
     T insert(int i, const T &value) {
@@ -94,7 +94,7 @@ public:
     virtual void doInsert(int i, const T &value) {
         Q_UNUSED(i);
         Q_UNUSED(value);
-        LIU_THROW(RuntimeException, "abstract method called");
+        LIU_ABSTRACT_CALL;
     }
 
     const GenericAbstractList *insert(int i, const GenericAbstractList *otherList) {
@@ -120,7 +120,7 @@ public:
 
     virtual void doRemove(int i) {
         Q_UNUSED(i);
-        LIU_THROW(RuntimeException, "abstract method called");
+        LIU_ABSTRACT_CALL;
     }
 
     void clear() {
@@ -131,7 +131,7 @@ public:
     }
 
     virtual void doClear() {
-        LIU_THROW(RuntimeException, "abstract method called");
+        LIU_ABSTRACT_CALL;
     }
 
     bool hasIndex(int i) const { return i >= 0 && i < size(); }
@@ -148,7 +148,7 @@ public:
     }
 
     virtual int size() const {
-        LIU_THROW(RuntimeException, "abstract method called");
+        LIU_ABSTRACT_CALL;
     }
     bool isEmpty() const { return size() == 0; }
     bool isNotEmpty() const { return size() > 0; }

@@ -14,6 +14,9 @@ throw EXCEPTION(context()->child(#EXCEPTION), MESSAGE, __FILE__, __LINE__, Q_FUN
 #define LIU_TODO \
 LIU_THROW(Exception, "function not yet implemented")
 
+#define LIU_ABSTRACT_CALL \
+LIU_THROW(RuntimeException, "abstract method called");
+
 class Exception : public Node {
     LIU_DECLARE(Exception, Node, Node);
 public:

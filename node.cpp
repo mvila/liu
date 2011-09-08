@@ -176,12 +176,16 @@ void Node::setOrigin(Node *node) {
     _origin = node;
 }
 
-bool Node::isOriginatingFrom(Node *orig) const { // TODO: take into account extensions
+bool Node::isOriginatingFrom(Node *orig) const {
     orig = orig->real();
     const Node *node = real();
     while(node != orig) {
         if(node->origin() == node) // Node::root reached?
             return false;
+        if(_extensions) {
+            foreach(Node *extension, *_extensions)
+                if(extension->isOriginatingFrom(orig)) return true;
+        }
         node = node->origin();
     }
     return true;
@@ -250,7 +254,7 @@ Node *Node::child(const QString &name, bool *wasFoundPtr, Node **parentPtr) cons
     if(wasFoundPtr)
         *wasFoundPtr = node;
     else if(!node)
-        LIU_THROW(NotFoundException, QString("child not found"));
+        LIU_THROW(NotFoundException, QString("child '%1' not found").arg(name));
     return node;
 }
 
@@ -279,7 +283,7 @@ Node *Node::setChild(const QString &name, Node *value, bool addOrSetMode) {
             if(current == value) return value;
             current->_removeParent(parent);
         }
-    } else if(!addOrSetMode) LIU_THROW(NotFoundException, "child not found");
+    } else if(!addOrSetMode) LIU_THROW(NotFoundException, QString("child '%1' not found").arg(name));
     parent->_setChild(name, value);
     return value;
 }
@@ -345,7 +349,7 @@ void Node::removeChild(const QString &name, bool *wasFoundPtr) {
     if(wasFoundPtr)
         *wasFoundPtr = current;
     else if(!current)
-        LIU_THROW(NotFoundException, "child not found");
+        LIU_THROW(NotFoundException, QString("child '%1' not found").arg(name));
 }
 
 LIU_DEFINE_NATIVE_METHOD(Node, remove) {

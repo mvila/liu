@@ -1,3 +1,13 @@
+"abcdef" contains?("")
+
+//i := "Hello" iterator
+//s := 0
+//while(i read?) {
+//    s++
+//    i skip!
+//}
+//s print
+
 /*
 //file := "file:///Network/Servers/serveur.bureau.alphavisa.com/Users/mvila/Desktop/Heures_Alpha_Visa.ics"
 file := "file:///Users/mvila/Desktop/Heures_Alpha_Visa.ics"

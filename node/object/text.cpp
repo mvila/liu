@@ -5,19 +5,21 @@ LIU_BEGIN
 
 // === Text ===
 
-LIU_DEFINE(Text, Element, Object);
+LIU_DEFINE(Text, Object, Object);
 
 Text::Text(Node *origin, const QString &value, bool isTranslatable, QList<IntPair> *interpolableSlices) :
-    GenericElement<QString>(origin, ""), _isTranslatable(isTranslatable) {
+    Iterable(origin), _value(value), _isTranslatable(isTranslatable) {
     setValue(value); setInterpolableSlices(interpolableSlices);
 }
 
-Text::Text(const Text &other) : GenericElement<QString>(other), _isTranslatable(other.isTranslatable()) {
+Text::Text(const Text &other) : Iterable(other), _value(other.value()), _isTranslatable(other.isTranslatable()) {
     setValue(other.value());
     setInterpolableSlices(other.interpolableSlices());
 }
 
 void Text::initRoot() {
+    addExtension(Iterable::root());
+
     LIU_ADD_NATIVE_METHOD(Text, init);
 
     LIU_ADD_NATIVE_METHOD(Text, get, []);
@@ -29,14 +31,9 @@ void Text::initRoot() {
     LIU_ADD_NATIVE_METHOD(Text, lowercase);
     LIU_ADD_NATIVE_METHOD(Text, capitalize);
 
-    LIU_ADD_NATIVE_METHOD(Text, contains);
-    LIU_ADD_NATIVE_METHOD(Text, count);
     LIU_ADD_NATIVE_METHOD(Text, extract_between);
     LIU_ADD_NATIVE_METHOD(Text, remove_after);
     LIU_ADD_NATIVE_METHOD(Text, replace);
-
-    LIU_ADD_NATIVE_METHOD(Text, size);
-    LIU_ADD_NATIVE_METHOD(Text, empty);
 
     LIU_ADD_NATIVE_METHOD(Text, equal_to, ==);
     LIU_ADD_NATIVE_METHOD(Text, compare, <=>);
@@ -140,23 +137,6 @@ LIU_DEFINE_NATIVE_METHOD(Text, capitalize) {
     }
 }
 
-LIU_DEFINE_NATIVE_METHOD(Text, contains) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_QUESTION_MARK;
-    LIU_CHECK_INPUT_SIZE(1);
-    QString what = message->runFirstInput()->toString();
-    if(what.isEmpty()) LIU_THROW(ArgumentException, "first argument is an empty text");
-    return LIU_BOOLEAN(value().contains(what));
-}
-
-LIU_DEFINE_NATIVE_METHOD(Text, count) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1);
-    QString what = message->runFirstInput()->toString();
-    if(what.isEmpty()) LIU_THROW(ArgumentException, "first argument is an empty text");
-    return LIU_NUMBER(value().count(what));
-}
-
 LIU_DEFINE_NATIVE_METHOD(Text, extract_between) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(2);
@@ -214,17 +194,24 @@ LIU_DEFINE_NATIVE_METHOD(Text, replace) {
         return LIU_TEXT(source);
 }
 
-LIU_DEFINE_NATIVE_METHOD(Text, size) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(0);
-    return LIU_NUMBER(value().size());
+bool Text::contains(Node *what) const {
+    return value().contains(what->toString());
 }
 
-LIU_DEFINE_NATIVE_METHOD(Text, empty) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_QUESTION_MARK;
-    LIU_CHECK_INPUT_SIZE(0);
-    return LIU_BOOLEAN(value().isEmpty());
+int Text::count(Node *what) const {
+    return value().count(what->toString());
+}
+
+int Text::size() const {
+    return value().size();
+}
+
+bool Text::empty() const {
+    return value().isEmpty();
+}
+
+Iterable::Iterator *Text::iterator() const {
+    return LIU_TEXT_ITERATOR(constCast(this));
 }
 
 bool Text::isEqualTo(const Node *other) const {
@@ -350,6 +337,46 @@ QString Text::toString(bool debug, short level) const {
 
 // === Text::Iterator ===
 
+LIU_DEFINE(Text::Iterator, Iterable::Iterator, Text);
+
+Text::Iterator::Iterator(Node *origin, Text *text) :
+    Iterable::Iterator(origin), _text(text), _index(0) {}
+
+void Text::Iterator::initRoot() {
+    LIU_ADD_NATIVE_METHOD(Text::Iterator, init);
+}
+
+LIU_DEFINE_NATIVE_METHOD(Text::Iterator, init) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0, 1);
+    if(message->hasAnInput()) {
+        Text *text = Text::dynamicCast(message->runFirstInput());
+        if(!text) LIU_THROW(ArgumentException, "text argument is expected");
+        _text = text;
+    }
+    return this;
+}
+
+bool Text::Iterator::hasNext() const {
+    if(!_text) return false;
+    return _index < _text->value().size() ;
+}
+
+Text *Text::Iterator::peekNext() const {
+    if(!_text) LIU_THROW(NullPointerException, "Text pointer is NULL");
+    if(_index >= _text->value().size()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
+    return LIU_TEXT(_text->value().at(_index));
+}
+
+void Text::Iterator::skipNext() {
+    if(!_text) LIU_THROW(NullPointerException, "Text pointer is NULL");
+    if(_index >= _text->value().size()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
+    _index++;
+}
+
+/*
+// === Text::Iterator ===
+
 LIU_DEFINE(Text::Iterator, Object, Text);
 
 void Text::Iterator::initRoot() {
@@ -410,5 +437,6 @@ LIU_DEFINE_NATIVE_METHOD(Text::Iterator, prefix_decrement) {
     previous();
     return this;
 }
+*/
 
 LIU_END

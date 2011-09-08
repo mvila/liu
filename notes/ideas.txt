@@ -3,6 +3,11 @@ i := "Hello" Iterator()
 ---
 
 i := "Hello" iterator
+while(i read?) { i read! print }
+
+---
+
+i := "Hello" iterator
 while(i value?) {
     i value print
     i next
@@ -11,7 +16,7 @@ while(i value?) {
 ---
 
 i := "Hello" iterator
-while(v := i next) { v print }
+while(v := i next!) { v print }
 while(i next?) { i current print }
 
 ---

@@ -158,8 +158,9 @@ Object Text {
         ?: "abc" < "def"
     }
 test:
-    ?: origin == Object Element
+    ?: origin == Object
     ?: parent == Object
+    ?: is?(Iterable)
 
     // interpolating...
     ?: "{}" == ""
