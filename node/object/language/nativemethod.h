@@ -11,18 +11,22 @@ namespace Language {
 
     #define LIU_ADD_NATIVE_METHOD(CLASS, METHOD, NAME...) \
     addOrSetChild(preferSecondArgumentIfNotEmpty(#METHOD, #NAME), \
-        new NativeMethod(NativeMethod::root(), static_cast<_MethodPointer_>(&CLASS::_##METHOD##_)))
+        new NativeMethod(NativeMethod::root(), preferSecondArgumentIfNotEmpty(#METHOD, #NAME), \
+        static_cast<_MethodPointer_>(&CLASS::_##METHOD##_)))
 
     typedef Node *(Node::*_MethodPointer_)();
 
     class NativeMethod : public AbstractMethod {
         LIU_DECLARE(NativeMethod, AbstractMethod, Language);
     public:
-        explicit NativeMethod(Node *origin, const _MethodPointer_ &method = NULL) :
-            AbstractMethod(origin) { setMethod(method); }
+        explicit NativeMethod(Node *origin, const QString &name = "", const _MethodPointer_ &method = NULL) :
+            AbstractMethod(origin) {
+            setNodeName(name);
+            setMethod(method);
+        }
 
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(NativeMethod);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(NativeMethod, method());
+        LIU_DECLARE_AND_DEFINE_FORK_METHOD(NativeMethod, nodeName(), method());
 
         _MethodPointer_ method() const { return _method; }
 
@@ -34,6 +38,10 @@ namespace Language {
         virtual Node *run(Node *receiver = context()) {
             LIU_PUSH_RUN(this);
             return (receiver->*method())();
+        }
+
+        virtual QString toString(bool debug = false, short level = 0) const {
+            return signature(debug, level);
         }
     private:
         _MethodPointer_ _method;

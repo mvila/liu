@@ -1,7 +1,12 @@
-i := "Hello" iterator() // reverse: yes
-while(i read?) {
-    i read! print
-}
+meth(a, b, c) := { a + b + c }
+
+\meth print
+Text \uppercase print
+
+//i := "Hello" iterator() // reverse: yes
+//while(i read?) {
+//    i read! print
+//}
 
 /*
 //file := "file:///Network/Servers/serveur.bureau.alphavisa.com/Users/mvila/Desktop/Heures_Alpha_Visa.ics"
