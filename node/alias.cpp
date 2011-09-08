@@ -1,5 +1,6 @@
 #include "node/alias.h"
 #include "node/object/language/message.h"
+#include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
 

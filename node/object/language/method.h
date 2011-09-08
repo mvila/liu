@@ -1,7 +1,7 @@
-#ifndef LIU_METHOD_H
-#define LIU_METHOD_H
+#ifndef LIU_LANGUAGE_METHOD_H
+#define LIU_LANGUAGE_METHOD_H
 
-#include "node/object/element.h"
+#include "node/object/language/abstractmethod.h"
 #include "node/object/language/message.h"
 #include "node/object/language/block.h"
 #include "node/object/language/parameterlist.h"
@@ -12,11 +12,11 @@ namespace Language {
     #define LIU_METHOD(ARGS...) \
     new Language::Method(context()->child("Object", "Language", "Method"), ##ARGS)
 
-    class Method : public Object {
-        LIU_DECLARE(Method, Object, Language);
+    class Method : public AbstractMethod {
+        LIU_DECLARE(Method, AbstractMethod, Language);
     public:
         explicit Method(Node *origin, Primitive *code = NULL, ParameterList *inputs = NULL, ParameterList *outputs = NULL,
-                        const QString &codeInputName = "") : Object(origin), _inputs(inputs), _outputs(outputs),
+                        const QString &codeInputName = "") : AbstractMethod(origin), _inputs(inputs), _outputs(outputs),
             _codeInputName(codeInputName), _code(NULL) { setCode(code); }
 
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(Method);
@@ -192,4 +192,4 @@ namespace Language {
 
 LIU_END
 
-#endif // LIU_METHOD_H
+#endif // LIU_LANGUAGE_METHOD_H

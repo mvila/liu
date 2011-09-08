@@ -1,6 +1,7 @@
 #include "node/object/dictionary.h"
 #include "node/object/text.h"
 #include "node/object/language/message.h"
+#include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
 

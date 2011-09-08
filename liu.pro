@@ -19,7 +19,6 @@ SOURCES += main.cpp \
     node.cpp \
     node/exception.cpp \
     node/alias.cpp \
-    node/nativemethod.cpp \
     node/runstack.cpp \
     node/controlflow.cpp \
     node/console.cpp \
@@ -47,6 +46,7 @@ SOURCES += main.cpp \
     node/object/language/parameterlist.cpp \
     node/object/language/section.cpp \
     node/object/language/block.cpp \
+    node/object/language/nativemethod.cpp \
     node/object/language/method.cpp \
     node/object/language/sourcecode.cpp \
     node/object/language/sourcecodedictionary.cpp \
@@ -61,14 +61,14 @@ SOURCES += main.cpp \
     tests/listtest.cpp \
     tests/dictionarytest.cpp \
     node/object/resource.cpp \
-    node/object/iterable.cpp
+    node/object/iterable.cpp \
+    node/object/language/abstractmethod.cpp
 
 HEADERS += \
     liu.h \
     node.h \
     node/exception.h \
     node/alias.h \
-    node/nativemethod.h \
     node/runstack.h \
     node/controlflow.h \
     node/console.h \
@@ -96,6 +96,7 @@ HEADERS += \
     node/object/language/parameterlist.h \
     node/object/language/section.h \
     node/object/language/block.h \
+    node/object/language/nativemethod.h \
     node/object/language/method.h \
     node/object/language/sourcecode.h \
     node/object/language/sourcecodedictionary.h \
@@ -113,7 +114,8 @@ HEADERS += \
     tests/listtest.h \
     tests/dictionarytest.h \
     node/object/resource.h \
-    node/object/iterable.h
+    node/object/iterable.h \
+    node/object/language/abstractmethod.h
 
 OTHER_FILES += \
     README.txt \

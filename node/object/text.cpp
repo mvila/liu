@@ -1,5 +1,6 @@
 #include "node/object/text.h"
 #include "node/object/language/interpreter.h"
+#include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
 

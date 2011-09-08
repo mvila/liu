@@ -1,6 +1,7 @@
 #include "node/object/list.h"
 #include "node/object/number.h"
 #include "node/object/text.h"
+#include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
 

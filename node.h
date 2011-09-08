@@ -318,7 +318,6 @@ NAME *NAME::root() { \
         if(pos != -1) name = name.mid(pos + 2); \
         PARENT::root()->addOrSetChild(name, _root); \
         _root->declare(name); \
-        _root->initRoot(); \
     } \
     return _root; \
 }

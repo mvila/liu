@@ -2,13 +2,13 @@
 
 #include "node.h"
 #include "node/exception.h"
-#include "node/nativemethod.h"
 #include "node/object/boolean.h"
 #include "node/object/number.h"
 #include "node/object/text.h"
 #include "node/object/property.h"
 #include "node/object/language/message.h"
 #include "node/object/language/block.h"
+#include "node/object/language/nativemethod.h"
 #include "node/object/language/method.h"
 
 LIU_BEGIN
@@ -41,7 +41,6 @@ Node *Node::root() {
         _root->setOrigin(_root);
         _root->addChild("Node", _root);
         _root->declare("Node");
-        _root->initRoot();
     }
     return _root;
 }
@@ -50,8 +49,6 @@ void Node::initRoot() {
     pushContext(this);
 
     LIU_ADD_NATIVE_METHOD(Node, self);
-
-    Property::root();
 
     Property *originProperty = LIU_PROPERTY();
     originProperty->LIU_ADD_NATIVE_METHOD(Node, origin_get, get);

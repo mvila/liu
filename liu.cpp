@@ -8,11 +8,15 @@
 #include "node/object/language/message.h"
 #include "node/object/language/primitive.h"
 #include "node/object/language/interpreter.h"
+#include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
 
 void init() {
-    foreach(Root root, roots()) root.node->setNodeName(root.name);
+    foreach(Root root, roots()) {
+        root.node->initRoot();
+        root.node->setNodeName(root.name);
+    }
     #ifdef LIU_CATCH_EXCEPTIONS
     try {
     #endif

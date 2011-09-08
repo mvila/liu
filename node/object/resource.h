@@ -12,7 +12,7 @@ LIU_BEGIN
 class Resource : public Object {
     LIU_DECLARE(Resource, Object, Object);
 public:
-    explicit Resource(Node *origin, const QString &url = "");
+    explicit Resource(Node *origin, const QString &url = QString());
 
     virtual ~Resource() {}
 

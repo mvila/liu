@@ -1,9 +1,10 @@
 #include "node/object/language/method.h"
+#include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
 
 namespace Language {
-    LIU_DEFINE(Method, Object, Language);
+    LIU_DEFINE(Method, AbstractMethod, Language);
 
     void Method::initRoot() {
         LIU_ADD_NATIVE_METHOD(Method, init);

@@ -1,4 +1,5 @@
 #include "node/object/language.h"
+#include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
 

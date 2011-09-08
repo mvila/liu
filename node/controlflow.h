@@ -3,7 +3,6 @@
 
 #include "node.h"
 #include "node/exception.h"
-#include "node/nativemethod.h"
 
 LIU_BEGIN
 

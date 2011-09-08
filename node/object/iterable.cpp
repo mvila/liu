@@ -1,5 +1,6 @@
 #include "node/object/iterable.h"
 #include "node/object/number.h"
+#include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
 

@@ -1,6 +1,7 @@
 #include "node/console.h"
 #include "node/object/text.h"
 #include "node/object/language/message.h"
+#include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
 

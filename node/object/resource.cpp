@@ -1,4 +1,5 @@
 #include "node/object/resource.h"
+#include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
 
@@ -7,7 +8,7 @@ LIU_BEGIN
 LIU_DEFINE(Resource, Object, Object);
 
 Resource::Resource(Node *origin, const QString &url) : Object(origin) {
-    setUrl(url);
+    if(!url.isNull()) setUrl(url);
 }
 
 void Resource::initRoot() {
