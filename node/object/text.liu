@@ -114,6 +114,11 @@ Object Text {
         ?: txt == "This is a wonderful world!"
     }
 
+    \iterator {
+    inputs:
+        (reverse: no)
+    }
+
     \size {
     test:
         ?: "" size == 0
