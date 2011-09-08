@@ -1,6 +1,6 @@
 #include "node/console.h"
-#include "node/object/message.h"
 #include "node/object/text.h"
+#include "node/object/language/message.h"
 
 LIU_BEGIN
 

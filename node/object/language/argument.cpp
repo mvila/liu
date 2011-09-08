@@ -1,4 +1,4 @@
-#include "node/object/message.h"
+#include "node/object/language/message.h"
 #include "node/object/language/argument.h"
 
 LIU_BEGIN

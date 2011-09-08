@@ -1,9 +1,9 @@
 #ifndef LIU_RESOURCE_H
 #define LIU_RESOURCE_H
 
-#include "node/object/message.h"
 #include "node/object/boolean.h"
 #include "node/object/text.h"
+#include "node/object/language/message.h"
 
 LIU_BEGIN
 

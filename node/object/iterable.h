@@ -1,8 +1,8 @@
 #ifndef LIU_ITERABLE_H
 #define LIU_ITERABLE_H
 
-#include "node/object/message.h"
 #include "node/object/boolean.h"
+#include "node/object/language/message.h"
 
 LIU_BEGIN
 

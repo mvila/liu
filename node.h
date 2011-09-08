@@ -42,8 +42,7 @@ if((VALUE) != FIELD) { \
 #define LIU_UNSET_FIELD(FIELD) \
 if(FIELD) removeAnonymousChild(FIELD);
 
-class Message;
-namespace Language { class Primitive; }
+namespace Language { class Primitive; class Message; }
 using namespace Language;
 
 #define LIU_DECLARE_NATIVE_METHOD(METHOD) \

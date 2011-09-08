@@ -6,10 +6,10 @@
 #include "node/object/boolean.h"
 #include "node/object/number.h"
 #include "node/object/text.h"
-#include "node/object/message.h"
-#include "node/object/method.h"
 #include "node/object/property.h"
+#include "node/object/language/message.h"
 #include "node/object/language/block.h"
+#include "node/object/language/method.h"
 
 LIU_BEGIN
 

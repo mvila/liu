@@ -34,20 +34,20 @@ SOURCES += main.cpp \
     node/object/list.cpp \
     node/object/bunch.cpp \
     node/object/dictionary.cpp \
-    node/object/method.cpp \
-    node/object/message.cpp \
     node/object/application.cpp \
     node/object/language.cpp \
     node/object/language/token.cpp \
     node/object/language/operator.cpp \
     node/object/language/operatortable.cpp \
     node/object/language/primitive.cpp \
+    node/object/language/message.cpp \
     node/object/language/argument.cpp \
     node/object/language/argumentbunch.cpp \
     node/object/language/parameter.cpp \
     node/object/language/parameterlist.cpp \
     node/object/language/section.cpp \
     node/object/language/block.cpp \
+    node/object/language/method.cpp \
     node/object/language/sourcecode.cpp \
     node/object/language/sourcecodedictionary.cpp \
     node/object/language/test.cpp \
@@ -83,20 +83,20 @@ HEADERS += \
     node/object/list.h \
     node/object/bunch.h \
     node/object/dictionary.h \
-    node/object/method.h \
-    node/object/message.h \
     node/object/application.h \
     node/object/language.h \
     node/object/language/token.h \
     node/object/language/operator.h \
     node/object/language/operatortable.h \
     node/object/language/primitive.h \
+    node/object/language/message.h \
     node/object/language/argument.h \
     node/object/language/argumentbunch.h \
     node/object/language/parameter.h \
     node/object/language/parameterlist.h \
     node/object/language/section.h \
     node/object/language/block.h \
+    node/object/language/method.h \
     node/object/language/sourcecode.h \
     node/object/language/sourcecodedictionary.h \
     node/object/language/test.h \

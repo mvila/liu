@@ -11,7 +11,7 @@ LIU_BEGIN
 
 namespace Language {
     #define LIU_INTERPRETER(ARGS...) \
-    new Interpreter(context()->child("Object", "Language", "Interpreter"), ##ARGS)
+    new Language::Interpreter(context()->child("Object", "Language", "Interpreter"), ##ARGS)
 
     class Interpreter : public Object {
         LIU_DECLARE(Interpreter, Object, Language);

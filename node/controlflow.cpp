@@ -1,6 +1,6 @@
 #include "node/controlflow.h"
 #include "node/object/boolean.h"
-#include "node/object/message.h"
+#include "node/object/language/message.h"
 #include "node/object/language/block.h"
 
 LIU_BEGIN

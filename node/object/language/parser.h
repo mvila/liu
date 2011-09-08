@@ -5,7 +5,7 @@
 #include "node/object/number.h"
 #include "node/object/character.h"
 #include "node/object/text.h"
-#include "node/object/message.h"
+#include "node/object/language/message.h"
 #include "node/object/language/block.h"
 #include "node/object/language/lexer.h"
 

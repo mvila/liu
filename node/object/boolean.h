@@ -2,7 +2,7 @@
 #define LIU_BOOLEAN_H
 
 #include "node/object/element.h"
-#include "node/object/message.h"
+#include "node/object/language/message.h"
 
 LIU_BEGIN
 

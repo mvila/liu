@@ -1,11 +1,11 @@
-#define LIU_CATCH_EXCEPTIONS
+//#define LIU_CATCH_EXCEPTIONS
 
 #include <QtCore/QFile>
 
 #include "liu.h"
 #include "node/exception.h"
-#include "node/object/message.h"
 #include "node/object/application.h"
+#include "node/object/language/message.h"
 #include "node/object/language/primitive.h"
 #include "node/object/language/interpreter.h"
 
