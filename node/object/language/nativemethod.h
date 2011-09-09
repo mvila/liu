@@ -19,14 +19,17 @@ namespace Language {
     class NativeMethod : public AbstractMethod {
         LIU_DECLARE(NativeMethod, AbstractMethod, Language);
     public:
-        explicit NativeMethod(Node *origin, const QString &name = "", const _MethodPointer_ &method = NULL) :
-            AbstractMethod(origin) {
+        explicit NativeMethod(Node *origin, const QString &name = "", const _MethodPointer_ &method = NULL,
+                              ParameterList *inputs = NULL, ParameterList *outputs = NULL,
+                                                     const QString &codeInputName = "") :
+            AbstractMethod(origin, inputs, outputs, codeInputName) {
             setNodeName(name);
             setMethod(method);
         }
 
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(NativeMethod);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(NativeMethod, nodeName(), method());
+        LIU_DECLARE_AND_DEFINE_FORK_METHOD(NativeMethod, nodeName(), method(), LIU_FORK_IF_NOT_NULL(inputs(false)),
+                                           LIU_FORK_IF_NOT_NULL(outputs(false)), codeInputName());
 
         _MethodPointer_ method() const { return _method; }
 
@@ -36,6 +39,7 @@ namespace Language {
         }
 
         virtual Node *run(Node *receiver = context()) {
+            runParameters();
             LIU_PUSH_RUN(this);
             return (receiver->*method())();
         }

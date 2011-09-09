@@ -1,6 +1,7 @@
 #include "node/object/language/block.h"
 #include "node/object/language/message.h"
 #include "node/object/language/testsuite.h"
+#include "node/object/language/abstractmethod.h"
 
 LIU_BEGIN
 
@@ -22,6 +23,19 @@ namespace Language {
     void Block::runMetaSections(Node *receiver) {
         if(!_metaSectionsHaveBeenRun) {
             if(docSection()) receiver->addOrSetChild("doc", docSection()->run(receiver));
+            if(Section *inputsSection = section("inputs")) {
+                AbstractMethod *method = AbstractMethod::dynamicCast(receiver);
+                if(!method) LIU_THROW_RUNTIME_EXCEPTION("'inputs' section is reserved to Method objects");
+                ArgumentBunch *inputs = LIU_ARGUMENT_BUNCH();
+                if(!inputsSection->isEmpty()) {
+                    if(inputsSection->size() > 1) LIU_THROW_RUNTIME_EXCEPTION("'inputs' section has more than one line");
+                    Primitive *prim = inputsSection->get(0);
+                    Primitive *prim2 = Primitive::dynamicCast(prim->value());
+                    if(prim2) prim = prim2;
+                    inputs->append(prim);
+                }
+                method->setInputs(inputs);
+            }
             if(testSection()) {
                 TestSuite *testSuite = TestSuite::cast(child("test_suite"));
                 testSuite->append(LIU_TEST(testSection(), receiver));

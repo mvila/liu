@@ -1,7 +1,7 @@
-meth(a, b, c) := { a + b + c }
-
-\meth print
-Text \uppercase print
+Text \iterator {
+inputs:
+    (reverse: no)
+}
 
 //i := "Hello" iterator() // reverse: yes
 //while(i read?) {

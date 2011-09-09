@@ -97,10 +97,17 @@ body:
     \fork {
     doc:
         "Fork the receiver."
+    inputs:
+        (\optional:)
     test:
         n := Node()
         f := n fork
         ?: f origin = n
+    }
+
+    \`:=` {
+    inputs:
+        (\lhs, \rhs)
     }
 
     write := {

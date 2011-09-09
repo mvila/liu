@@ -115,8 +115,8 @@ Object Text {
     }
 
     \iterator {
-    inputs:
-        (reverse: no)
+//    inputs:
+//        (reverse: no)
     }
 
     \size {
