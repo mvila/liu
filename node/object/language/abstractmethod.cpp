@@ -10,6 +10,7 @@ namespace Language {
     }
 
     void AbstractMethod::runParameters() {
+        return;
         LIU_FIND_LAST_MESSAGE;
 //        P(message->name());
 //        P(inputs()->size());
