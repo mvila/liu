@@ -1,0 +1,21 @@
+Console {
+    \`write` {
+    inputs:
+        (text)
+    }
+
+    \`print` {
+    inputs:
+        (text)
+    }
+
+    \`alert` {
+    inputs:
+        (text)
+    }
+
+    \`read` {
+    inputs:
+        (message: "")
+    }
+}

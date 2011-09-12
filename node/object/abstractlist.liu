@@ -1,5 +1,21 @@
 Object AbstractList {
+    \`[]` {
+    inputs: (index: Node(), value: Node())
+    }
+
+    \`[]=` {
+    inputs: (index, value)
+    }
+
+    \append {
+    inputs: (item)
+    }
+
     `<<` := Alias(append)
+
+    \`[]>>` {
+    inputs: (index: Node(), value: Node())
+    }
 test:
     ?: origin == Object
     ?: parent == Object

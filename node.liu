@@ -1,14 +1,25 @@
+Alias {
+    \init {
+    inputs:
+        (\what)
+    }
+}
+
 Node {
 doc:
     "Root element, grandfather of everything."
 body:
     \origin {
+        \set { inputs: (node) }
     test:
         n1 := Node()
         n2 := Node()
         ?: n2 origin == Node
         n2 origin = n1
         ?: n2 origin == n1
+    }
+
+    \parent {
     }
 
     \extensions {
@@ -54,6 +65,8 @@ body:
     }
 
     \is? {
+    inputs:
+        (\what)
     test:
         ?: Node is?(Node)
         ?: Node() is?(Node)
@@ -72,6 +85,8 @@ body:
     }
 
     \has? {
+    inputs:
+        (\what)
     test:
         ?: Node has?(Node)
         !: Node has?(__CrazyNode__)
@@ -94,11 +109,14 @@ body:
         ?: n2 b has?(a)
     }
 
+    \copy {
+    }
+
     \fork {
     doc:
         "Fork the receiver."
     inputs:
-        (\optional:)
+        (\args: 0) // TODO
     test:
         n := Node()
         f := n fork
@@ -107,7 +125,68 @@ body:
 
     \`:=` {
     inputs:
-        (\lhs, \rhs)
+        (\left, \right)
+    }
+
+    \`=` {
+    inputs:
+        (\left, \right)
+    }
+
+    \`>>` {
+    inputs:
+        (\what)
+    }
+
+    \`==` {
+    inputs:
+        (\what)
+    }
+
+    \`!=` {
+    inputs:
+        (\what)
+    }
+
+    \`||` {
+    inputs:
+        (\node)
+    }
+
+    \`&&` {
+    inputs:
+        (\node)
+    }
+
+    \`!` {
+    }
+
+    \`||=` {
+    inputs:
+        (\left, \right)
+    }
+
+    \`&&=` {
+    inputs:
+        (\left, \right)
+    }
+
+    \throw {
+    }
+
+    \`?:` {
+    }
+
+    \`!:` {
+    }
+
+    \inspect {
+    }
+
+    \dump {
+    }
+
+    \memory_address {
     }
 
     write := {

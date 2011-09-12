@@ -134,4 +134,7 @@ OTHER_FILES += \
     node/object/abstractlist.liu \
     misc/kate/liu.xml \
     examples/console_read.liu \
-    node/object/number.liu
+    node/object/number.liu \
+    node/alias.liu \
+    node/console.liu \
+    node/controlflow.liu

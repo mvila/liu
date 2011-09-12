@@ -69,48 +69,7 @@ namespace Language {
         void setCodeInputName(const QString &name) { _codeInputName = name; }
         bool hasCodeInput() const { return !_codeInputName.isEmpty(); }
 
-        void runParameters() {
-            LIU_FIND_LAST_MESSAGE;
-            P(message->name());
-            P(inputs()->size());
-            AbstractMethod *forkedMethod = this; //->fork();
-            QHash<QString, Parameter *> labels(inputs()->labels());
-            if(message->inputs(false)) {
-                ArgumentBunch::Iterator iterator(message->inputs());
-                short i = -1;
-                bool labelFound = false;
-                while(Argument *argument = iterator.next()) {
-                    Parameter *parameter;
-                    if(argument->label()) {
-                        QString labelName = argument->labelName();
-                        if(!hasInput(labelName)) LIU_THROW(NotFoundException, "unknown parameter label");
-                        if(!labels.contains(labelName)) LIU_THROW(DuplicateException, "duplicated parameter label");
-                        parameter = input(labelName);
-                        labelFound = true;
-                    } else {
-                        if(labelFound) LIU_THROW(ArgumentException, "positional arguments are forbidden after labeled ones");
-                        i++;
-                        if(!hasInput(i)) LIU_THROW(IndexOutOfBoundsException, "too many arguments");
-                        parameter = input(i);
-                    }
-                    Node *rcvr = parameter->isParented() ? forkedMethod->parent() : forkedMethod;
-                    Node *val = parameter->isEscaped() ? argument->value() : argument->run();
-                    rcvr->addOrSetChild(parameter->label(), val);
-                    labels.remove(parameter->label());
-                }
-            }
-            foreach(Parameter *parameter, labels) {
-                if(!parameter->defaultValue()) LIU_THROW(ArgumentException, "missing mandatory parameter");
-                Node *rcvr = parameter->isParented() ? forkedMethod->parent() : forkedMethod;
-                Node *val = parameter->isEscaped() ? parameter->defaultValue() : parameter->run();
-                rcvr->addOrSetChild(parameter->label(), val);
-            }
-            if(hasCodeInput()) {
-                LIU_FIND_LAST_PRIMITIVE;
-                Primitive *nextPrimitive = primitive->next();
-                forkedMethod->addOrSetChild(codeInputName(), nextPrimitive ? nextPrimitive : LIU_PRIMITIVE()); // FIXME: abstract primitive?
-            }
-        }
+        void runParameters();
 
         virtual void hasBeenDefined(Message *message) {
             setNodeName(message->name());

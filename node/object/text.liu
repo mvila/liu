@@ -133,6 +133,8 @@ Object Text {
     }
 
     \`==` {
+    inputs:
+        (\what)
     test:
         ?: "" == ""
         !: "a" == ""

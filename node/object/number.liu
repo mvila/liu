@@ -107,6 +107,7 @@ Object Number {
     }
 
     \`==` {
+    inputs: (what)
     test:
         ?: 0 == 0
         !: 0 == 1

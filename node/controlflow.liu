@@ -1,0 +1,6 @@
+ControlFlow {
+    \`if` {
+    inputs:
+        (\test, \then: Node(), \else: Node())
+    }
+}

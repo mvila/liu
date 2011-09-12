@@ -1,7 +1,7 @@
-Text \iterator {
-inputs:
-    (reverse: no)
-}
+//Text \iterator {
+//inputs:
+//    (reverse: no)
+//}
 
 //i := "Hello" iterator() // reverse: yes
 //while(i read?) {

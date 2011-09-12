@@ -129,11 +129,11 @@ namespace Language {
     Primitive *Parser::scanName() {
         Message *message = LIU_MESSAGE();
         QString name = tokenText();
-        if(name.contains('?')) {
+        if(name.endsWith('?') && name.size() > 1) {
             message->setIsQuestioned(true);
             name.remove('?');
         }
-        if(name.contains('!')) {
+        if(name.endsWith('!') && name.size() > 1) {
             message->setIsExclaimed(true);
             name.remove('!');
         }
