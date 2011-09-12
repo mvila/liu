@@ -1,0 +1,18 @@
+Object Character {
+    \`==` {
+    inputs:
+        (value)
+    test:
+        ?: 'a' == 'a'
+        !: 'a' == 'A'
+    }
+
+    \`<=>` {
+    inputs:
+        (value)
+    test:
+        ?: 'a' <=> 'a' == 0
+        ?: 'a' <=> 'b' == -1
+        ?: 'b' <=> 'a' == 1
+    }
+}

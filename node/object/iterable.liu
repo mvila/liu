@@ -1,0 +1,39 @@
+Object Iterable {
+    \iterator {
+    }
+
+    \contains {
+    inputs:
+        (value)
+    }
+
+    \count {
+    inputs:
+        (value)
+    }
+
+    \size {
+    inputs:
+    }
+
+    \empty? {
+    }
+
+    \`==` {
+    inputs:
+        (value)
+    }
+
+    Iterator {
+        \read {
+        }
+
+        \skip {
+        }
+
+        \`==` {
+        inputs:
+            (value)
+        }
+    }
+}

@@ -1,6 +1,34 @@
 ControlFlow {
     \`if` {
     inputs:
-        (\test, \then: Node(), \else: Node())
+        (test, \then: Node(), \else: Node())
+    }
+
+    \`unless` {
+    inputs:
+        (test, \then: Node(), \else: Node())
+    }
+
+    \`loop` {
+    inputs:
+        (count: inf)
+    }
+
+    \`while` {
+    inputs:
+        (test)
+    }
+
+    \`until` {
+    inputs:
+        (test)
+    }
+
+    \`break` {
+    inputs:
+        (result: Node())
+    }
+
+    \`continue` {
     }
 }

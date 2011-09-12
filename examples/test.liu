@@ -1,3 +1,12 @@
+X := Node()
+X a := 1
+Y := X()
+Z := Y()
+//Z a := 2
+Y a
+X a := 1.5
+Y a
+
 //Text \iterator {
 //inputs:
 //    (reverse: no)

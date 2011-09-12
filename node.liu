@@ -10,7 +10,7 @@ doc:
     "Root element, grandfather of everything."
 body:
     \origin {
-        \set { inputs: (node) }
+        \set { inputs: (value) }
     test:
         n1 := Node()
         n2 := Node()
@@ -66,7 +66,7 @@ body:
 
     \is? {
     inputs:
-        (\what)
+        (\ancestor)
     test:
         ?: Node is?(Node)
         ?: Node() is?(Node)
@@ -86,7 +86,7 @@ body:
 
     \has? {
     inputs:
-        (\what)
+        (\child)
     test:
         ?: Node has?(Node)
         !: Node has?(__CrazyNode__)
@@ -125,37 +125,37 @@ body:
 
     \`:=` {
     inputs:
-        (\left, \right)
+        (\target, \value)
     }
 
     \`=` {
     inputs:
-        (\left, \right)
+        (\target, \value)
     }
 
     \`>>` {
     inputs:
-        (\what)
+        (\child)
     }
 
     \`==` {
     inputs:
-        (\what)
+        (\value)
     }
 
     \`!=` {
     inputs:
-        (\what)
+        (\value)
     }
 
     \`||` {
     inputs:
-        (\node)
+        (\value)
     }
 
     \`&&` {
     inputs:
-        (\node)
+        (\value)
     }
 
     \`!` {
@@ -163,12 +163,12 @@ body:
 
     \`||=` {
     inputs:
-        (\left, \right)
+        (\target, \value)
     }
 
     \`&&=` {
     inputs:
-        (\left, \right)
+        (\target, \value)
     }
 
     \throw {

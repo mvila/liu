@@ -137,4 +137,7 @@ OTHER_FILES += \
     node/object/number.liu \
     node/alias.liu \
     node/console.liu \
-    node/controlflow.liu
+    node/controlflow.liu \
+    node/object/boolean.liu \
+    node/object/character.liu \
+    node/object/iterable.liu

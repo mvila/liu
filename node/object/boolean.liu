@@ -1,0 +1,15 @@
+Object Boolean {
+    \`==` {
+    inputs:
+        (value)
+    test:
+        ?: false == false
+        ?: false == no
+        ?: no == no
+        ?: true == true
+        ?: true == yes
+        ?: yes == yes
+        ?: true != false
+        ?: Boolean() == false
+    }
+}

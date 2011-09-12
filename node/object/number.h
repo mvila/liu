@@ -102,17 +102,21 @@ public:
 
     LIU_DECLARE_NATIVE_METHOD(nan) {
         LIU_FIND_LAST_MESSAGE;
-        LIU_CHECK_QUESTION_MARK;
         LIU_CHECK_INPUT_SIZE(0);
-        return LIU_BOOLEAN(value() != value());
+        if(message->isQuestioned())
+            return LIU_BOOLEAN(value() != value());
+        double zero = 0;
+        return LIU_NUMBER(0 / zero);
     }
 
     LIU_DECLARE_NATIVE_METHOD(inf) {
         LIU_FIND_LAST_MESSAGE;
-        LIU_CHECK_QUESTION_MARK;
         LIU_CHECK_INPUT_SIZE(0);
-        return LIU_BOOLEAN(value() > std::numeric_limits<qreal>::max() ||
-                           value() < -std::numeric_limits<qreal>::max());
+        if(message->isQuestioned())
+            return LIU_BOOLEAN(value() > std::numeric_limits<qreal>::max() ||
+                               value() < -std::numeric_limits<qreal>::max());
+        double zero = 0;
+        return LIU_NUMBER(1 / zero);
     }
 
     virtual bool isEqualTo(const Node *other) const {
