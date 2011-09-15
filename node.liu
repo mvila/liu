@@ -109,6 +109,12 @@ body:
         ?: n2 b has?(a)
     }
 
+    \virtual? {
+    }
+
+    \real? {
+    }
+
     \copy {
     }
 

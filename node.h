@@ -110,6 +110,10 @@ public:
     void setIsVirtual(bool isVirtual) { _isVirtual = isVirtual; }
     void setIsReal(bool isReal) { _isVirtual = !isReal; }
 
+    Node *virtualOrReal(bool virtualMode);
+    LIU_DECLARE_NATIVE_METHOD(virtual) { return virtualOrReal(true); }
+    LIU_DECLARE_NATIVE_METHOD(real) { return virtualOrReal(false); }
+
     bool isAutoRunnable() const { return _isAutoRunnable; }
     void setIsAutoRunnable(bool isAutoRunnable) { _isAutoRunnable = isAutoRunnable; }
 

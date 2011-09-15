@@ -1,11 +1,9 @@
 X := Node()
-X a := 1
+X a := "a"
 Y := X()
-Z := Y()
-//Z a := 2
 Y a
-X a := 1.5
-Y a
+X a := "b"
+Y a // -> a au lieu de b !
 
 //Text \iterator {
 //inputs:

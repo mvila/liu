@@ -26,14 +26,8 @@ public:
 
     LIU_DECLARE_NATIVE_METHOD(init);
 
-    QString value() const { return _value; }
-
-    virtual void setValue(const QString &newValue) {
-        if(newValue != value()) {
-            _value = newValue;
-            hasChanged();
-        }
-    }
+    QString value() const;
+    void setValue(const QString &newValue);
 
     virtual void hasChanged() {}
 

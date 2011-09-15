@@ -61,6 +61,9 @@ void Node::initRoot() {
 
     LIU_ADD_NATIVE_METHOD(Node, is);
 
+    LIU_ADD_NATIVE_METHOD(Node, virtual);
+    LIU_ADD_NATIVE_METHOD(Node, real);
+
     LIU_ADD_NATIVE_METHOD(Node, copy);
 
     LIU_ADD_NATIVE_METHOD(Node, fork);
@@ -193,6 +196,13 @@ LIU_DEFINE_NATIVE_METHOD(Node, is) {
     LIU_CHECK_QUESTION_MARK;
     LIU_CHECK_INPUT_SIZE(1);
     return LIU_BOOLEAN(isOriginatingFrom(message->runFirstInput()));
+}
+
+Node *Node::virtualOrReal(bool virtualMode) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_QUESTION_MARK;
+    LIU_CHECK_INPUT_SIZE(0);
+    return LIU_BOOLEAN(isVirtual() == virtualMode);
 }
 
 Node *Node::real() {

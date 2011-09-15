@@ -56,6 +56,17 @@ LIU_DEFINE_NATIVE_METHOD(Text, init) {
     return this;
 }
 
+QString Text::value() const {
+    return _value;
+}
+
+void Text::setValue(const QString &newValue) {
+    if(newValue != value()) {
+        _value = newValue;
+        hasChanged();
+    }
+}
+
 Node *Text::run(Node *receiver) {
     Q_UNUSED(receiver);
     if(interpolableSlices()) {
