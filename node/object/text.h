@@ -82,6 +82,7 @@ public:
     virtual QString toString(bool debug = false, short level = 0) const;
 private:
     QString _value;
+    bool _hasValue;
     bool _isTranslatable;
     QList<IntPair> *_interpolableSlices;
 public:

@@ -1,3 +1,24 @@
+X := Node()
+X a := "Hello"
+Y := X()
+Y a // entraîne la création d'un fork de 'X a'
+X a := "HELLO"
+Y a // -> "Hello" en non pas "HELLO", ce qui est normal puisque 'Y a' a toujours pour origine l'ancien 'X a'
+
+X := Node()
+X a := "Hello"
+Y := X()
+Y a
+X a uppercase!
+Y a // -> on a bien cette fois-ci "HELLO" car c'est la valeur de l'objet pointé par 'X a' qui a changé (inplace update)
+
+---
+
+name := "Manu"
+name value = "Manuel" // 'value' est un pseudo-child (Property ?)
+
+---
+
 i := "Hello" Iterator()
 
 ---

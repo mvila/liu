@@ -9,7 +9,7 @@ LIU_BEGIN
 LIU_DEFINE(Text, Object, Object);
 
 Text::Text(Node *origin, const QString &value, bool isTranslatable, QList<IntPair> *interpolableSlices) :
-    Iterable(origin), _value(value), _isTranslatable(isTranslatable) {
+    Iterable(origin), _value(value), _hasValue(false), _isTranslatable(isTranslatable) {
     setValue(value); setInterpolableSlices(interpolableSlices);
 }
 
@@ -43,7 +43,7 @@ void Text::initRoot() {
 LIU_DEFINE_NATIVE_METHOD(Text, init) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0, 1);
-    if(message->hasInput(0)) setValue(message->runFirstInput()->toString());
+    if(message->hasAnInput()) setValue(message->runFirstInput()->toString());
 
     // === TODO: DRY ===
     LIU_FIND_LAST_PRIMITIVE;

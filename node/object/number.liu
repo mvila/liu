@@ -144,7 +144,6 @@ Object Number {
         ?: 3.14 <=> 3.13 == 1
     }
 test:
-    Object() \`==` print
     ?: origin == Object Element
     ?: parent == Object
 
