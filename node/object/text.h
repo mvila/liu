@@ -14,32 +14,33 @@ LIU_BEGIN
 class Text : public Iterable {
     LIU_DECLARE(Text, Object, Object);
 public:
-    explicit Text(Node *origin, const QString &value = "", bool isTranslatable = false,
+    explicit Text(Node *origin, QString *value = NULL, bool *isTranslatable = NULL,
+                  QList<IntPair> *interpolableSlices = NULL);
+
+    Text(Node *origin, const QString &value, bool isTranslatable = false,
                   QList<IntPair> *interpolableSlices = NULL);
 
     Text(const Text &other);
 
-    virtual ~Text() { delete _interpolableSlices; }
+    virtual ~Text();
 
     LIU_DECLARE_AND_DEFINE_COPY_METHOD(Text);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Text, value(), isTranslatable(), interpolableSlices());
+    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Text, _value, _isTranslatable, _interpolableSlices);
+
+    virtual void initFork();
 
     LIU_DECLARE_NATIVE_METHOD(init);
 
-    QString value() const;
+    const QString &value() const;
     void setValue(const QString &newValue);
 
+    bool isTranslatable() const;
+    void setIsTranslatable(bool isTranslatable);
+
+    QList<IntPair> *interpolableSlices() const;
+    void setInterpolableSlices(QList<IntPair> *interpolableSlices);
+
     virtual void hasChanged() {}
-
-    bool isTranslatable() const { return _isTranslatable; }
-    void setIsTranslatable(bool isTranslatable) { _isTranslatable = isTranslatable; }
-
-    QList<IntPair> *interpolableSlices() const { return _interpolableSlices; }
-
-    void setInterpolableSlices(QList<IntPair> *interpolableSlices) {
-        _interpolableSlices = interpolableSlices && !interpolableSlices->isEmpty() ?
-                    new QList<IntPair>(*interpolableSlices) : NULL;
-    }
 
     virtual Node *run(Node *receiver = context());
 
@@ -81,10 +82,12 @@ public:
     virtual QChar toChar() const;
     virtual QString toString(bool debug = false, short level = 0) const;
 private:
-    QString _value;
-    bool _hasValue;
-    bool _isTranslatable;
+    QString *_value;
+    bool *_isTranslatable;
     QList<IntPair> *_interpolableSlices;
+    bool _hasValue              : 1;
+    bool _hasIsTranslatable     : 1;
+    bool _hasInterpolableSlices : 1;
 public:
     // === Iterator ===
 
