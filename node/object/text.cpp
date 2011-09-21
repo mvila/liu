@@ -81,8 +81,8 @@ LIU_DEFINE_NATIVE_METHOD(Text, init) {
     return this;
 }
 
-const QString &Text::value() const {
-    return *_value;
+QString Text::value() const {
+    return _value ? *_value : QString();
 }
 
 void Text::setValue(const QString &newValue) {

@@ -31,7 +31,7 @@ public:
 
     LIU_DECLARE_NATIVE_METHOD(init);
 
-    const QString &value() const;
+    QString value() const;
     void setValue(const QString &newValue);
 
     bool isTranslatable() const;
