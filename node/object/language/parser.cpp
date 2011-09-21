@@ -187,7 +187,10 @@ namespace Language {
             } catch(const Exception &e) {
                 throw parserException(e.message);
             }
-            value = LIU_TEXT(s, true, &interpolableSlices);
+            Text *text = LIU_TEXT(s);
+            // text->setIsTranslatable(true);
+            if(!interpolableSlices.isEmpty()) text->setInterpolableSlices(interpolableSlices);
+            value = text;
             break;
         }
         default:

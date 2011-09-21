@@ -6,6 +6,54 @@ Object Text {
         new_txt := txt fork
         ?: new_txt origin == txt
         ?: new_txt == "Hello"
+
+        X := Node()
+        X a := "a"
+        Y := X()
+        X a := "b"
+        ?: Y a == "b"
+        X a uppercase!
+        ?: Y a == "B"
+        X a := "c"
+        ?: Y a == "B"
+    }
+
+    \value {
+    test:
+        ?: Text() value == ""
+        ?: "" value == ""
+        ?: "Hello" value == "Hello"
+        txt := "Hello"
+        txt value = "Bye"
+        ?: txt == "Bye"
+        txt value uppercase!
+        ?: txt value == "BYE"
+        ?: txt == "BYE"
+
+        X := Node()
+        X a := "a"
+        Y := X()
+        ?: Y a == "a"
+        X a value = "b"
+        ?: Y a == "b"
+
+        x := Text()
+        y := x()
+        x value = "Hi"
+        ?: y == "Hi"
+
+        !: Text value?
+        !: Text() value?
+        ?: "" value?
+        ?: "hello" value?
+
+        x := Text()
+        !: x value?
+        y := x()
+        !: y value?
+        x value = "Hi"
+        ?: x value?
+        ?: y value?
     }
 
     \`[]` {

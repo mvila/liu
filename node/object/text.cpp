@@ -1,4 +1,5 @@
 #include "node/object/text.h"
+#include "node/object/property.h"
 #include "node/object/language/interpreter.h"
 #include "node/object/language/nativemethod.h"
 
@@ -8,42 +9,30 @@ LIU_BEGIN
 
 LIU_DEFINE(Text, Object, Object);
 
-Text::Text(Node *origin, QString *value, bool *isTranslatable, QList<IntPair> *interpolableSlices) :
-    Iterable(origin), _value(value), _isTranslatable(isTranslatable), _interpolableSlices(interpolableSlices),
-    _hasValue(false), _hasIsTranslatable(false), _hasInterpolableSlices(false) {
-    Text *orig = Text::dynamicCast(origin);
-    if(orig) {
-        _value = orig->_value;
-        _isTranslatable = orig->_isTranslatable;
-        _interpolableSlices = orig->_interpolableSlices;
-    }
-}
-
-Text::Text(Node *origin, const QString &value, bool isTranslatable, QList<IntPair> *interpolableSlices) :
-    Iterable(origin), _value(NULL), _isTranslatable(NULL), _interpolableSlices(NULL),
-    _hasValue(false), _hasIsTranslatable(false), _hasInterpolableSlices(false) {
+void Text::initialize(const QString *value, bool *isTranslatable, QList<IntPair> *interpolableSlices) {
+    _hasValue = false;
+    _hasIsTranslatable = false;
+    _hasInterpolableSlices = false;
     setValue(value);
     setIsTranslatable(isTranslatable);
     setInterpolableSlices(interpolableSlices);
 }
 
-Text::Text(const Text &other) : Iterable(other), _value(NULL), _isTranslatable(NULL), _interpolableSlices(NULL),
-    _hasValue(false), _hasIsTranslatable(false), _hasInterpolableSlices(false) {
-    setValue(other.value());
-    setIsTranslatable(other.isTranslatable());
-    setInterpolableSlices(other.interpolableSlices());
-}
-
 Text::~Text() {
-    if(_hasValue) delete _value;
-    if(_hasIsTranslatable) delete _isTranslatable;
-    if(_hasInterpolableSlices) delete _interpolableSlices;
+    setValue();
+    setIsTranslatable();
+    setInterpolableSlices();
 }
 
 void Text::initRoot() {
     addExtension(Iterable::root());
 
     LIU_ADD_NATIVE_METHOD(Text, init);
+
+    Property *valueProperty = LIU_PROPERTY();
+    valueProperty->LIU_ADD_NATIVE_METHOD(Text, value_get, get);
+    valueProperty->LIU_ADD_NATIVE_METHOD(Text, value_set, set);
+    addChild("value", valueProperty);
 
     LIU_ADD_NATIVE_METHOD(Text, get, []);
 
@@ -62,81 +51,117 @@ void Text::initRoot() {
     LIU_ADD_NATIVE_METHOD(Text, compare, <=>);
 }
 
-void Text::initFork() {
-}
-
 LIU_DEFINE_NATIVE_METHOD(Text, init) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0, 1);
     if(message->hasAnInput()) setValue(message->runFirstInput()->toString());
 
-    // === TODO: DRY ===
-    LIU_FIND_LAST_PRIMITIVE;
-    Primitive *nextPrimitive = primitive->next();
-    if(nextPrimitive) {
-        nextPrimitive->run(this);
-        Primitive::skip(this);
-    }
+//    // === TODO: DRY ===
+//    LIU_FIND_LAST_PRIMITIVE;
+//    Primitive *nextPrimitive = primitive->next();
+//    if(nextPrimitive) {
+//        nextPrimitive->run(this);
+//        Primitive::skip(this);
+//    }
 
     return this;
 }
 
-QString Text::value() const {
-    return _value ? *_value : QString();
+QString *Text::hasValue() const {
+    if(_value) return _value;
+    if(Text *orig = Text::dynamicCast(origin())) return orig->hasValue();
+    return NULL;
 }
 
-void Text::setValue(const QString &newValue) {
-    if(_hasValue)
-        *_value = newValue;
-    else {
-        _value = new QString(newValue);
-        _hasValue = true;
+QString Text::value() const {
+    QString *has = hasValue();
+    return has ? *has : QString();
+}
+
+void Text::setValue(const QString *value) {
+    if(value) {
+        if(_hasValue)
+            *_value = *value;
+        else {
+            _value = new QString(*value);
+            _hasValue = true;
+        }
+    } else {
+        if(_hasValue) delete _value;
+        Text *orig = Text::dynamicCast(origin());
+        _value = orig ? orig->_value : NULL;
+        _hasValue = false;
     }
     hasChanged();
+}
+
+LIU_DEFINE_NATIVE_METHOD(Text, value_get) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0);
+    if(message->isQuestioned())
+        return LIU_BOOLEAN(Text::cast(parent())->hasValue());
+    else
+        return parent();
+}
+
+LIU_DEFINE_NATIVE_METHOD(Text, value_set) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(1);
+    Text::cast(parent())->setValue(message->runFirstInput()->toString());
+    return this;
 }
 
 bool Text::isTranslatable() const {
-    return *_isTranslatable;
+    return _isTranslatable ? *_isTranslatable : false;
 }
 
-void Text::setIsTranslatable(bool isTranslatable) {
-    if(_hasIsTranslatable)
-        *_isTranslatable = isTranslatable;
-    else {
-        _isTranslatable = new bool(isTranslatable);
-        _hasIsTranslatable = true;
+void Text::setIsTranslatable(const bool *isTranslatable) {
+    if(isTranslatable) {
+        if(_hasIsTranslatable)
+            *_isTranslatable = *isTranslatable;
+        else {
+            _isTranslatable = new bool(*isTranslatable);
+            _hasIsTranslatable = true;
+        }
+    } else {
+        if(_hasIsTranslatable) delete _isTranslatable;
+        Text *orig = Text::dynamicCast(origin());
+        _isTranslatable = orig ? orig->_isTranslatable : NULL;
+        _hasIsTranslatable = false;
     }
     hasChanged();
 }
 
-QList<IntPair> *Text::interpolableSlices() const {
-    return _interpolableSlices;
+QList<IntPair> Text::interpolableSlices() const {
+    return _interpolableSlices ? *_interpolableSlices : QList<IntPair>();
 }
 
-// A revoir : modifier la macro LIU_TEXT pour faire systématiquement des forks du root et ainsi récupérer un pointeur
-// vers un interpolableSlices vide
-void Text::setInterpolableSlices(QList<IntPair> *interpolableSlices) {
-    if(_hasInterpolableSlices) {
-        if(interpolableSlices)
+void Text::setInterpolableSlices(const QList<IntPair> *interpolableSlices) {
+    if(interpolableSlices) {
+        if(_hasInterpolableSlices)
             *_interpolableSlices = *interpolableSlices;
-        else
-            _interpolableSlices->clear();
+        else {
+            _interpolableSlices = new QList<IntPair>(*interpolableSlices);
+            _hasInterpolableSlices = true;
+        }
     } else {
-        _interpolableSlices = interpolableSlices ? new QList<IntPair>(*interpolableSlices) : new QList<IntPair>;
-        _hasInterpolableSlices = true;
+        if(_hasInterpolableSlices) delete _interpolableSlices;
+        Text *orig = Text::dynamicCast(origin());
+        _interpolableSlices = orig ? orig->_interpolableSlices : NULL;
+        _hasInterpolableSlices = false;
     }
     hasChanged();
 }
 
 Node *Text::run(Node *receiver) {
     Q_UNUSED(receiver);
-    if(interpolableSlices()) {
+    if(hasInterpolableSlices()) {
         LIU_PUSH_RUN(this);
         QString result = value();
         QString source;
         QString str;
         int offset = 0;
-        foreach (IntPair slice, *interpolableSlices()) {
+        foreach (IntPair slice, interpolableSlices()) {
             source = result.mid(offset + slice.first + 1, slice.second - 2);
             str = !source.isEmpty() ? Interpreter::root()->runSourceCode("liu:" + source)->toString() : "";
             result.replace(offset + slice.first, slice.second, str);

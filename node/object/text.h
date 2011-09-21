@@ -14,31 +14,37 @@ LIU_BEGIN
 class Text : public Iterable {
     LIU_DECLARE(Text, Object, Object);
 public:
-    explicit Text(Node *origin, QString *value = NULL, bool *isTranslatable = NULL,
-                  QList<IntPair> *interpolableSlices = NULL);
+    explicit Text(Node *origin) : Iterable(origin) { initialize(); }
 
-    Text(Node *origin, const QString &value, bool isTranslatable = false,
-                  QList<IntPair> *interpolableSlices = NULL);
+    Text(Node *origin, const QString &value) : Iterable(origin) { initialize(&value); }
 
-    Text(const Text &other);
+//    Text(const Text &other);
 
     virtual ~Text();
 
     LIU_DECLARE_AND_DEFINE_COPY_METHOD(Text);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Text, _value, _isTranslatable, _interpolableSlices);
+    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Text);
 
-    virtual void initFork();
+    void initialize(const QString *value = NULL, bool *isTranslatable = NULL, QList<IntPair> *interpolableSlices = NULL);
 
     LIU_DECLARE_NATIVE_METHOD(init);
 
+    QString *hasValue() const;
     QString value() const;
-    void setValue(const QString &newValue);
+    void setValue(const QString *value = NULL);
+    void setValue(const QString &value) { setValue(&value); }
+    LIU_DECLARE_NATIVE_METHOD(value_get);
+    LIU_DECLARE_NATIVE_METHOD(value_set);
 
     bool isTranslatable() const;
-    void setIsTranslatable(bool isTranslatable);
+    void setIsTranslatable(const bool *isTranslatable = NULL);
+    void setIsTranslatable(const bool isTranslatable) { setIsTranslatable(&isTranslatable); }
+    bool hasIsTranslatable() const { return _isTranslatable; }
 
-    QList<IntPair> *interpolableSlices() const;
-    void setInterpolableSlices(QList<IntPair> *interpolableSlices);
+    QList<IntPair> interpolableSlices() const;
+    void setInterpolableSlices(const QList<IntPair> *interpolableSlices = NULL);
+    void setInterpolableSlices(const QList<IntPair> &interpolableSlices) { setInterpolableSlices(&interpolableSlices); }
+    bool hasInterpolableSlices() const { return _interpolableSlices; }
 
     virtual void hasChanged() {}
 

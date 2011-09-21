@@ -1,9 +1,16 @@
-X := Node()
-X a := "a"
-Y := X()
-Y a
-X a := "b"
-Y a // -> a au lieu de b !
+//X := Node()
+//X a := "a"
+//Y := X()
+//Y a
+//X a := "b"
+//Y a // -> a au lieu de b !
+
+//X := Node()
+//X a := "a"
+//Y := X()
+//Y a
+//X a uppercase!
+//Y a // -> a au lieu de b !
 
 //Text \iterator {
 //inputs:
