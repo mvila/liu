@@ -14,37 +14,28 @@ LIU_BEGIN
 class Text : public Iterable {
     LIU_DECLARE(Text, Object, Object);
 public:
-    explicit Text(Node *origin) : Iterable(origin) { initialize(); }
+    explicit Text(Node *origin) : Iterable(origin) { initFork(); }
 
-    Text(Node *origin, const QString &value) : Iterable(origin) { initialize(&value); }
+    Text(Node *origin, const QString &value) : Iterable(origin) { initFork(&value); }
 
 //    Text(const Text &other);
+
+    void initFork(const QString *value = NULL, bool *isTranslatable = NULL, QList<IntPair> *interpolableSlices = NULL);
 
     virtual ~Text();
 
     LIU_DECLARE_AND_DEFINE_COPY_METHOD(Text);
     LIU_DECLARE_AND_DEFINE_FORK_METHOD(Text);
 
-    void initialize(const QString *value = NULL, bool *isTranslatable = NULL, QList<IntPair> *interpolableSlices = NULL);
-
     LIU_DECLARE_NATIVE_METHOD(init);
 
-    QString *hasValue() const;
-    QString value() const;
-    void setValue(const QString *value = NULL);
-    void setValue(const QString &value) { setValue(&value); }
+    LIU_DECLARE_ACCESSOR(QString, value, Value);
     LIU_DECLARE_NATIVE_METHOD(value_get);
     LIU_DECLARE_NATIVE_METHOD(value_set);
 
-    bool isTranslatable() const;
-    void setIsTranslatable(const bool *isTranslatable = NULL);
-    void setIsTranslatable(const bool isTranslatable) { setIsTranslatable(&isTranslatable); }
-    bool hasIsTranslatable() const { return _isTranslatable; }
+    LIU_DECLARE_ACCESSOR(bool, isTranslatable, IsTranslatable);
 
-    QList<IntPair> interpolableSlices() const;
-    void setInterpolableSlices(const QList<IntPair> *interpolableSlices = NULL);
-    void setInterpolableSlices(const QList<IntPair> &interpolableSlices) { setInterpolableSlices(&interpolableSlices); }
-    bool hasInterpolableSlices() const { return _interpolableSlices; }
+    LIU_DECLARE_ACCESSOR(QList<IntPair>, interpolableSlices, InterpolableSlices);
 
     virtual void hasChanged() {}
 
@@ -91,9 +82,6 @@ private:
     QString *_value;
     bool *_isTranslatable;
     QList<IntPair> *_interpolableSlices;
-    bool _hasValue              : 1;
-    bool _hasIsTranslatable     : 1;
-    bool _hasInterpolableSlices : 1;
 public:
     // === Iterator ===
 

@@ -15,7 +15,6 @@ virtual NAME *copy() const { return new NAME(*this); }
 #define LIU_DECLARE_AND_DEFINE_FORK_METHOD(NAME, ARGS...) \
 virtual NAME *fork() const { \
     NAME *node = new NAME(constCast(this), ##ARGS); \
-    node->initFork(); \
     return node; \
 }
 
@@ -25,7 +24,6 @@ virtual NAME *fork() const;
 #define LIU_DEFINE_FORK_METHOD(NAME, ARGS...) \
 NAME *NAME::fork() const { \
     NAME *node = new NAME(constCast(this), ##ARGS); \
-    node->initFork(); \
     return node; \
 }
 
@@ -51,6 +49,37 @@ Node *_##METHOD##_()
 #define LIU_DEFINE_NATIVE_METHOD(NAME, METHOD) \
 Node *NAME::_##METHOD##_()
 
+#define LIU_DECLARE_ACCESSOR(TYPE, NAME, NAME_CAP) \
+TYPE *has##NAME_CAP() const; \
+TYPE NAME() const; \
+void set##NAME_CAP(const TYPE *NAME = NULL); \
+void set##NAME_CAP(const TYPE &NAME) { set##NAME_CAP(&NAME); }
+
+#define LIU_DEFINE_ACCESSOR(CLASS, TYPE, NAME, NAME_CAP) \
+TYPE *CLASS::has##NAME_CAP() const { \
+    if(_##NAME) return _##NAME; \
+    if(CLASS *orig = CLASS::dynamicCast(origin())) return orig->has##NAME_CAP(); \
+    return NULL; \
+} \
+\
+TYPE CLASS::NAME() const { \
+    TYPE *has = has##NAME_CAP(); \
+    return has ? *has : TYPE(); \
+} \
+\
+void CLASS::set##NAME_CAP(const TYPE *NAME) { \
+    if(NAME) { \
+        if(_##NAME) \
+            *_##NAME = *NAME; \
+        else \
+            _##NAME = new TYPE(*NAME); \
+    } else if(_##NAME) { \
+        delete _##NAME; \
+        _##NAME = NULL; \
+    } \
+    hasChanged(); \
+}
+
 #define LIU_CHECK_POINTER(POINTER) \
 if(!(POINTER)) LIU_THROW_NULL_POINTER_EXCEPTION("Node pointer is NULL")
 
@@ -59,9 +88,11 @@ public:
     static const bool isInitialized;
 
     explicit Node(Node *origin) : _origin(origin), _extensions(NULL), // default constructor
-        _children(NULL), _parents(NULL), _isAbstract(true), _isVirtual(false), _isAutoRunnable(false) {}
+        _children(NULL), _parents(NULL), _isAbstract(true), _isVirtual(false), _isAutoRunnable(false) { initFork(); }
 
     Node(const Node &other); // copy constructor
+
+    void initFork();
 
     virtual ~Node();
 
@@ -78,7 +109,6 @@ public:
 
     LIU_DECLARE_AND_DEFINE_COPY_METHOD(Node);
     LIU_DECLARE_AND_DEFINE_FORK_METHOD(Node);
-    virtual void initFork();
 
     LIU_DECLARE_NATIVE_METHOD(copy);
 
@@ -90,6 +120,10 @@ public:
     Node *origin() const {
         if(!_origin) LIU_THROW_NULL_POINTER_EXCEPTION("origin is NULL");
         return _origin;
+    }
+
+    Node *hasOrigin() const {
+        return _origin && _origin != this ? _origin : NULL;
     }
 
     LIU_DECLARE_NATIVE_METHOD(origin_get);

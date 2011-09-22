@@ -9,10 +9,10 @@ LIU_BEGIN
 
 LIU_DEFINE(Text, Object, Object);
 
-void Text::initialize(const QString *value, bool *isTranslatable, QList<IntPair> *interpolableSlices) {
-    _hasValue = false;
-    _hasIsTranslatable = false;
-    _hasInterpolableSlices = false;
+void Text::initFork(const QString *value, bool *isTranslatable, QList<IntPair> *interpolableSlices) {
+    _value = NULL;
+    _isTranslatable = NULL;
+    _interpolableSlices = NULL;
     setValue(value);
     setIsTranslatable(isTranslatable);
     setInterpolableSlices(interpolableSlices);
@@ -67,33 +67,7 @@ LIU_DEFINE_NATIVE_METHOD(Text, init) {
     return this;
 }
 
-QString *Text::hasValue() const {
-    if(_value) return _value;
-    if(Text *orig = Text::dynamicCast(origin())) return orig->hasValue();
-    return NULL;
-}
-
-QString Text::value() const {
-    QString *has = hasValue();
-    return has ? *has : QString();
-}
-
-void Text::setValue(const QString *value) {
-    if(value) {
-        if(_hasValue)
-            *_value = *value;
-        else {
-            _value = new QString(*value);
-            _hasValue = true;
-        }
-    } else {
-        if(_hasValue) delete _value;
-        Text *orig = Text::dynamicCast(origin());
-        _value = orig ? orig->_value : NULL;
-        _hasValue = false;
-    }
-    hasChanged();
-}
+LIU_DEFINE_ACCESSOR(Text, QString, value, Value);
 
 LIU_DEFINE_NATIVE_METHOD(Text, value_get) {
     LIU_FIND_LAST_MESSAGE;
@@ -111,47 +85,9 @@ LIU_DEFINE_NATIVE_METHOD(Text, value_set) {
     return this;
 }
 
-bool Text::isTranslatable() const {
-    return _isTranslatable ? *_isTranslatable : false;
-}
+LIU_DEFINE_ACCESSOR(Text, bool, isTranslatable, IsTranslatable);
 
-void Text::setIsTranslatable(const bool *isTranslatable) {
-    if(isTranslatable) {
-        if(_hasIsTranslatable)
-            *_isTranslatable = *isTranslatable;
-        else {
-            _isTranslatable = new bool(*isTranslatable);
-            _hasIsTranslatable = true;
-        }
-    } else {
-        if(_hasIsTranslatable) delete _isTranslatable;
-        Text *orig = Text::dynamicCast(origin());
-        _isTranslatable = orig ? orig->_isTranslatable : NULL;
-        _hasIsTranslatable = false;
-    }
-    hasChanged();
-}
-
-QList<IntPair> Text::interpolableSlices() const {
-    return _interpolableSlices ? *_interpolableSlices : QList<IntPair>();
-}
-
-void Text::setInterpolableSlices(const QList<IntPair> *interpolableSlices) {
-    if(interpolableSlices) {
-        if(_hasInterpolableSlices)
-            *_interpolableSlices = *interpolableSlices;
-        else {
-            _interpolableSlices = new QList<IntPair>(*interpolableSlices);
-            _hasInterpolableSlices = true;
-        }
-    } else {
-        if(_hasInterpolableSlices) delete _interpolableSlices;
-        Text *orig = Text::dynamicCast(origin());
-        _interpolableSlices = orig ? orig->_interpolableSlices : NULL;
-        _hasInterpolableSlices = false;
-    }
-    hasChanged();
-}
+LIU_DEFINE_ACCESSOR(Text, QList<IntPair>, interpolableSlices, InterpolableSlices);
 
 Node *Text::run(Node *receiver) {
     Q_UNUSED(receiver);

@@ -25,6 +25,10 @@ Node::Node(const Node &other) : _origin(other._origin), _extensions(NULL), // co
     }
 }
 
+void Node::initFork() {
+    if(hasOrigin()) setIsAutoRunnable(origin()->isAutoRunnable());
+}
+
 Node::~Node() {
     if(_extensions) delete _extensions;
     if(_children) {
@@ -125,10 +129,6 @@ LIU_DEFINE_NATIVE_METHOD(Node, copy) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     return copy();
-}
-
-void Node::initFork() {
-    setIsAutoRunnable(origin()->isAutoRunnable());
 }
 
 LIU_DEFINE_NATIVE_METHOD(Node, fork) {

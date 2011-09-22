@@ -13,12 +13,11 @@ if(!(VALUE)) LIU_THROW(NullPointerException, "value is NULL")
 template<class T>
 class GenericAbstractList : public Object {
 public:
-    explicit GenericAbstractList(Node *origin) : Object(origin), _areDuplicateValuesNotAllowed(false) {}
+    explicit GenericAbstractList(Node *origin) : Object(origin), _areDuplicateValuesNotAllowed(false) { initFork(); }
 
-    virtual void initFork() {
-        Object::initFork();
-        GenericAbstractList *orig = static_cast<GenericAbstractList *>(origin());
-        setAreDuplicateValuesNotAllowed(orig->areDuplicateValuesNotAllowed());
+    void initFork() {
+        GenericAbstractList *orig = dynamic_cast<GenericAbstractList *>(origin());
+        if(orig) setAreDuplicateValuesNotAllowed(orig->areDuplicateValuesNotAllowed());
     }
 
     bool areDuplicateValuesNotAllowed() const { return _areDuplicateValuesNotAllowed; }
@@ -218,19 +217,20 @@ public:
     using GenericAbstractList<T>::hasChanged;
 
     explicit GenericList(Node *origin, bool isBunch = false) :
-        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) {}
+        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) { initFork(); }
 
     GenericList(Node *origin, const T &value, bool isBunch = false) :
-        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) { append(value); }
+        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) { initFork(); append(value); }
 
     GenericList(Node *origin, const T &value1, const T &value2, bool isBunch = false) :
-        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) { append(value1); append(value2); }
+        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) { initFork(); append(value1); append(value2); }
 
     GenericList(Node *origin, const T &value1, const T &value2, const T &value3, bool isBunch = false) :
-        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) { append(value1); append(value2); append(value3); }
+        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) { initFork(); append(value1); append(value2); append(value3); }
 
     GenericList(Node *origin, const QList<T> &other, bool isBunch = false) :
         GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) {
+        initFork();
         if(!other.isEmpty()) {
             foreach(T node, other) doInsert(size(), node);
             hasChanged();
@@ -251,10 +251,9 @@ public:
         }
     }
 
-    virtual void initFork() {
-        GenericAbstractList<T>::initFork();
-        GenericList *orig = static_cast<GenericList *>(origin());
-        if(orig->isNotEmpty()) {
+    void initFork() {
+        GenericList *orig = dynamic_cast<GenericList *>(origin());
+        if(orig && orig->isNotEmpty()) {
             foreach(T node, *orig->_list) doInsert(size(), node->fork());
             hasChanged();
         }

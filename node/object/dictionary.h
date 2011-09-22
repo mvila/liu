@@ -15,6 +15,7 @@ template<class K, class V>
 class GenericDictionary : public Object {
 public:
     explicit GenericDictionary(Node *origin, const QHash<K, V> &other = (QHash<K, V>())) : Object(origin), _hash(NULL) {
+        initFork();
         if(!other.isEmpty()) {
             QHashIterator<K, V> i(other);
             while(i.hasNext()) { i.next(); set(i.key(), i.value()); }
@@ -35,10 +36,9 @@ public:
         }
     }
 
-    virtual void initFork() {
-        Object::initFork();
-        GenericDictionary *orig = static_cast<GenericDictionary *>(origin());
-        if(orig->isNotEmpty()) {
+    void initFork() {
+        GenericDictionary *orig = dynamic_cast<GenericDictionary *>(origin());
+        if(orig && orig->isNotEmpty()) {
             QHashIterator<K, V> i(*orig->_hash);
             while(i.hasNext()) { i.next(); set(i.key(), i.value()->fork()); }
         }
