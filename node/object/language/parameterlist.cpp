@@ -8,6 +8,21 @@ namespace Language {
     void ParameterList::initRoot() {
     }
 
+    Parameter *ParameterList::get(const QString &label) {
+        hasChanged(); // FIXME: should be not necessary!
+        return _labels.value(label);
+    }
+
+    bool ParameterList::hasLabel(const QString &label) {
+        hasChanged(); // FIXME: should be not necessary!
+        return _labels.contains(label);
+    }
+
+    QHash<QString, Parameter *> ParameterList::labels() {
+        hasChanged(); // FIXME: should be not necessary!
+        return _labels;
+    }
+
     void ParameterList::hasChanged() {
         _labels.clear();
         Iterator i(this);

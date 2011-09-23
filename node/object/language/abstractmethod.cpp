@@ -25,8 +25,8 @@ namespace Language {
                 Parameter *parameter;
                 if(argument->label()) {
                     QString labelName = argument->labelName();
-                    if(!hasInput(labelName)) LIU_THROW(NotFoundException, "unknown parameter label");
-                    if(!labels.contains(labelName)) LIU_THROW(DuplicateException, "duplicated parameter label");
+                    if(!hasInput(labelName)) LIU_THROW(NotFoundException, QString("unknown parameter label '%1'").arg(labelName));
+                    if(!labels.contains(labelName)) LIU_THROW(DuplicateException, QString("duplicated parameter label '%1'").arg(labelName));
                     parameter = input(labelName);
                     labelFound = true;
                 } else {

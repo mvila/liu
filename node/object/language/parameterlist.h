@@ -19,10 +19,10 @@ namespace Language {
         LIU_DECLARE_AND_DEFINE_FORK_METHOD(ParameterList);
 
         using GenericList<Parameter *>::get;
-        Parameter *get(const QString &label) { return _labels.value(label); }
-        bool hasLabel(const QString &label) { return _labels.contains(label); }
+        Parameter *get(const QString &label);
+        bool hasLabel(const QString &label);
 
-        QHash<QString, Parameter *> labels() { return _labels; }
+        QHash<QString, Parameter *> labels();
 
         virtual void hasChanged();
 
