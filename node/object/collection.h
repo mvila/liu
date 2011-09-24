@@ -24,6 +24,9 @@ public:
 
     virtual void remove(Node *item, bool *wasFoundPtr = NULL) { Q_UNUSED(item); Q_UNUSED(wasFoundPtr); LIU_ABSTRACT_CALL; }
     LIU_DECLARE_NATIVE_METHOD(remove);
+
+    virtual void clear();
+    LIU_DECLARE_NATIVE_METHOD(clear);
 };
 
 LIU_END

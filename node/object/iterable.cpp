@@ -15,6 +15,10 @@ void Iterable::initRoot() {
     LIU_ADD_NATIVE_METHOD(Iterable, count);
     LIU_ADD_NATIVE_METHOD(Iterable, size);
     LIU_ADD_NATIVE_METHOD(Iterable, empty);
+
+    LIU_ADD_NATIVE_METHOD(Iterable, first);
+    LIU_ADD_NATIVE_METHOD(Iterable, second);
+    LIU_ADD_NATIVE_METHOD(Iterable, third);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Iterable, iterator) {
@@ -79,6 +83,52 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, empty) {
     return LIU_BOOLEAN(empty());
 }
 
+Node *Iterable::first(bool *wasFoundPtr) const {
+    QScopedPointer<Iterator> i(iterator());
+    return i->next(wasFoundPtr);
+}
+
+LIU_DEFINE_NATIVE_METHOD(Iterable, first) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0);
+    bool wasFound = true;
+    Node *result = first(message->isQuestioned() ? &wasFound : NULL);
+    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    return result;
+}
+
+Node *Iterable::second(bool *wasFoundPtr) const {
+    QScopedPointer<Iterator> i(iterator());
+    i->next(wasFoundPtr);
+    return i->next(wasFoundPtr);
+}
+
+LIU_DEFINE_NATIVE_METHOD(Iterable, second) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0);
+    bool wasFound = true;
+    Node *result = second(message->isQuestioned() ? &wasFound : NULL);
+    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    return result;
+}
+
+
+Node *Iterable::third(bool *wasFoundPtr) const {
+    QScopedPointer<Iterator> i(iterator());
+    i->next(wasFoundPtr);
+    i->next(wasFoundPtr);
+    return i->next(wasFoundPtr);
+}
+
+LIU_DEFINE_NATIVE_METHOD(Iterable, third) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0);
+    bool wasFound = true;
+    Node *result = third(message->isQuestioned() ? &wasFound : NULL);
+    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    return result;
+}
+
 // === Iterator ===
 
 LIU_DEFINE_2(Iterable::Iterator, Object, Iterable);
@@ -88,7 +138,11 @@ void Iterable::Iterator::initRoot() {
     LIU_ADD_NATIVE_METHOD(Iterable::Iterator, skip);
 }
 
-Node *Iterable::Iterator::next() {
+Node *Iterable::Iterator::next(bool *wasFoundPtr) {
+    if(wasFoundPtr) {
+        *wasFoundPtr = hasNext();
+        if(!*wasFoundPtr) return NULL;
+    }
     Node *result = peekNext();
     skipNext();
     return result;

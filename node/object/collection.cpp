@@ -8,6 +8,8 @@ LIU_DEFINE_2(Collection, Iterable, Object);
 void Collection::initRoot() {
     LIU_ADD_NATIVE_METHOD(Collection, append, <<);
     LIU_ADD_NATIVE_METHOD(Collection, remove, []>>);
+
+    LIU_ADD_NATIVE_METHOD(Collection, clear);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Collection, append) {
@@ -32,6 +34,25 @@ LIU_DEFINE_NATIVE_METHOD(Collection, remove) {
     remove(value, message->isQuestioned() ? &wasFound : NULL);
     if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
     return value;
+}
+
+void Collection::clear() {
+    bool wasFound;
+    while(true) {
+        Node *item = first(&wasFound);
+        if(wasFound)
+            remove(item);
+        else
+            return;
+    }
+}
+
+LIU_DEFINE_NATIVE_METHOD(Collection, clear) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0);
+    LIU_CHECK_EXCLAMATION_MARK;
+    clear();
+    return this;
 }
 
 LIU_END

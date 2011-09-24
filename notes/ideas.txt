@@ -71,7 +71,7 @@ provide: each, first, second, third, last, contains?, count(value), size, empty?
 Collection := Iterable()
 require: append, remove
 attribute: uniqueValue?
-provide: append(iterable), remove_all(value), remove(iterable), replace
+provide: append(iterable), remove_all(value), remove(iterable), replace, clear
 
 Indexable := Collection() // Dictionary
 require: get, set, unset, indexes

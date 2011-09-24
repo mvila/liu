@@ -37,6 +37,15 @@ public:
 
     virtual bool empty() const;
     LIU_DECLARE_NATIVE_METHOD(empty);
+
+    virtual Node *first(bool *wasFoundPtr = NULL) const;
+    LIU_DECLARE_NATIVE_METHOD(first);
+
+    virtual Node *second(bool *wasFoundPtr = NULL) const;
+    LIU_DECLARE_NATIVE_METHOD(second);
+
+    virtual Node *third(bool *wasFoundPtr = NULL) const;
+    LIU_DECLARE_NATIVE_METHOD(third);
 public:
     // === Iterator ===
 
@@ -57,7 +66,7 @@ public:
         virtual bool hasNext() const { LIU_ABSTRACT_CALL; }
         virtual Node *peekNext() const { LIU_ABSTRACT_CALL; }
         virtual void skipNext() { LIU_ABSTRACT_CALL; }
-        Node *next();
+        Node *next(bool *wasFoundPtr = NULL);
 
         LIU_DECLARE_NATIVE_METHOD(read);
         LIU_DECLARE_NATIVE_METHOD(skip);

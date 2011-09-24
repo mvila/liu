@@ -125,7 +125,7 @@ Object Text {
         ?: txt == "Hello"
     }
 
-    \contains {
+    \contains? {
     test:
         txt := "This is a beautiful world!"
         ?: txt contains?("beautiful")
@@ -167,6 +167,36 @@ Object Text {
 //        (reverse: no)
     }
 
+    \`<<` {
+    test:
+        ?: "" << "" == ""
+        ?: "a" << 'b' == "ab"
+        txt := "abc"
+        ?: txt << "def" == "abcdef"
+    }
+
+    \`[]>>` {
+    test:
+        txt := ""
+        txt[:""] >>
+        ?: txt == ""
+        txt = "abc"
+        ?: txt[:'b'] >> == 'b'
+        ?: txt == "ac"
+        ?: NotFoundException throw? { txt[:'b'] >> }
+        !: txt[:'b']? >>
+        ?: txt[:'c']? >>
+        ?: txt == "a"
+        ?: txt[:'a'] >> == 'a'
+        ?: txt empty?
+
+        txt = "ababa"
+        txt[:"a"] >>
+        ?: txt == "baba"
+        ?: txt[:"ab"] >> == "ab"
+        ?: txt == "ba"
+    }
+
     \size {
     test:
         ?: "" size == 0
@@ -178,6 +208,46 @@ Object Text {
     test:
         ?: "" empty?
         !: "a" empty?
+    }
+
+    \clear! {
+    test:
+        ?: "" clear! == ""
+        ?: "a" clear! == ""
+        ?: "abab" clear! == ""
+        txt := "Hi there!"
+        txt clear!
+        ?: txt == ""
+    }
+
+    \first {
+    test:
+        ?: IndexOutOfBoundsException throw? { "" first }
+        !: "" first?
+        ?: "a" first? == "a"
+        ?: "abc" first == "a"
+    }
+
+    \second {
+    test:
+        ?: IndexOutOfBoundsException throw? { "" second }
+        !: "" second?
+        ?: IndexOutOfBoundsException throw? { "a" second }
+        !: "a" second?
+        ?: "ab" second? == "b"
+        ?: "abc" second == "b"
+    }
+
+    \third {
+    test:
+        ?: IndexOutOfBoundsException throw? { "" third }
+        !: "" third?
+        ?: IndexOutOfBoundsException throw? { "a" third }
+        !: "a" third?
+        ?: IndexOutOfBoundsException throw? { "ab" third }
+        !: "ab" third?
+        ?: "abc" third? == "c"
+        ?: "abcd" third == "c"
     }
 
     \`==` {

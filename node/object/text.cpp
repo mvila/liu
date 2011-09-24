@@ -418,14 +418,12 @@ bool Text::Iterator::hasNext() const {
 }
 
 Text *Text::Iterator::peekNext() const {
-    if(!_text) LIU_THROW(NullPointerException, "Text pointer is NULL");
-    if(_index >= _text->value().size()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
+    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
     return Text::make(_text->value().at(_index));
 }
 
 void Text::Iterator::skipNext() {
-    if(!_text) LIU_THROW(NullPointerException, "Text pointer is NULL");
-    if(_index >= _text->value().size()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
+    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
     _index++;
 }
 
