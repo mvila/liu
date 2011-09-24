@@ -8,7 +8,7 @@ void TextTest::initialize() {
 }
 
 void TextTest::fork() {
-    Text *text = LIU_TEXT("Hello");
+    Text *text = Text::make("Hello");
     QVERIFY(text->origin() == Text::root());
     QCOMPARE(text->value(), QString("Hello"));
     Text *newText(text->fork());
@@ -17,9 +17,9 @@ void TextTest::fork() {
 }
 
 void TextTest::compare() {
-    Text *t1 = LIU_TEXT("Hello");
-    Text *t2 = LIU_TEXT("Hello");
-    Text *t3 = LIU_TEXT("Salut");
+    Text *t1 = Text::make("Hello");
+    Text *t2 = Text::make("Hello");
+    Text *t3 = Text::make("Salut");
     QVERIFY(t1->compare(t2) == 0);
     QVERIFY(t1->compare(t3) != 0);
     QVERIFY(t1 != t2);
@@ -27,8 +27,8 @@ void TextTest::compare() {
     QVERIFY(*t1 == *t2);
     QVERIFY(!(*t1 != *t2));
     QVERIFY(*t1 != *t3);
-    Text *t4 = LIU_TEXT("Jean");
-    Text *t5 = LIU_TEXT("Pierre");
+    Text *t4 = Text::make("Jean");
+    Text *t5 = Text::make("Pierre");
     QVERIFY(*t4 != *t5);
     QCOMPARE(t4->compare(t5), short(-1));
     QCOMPARE(t5->compare(t4), short(1));

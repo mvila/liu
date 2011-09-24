@@ -99,7 +99,7 @@ namespace Language {
         SourceCode *source;
         if(!(source = sourceCodeIsAlreadyLoaded(url))) {
             source = LIU_SOURCE_CODE(url);
-            sourceCodes()->set(LIU_TEXT(url), source);
+            sourceCodes()->set(Text::make(url), source);
             source->parse();
         }
         return source;
@@ -107,7 +107,7 @@ namespace Language {
 
     SourceCode *Interpreter::sourceCodeIsAlreadyLoaded(QString url) {
         url = normalizeUrl(url);
-        return sourceCodes()->hasKey(LIU_TEXT(url));
+        return sourceCodes()->hasKey(Text::make(url));
     }
 }
 

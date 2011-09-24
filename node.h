@@ -18,6 +18,13 @@ virtual NAME *fork() const { \
     return node; \
 }
 
+#define LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(NAME, ARGS...) \
+virtual NAME *fork() const { \
+    NAME *node = new NAME(constCast(this)); \
+    node->init(ARGS); \
+    return node; \
+}
+
 #define LIU_DECLARE_FORK_METHOD(NAME) \
 virtual NAME *fork() const;
 
@@ -91,6 +98,8 @@ public:
         _children(NULL), _parents(NULL), _isAbstract(true), _isVirtual(false), _isAutoRunnable(false) { initFork(); }
 
     Node(const Node &other); // copy constructor
+
+    Node *init() { return this; }
 
     void initFork();
 
@@ -351,6 +360,22 @@ NAME *NAME::root() { \
     static NAME *_root = NULL; \
     if(!_root) { \
         _root = new NAME(ORIGIN::root()); \
+        QString name = #NAME; \
+        int pos = name.lastIndexOf("::"); \
+        if(pos != -1) name = name.mid(pos + 2); \
+        PARENT::root()->addOrSetChild(name, _root); \
+        _root->declare(name); \
+    } \
+    return _root; \
+}
+
+#define LIU_DEFINE_2(NAME, ORIGIN, PARENT) \
+const bool NAME::isInitialized = NAME::root(); \
+NAME *NAME::root() { \
+    static NAME *_root = NULL; \
+    if(!_root) { \
+        _root = new NAME(ORIGIN::root()); \
+        _root->init(); \
         QString name = #NAME; \
         int pos = name.lastIndexOf("::"); \
         if(pos != -1) name = name.mid(pos + 2); \

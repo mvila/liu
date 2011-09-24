@@ -62,7 +62,8 @@ SOURCES += main.cpp \
     tests/dictionarytest.cpp \
     node/object/resource.cpp \
     node/object/iterable.cpp \
-    node/object/language/abstractmethod.cpp
+    node/object/language/abstractmethod.cpp \
+    node/object/collection.cpp
 
 HEADERS += \
     liu.h \
@@ -115,7 +116,8 @@ HEADERS += \
     tests/dictionarytest.h \
     node/object/resource.h \
     node/object/iterable.h \
-    node/object/language/abstractmethod.h
+    node/object/language/abstractmethod.h \
+    node/object/collection.h
 
 OTHER_FILES += \
     README.txt \

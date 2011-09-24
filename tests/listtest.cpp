@@ -14,7 +14,7 @@ void ListTest::insertGetAndSet() { // TODO: more tests with fork
     QVERIFY(!list->isNotEmpty());
     QCATCH(list->get(-1), IndexOutOfBoundsException);
     QCATCH(list->get(0), IndexOutOfBoundsException);
-    Text *t1 = LIU_TEXT("val1");
+    Text *t1 = Text::make("val1");
     QCATCH(list->set(-1, t1), IndexOutOfBoundsException);
     QCATCH(list->set(0, t1), IndexOutOfBoundsException);
     QCATCH(list->insert(-1, t1), IndexOutOfBoundsException);
@@ -24,13 +24,13 @@ void ListTest::insertGetAndSet() { // TODO: more tests with fork
     QVERIFY(list->isNotEmpty());
     QVERIFY(list->get(0) == t1);
     QVERIFY(t1->hasDirectParent(list));
-    Text *t2 = LIU_TEXT("val2");
+    Text *t2 = Text::make("val2");
     list->set(0, t2);
     QCOMPARE(list->size(), 1);
     QVERIFY(list->get(0) == t2);
     QVERIFY(!t1->hasDirectParent(list));
     QVERIFY(t2->hasDirectParent(list));
-    Text *t3 = LIU_TEXT("val3");
+    Text *t3 = Text::make("val3");
     list->insert(0, t3);
     QCOMPARE(list->size(), 2);
     QVERIFY(list->get(0) == t3);
@@ -46,9 +46,9 @@ void ListTest::insertGetAndSet() { // TODO: more tests with fork
 
 void ListTest::remove() { // TODO: test with fork
     List *list = LIU_LIST();
-    Text *t1 = LIU_TEXT("val1");
-    Text *t2 = LIU_TEXT("val2");
-    Text *t3 = LIU_TEXT("val3");
+    Text *t1 = Text::make("val1");
+    Text *t2 = Text::make("val2");
+    Text *t3 = Text::make("val3");
     list->append(t1);
     list->append(t2);
     list->append(t3);
@@ -73,9 +73,9 @@ void ListTest::remove() { // TODO: test with fork
 
 void ListTest::clear() {
     List *list = LIU_LIST();
-    Text *t1 = LIU_TEXT("val1");
-    Text *t2 = LIU_TEXT("val2");
-    Text *t3 = LIU_TEXT("val3");
+    Text *t1 = Text::make("val1");
+    Text *t2 = Text::make("val2");
+    Text *t3 = Text::make("val3");
     list->append(t1);
     list->append(t2);
     list->append(t3);

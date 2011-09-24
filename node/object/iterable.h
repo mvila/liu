@@ -8,28 +8,28 @@ LIU_BEGIN
 
 // === Iterable ===
 
-#define LIU_ITERABLE(ARGS...) new Iterable(context()->child("Object", "Iterable"), ##ARGS)
-
 class Iterable : public Object {
     LIU_DECLARE(Iterable, Object, Object);
 public:
-    explicit Iterable(Node *origin);
+    explicit Iterable(Node *origin = context()->child("Object", "Iterable")) : Object(origin) {}
+
+    static Iterable *make() { return (new Iterable())->init(); }
+
+    Iterable *init() { Object::init(); return this; }
 
     virtual ~Iterable() {}
 
     LIU_DECLARE_AND_DEFINE_COPY_METHOD(Iterable);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Iterable);
-
-    LIU_DECLARE_NATIVE_METHOD(init);
+    LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Iterable);
 
     class Iterator;
     virtual Iterator *iterator() const { LIU_ABSTRACT_CALL; }
     LIU_DECLARE_NATIVE_METHOD(iterator);
 
-    virtual bool contains(Node *what) const;
+    virtual bool contains(Node *value) const;
     LIU_DECLARE_NATIVE_METHOD(contains);
 
-    virtual int count(Node *what) const;
+    virtual int count(Node *value) const;
     LIU_DECLARE_NATIVE_METHOD(count);
 
     virtual int size() const;
@@ -37,27 +37,22 @@ public:
 
     virtual bool empty() const;
     LIU_DECLARE_NATIVE_METHOD(empty);
-
-    virtual bool isEqualTo(const Node *other) const;
-    LIU_DECLARE_NATIVE_METHOD(equal_to);
-
-//    virtual QString toString(bool debug = false, short level = 0) const;
 public:
     // === Iterator ===
-
-    #define LIU_ITERATOR(ARGS...) new Iterator(context()->child("Object", "Iterable", "Iterator"), ##ARGS)
 
     class Iterator : public Object {
         LIU_DECLARE(Iterator, Object, Iterable);
     public:
-        explicit Iterator(Node *origin);
+        explicit Iterator(Node *origin = context()->child("Object", "Iterable", "Iterator")) : Object(origin) {}
+
+        static Iterator *make() { return (new Iterator())->init(); }
+
+        Iterator *init() { Object::init(); return this; }
 
         virtual ~Iterator() {}
 
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(Iterator);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(Iterator);
-
-        LIU_DECLARE_NATIVE_METHOD(init);
+        LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Iterator);
 
         virtual bool hasNext() const { LIU_ABSTRACT_CALL; }
         virtual Node *peekNext() const { LIU_ABSTRACT_CALL; }
@@ -66,11 +61,6 @@ public:
 
         LIU_DECLARE_NATIVE_METHOD(read);
         LIU_DECLARE_NATIVE_METHOD(skip);
-
-        virtual bool isEqualTo(const Node *other) const;
-        LIU_DECLARE_NATIVE_METHOD(equal_to);
-
-    //    virtual QString toString(bool debug = false, short level = 0) const;
     };
 };
 

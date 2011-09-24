@@ -187,7 +187,7 @@ namespace Language {
             } catch(const Exception &e) {
                 throw parserException(e.message);
             }
-            Text *text = LIU_TEXT(s);
+            Text *text = Text::make(s);
             // text->setIsTranslatable(true);
             if(!interpolableSlices.isEmpty()) text->setInterpolableSlices(interpolableSlices);
             value = text;

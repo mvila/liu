@@ -130,7 +130,7 @@ LIU_DEFINE_NATIVE_METHOD(List, init) {
         QString separator = message->runSecondInput()->toString();
         QStringList list = source.split(separator);
         QStringListIterator i(list);
-        while (i.hasNext()) append(LIU_TEXT(i.next()));
+        while (i.hasNext()) append(Text::make(i.next()));
         return this;
     }
     LIU_THROW_CONVERSION_EXCEPTION("cannot build a List with these arguments");

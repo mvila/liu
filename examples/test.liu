@@ -1,3 +1,7 @@
+txt := "Bonjour ici et la"
+txt[:"o"] >>
+txt
+
 //X := Node()
 //X a := "a"
 //Y := X()

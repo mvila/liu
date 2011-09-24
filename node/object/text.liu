@@ -216,6 +216,7 @@ test:
     ?: origin == Object
     ?: parent == Object
     ?: is?(Iterable)
+    ?: is?(Collection)
 
     // interpolating...
     ?: "{}" == ""

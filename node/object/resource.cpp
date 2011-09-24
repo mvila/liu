@@ -40,7 +40,7 @@ LIU_DEFINE_NATIVE_METHOD(Resource, get) {
     LIU_CHECK_INPUT_SIZE(0);
     if(url().isEmpty()) LIU_THROW_RUNTIME_EXCEPTION("'url' is empty");
     QString theUrl = normalizeUrl(url());
-    if(theUrl.startsWith("file://")) return LIU_TEXT(readTextFile(theUrl.mid(7)));
+    if(theUrl.startsWith("file://")) return Text::make(readTextFile(theUrl.mid(7)));
     LIU_THROW_RUNTIME_EXCEPTION("unknown protocol");
 }
 

@@ -2,30 +2,29 @@
 #define LIU_TEXT_H
 
 #include "node/object/element.h"
-#include "node/object/iterable.h"
+#include "node/object/collection.h"
 #include "node/object/boolean.h"
 #include "node/object/number.h"
 #include "node/object/language/message.h"
 
 LIU_BEGIN
 
-#define LIU_TEXT(ARGS...) new Text(context()->child("Object", "Text"), ##ARGS)
-
-class Text : public Iterable {
+class Text : public Collection {
     LIU_DECLARE(Text, Object, Object);
 public:
-    explicit Text(Node *origin) : Iterable(origin) { initFork(); }
+    explicit Text(Node *origin = context()->child("Object", "Text")) : Collection(origin) {}
 
-    Text(Node *origin, const QString &value) : Iterable(origin) { initFork(&value); }
+    //    Text(const Text &other);
 
-//    Text(const Text &other);
+    static Text *make() { return (new Text())->init(); }
+    static Text *make(const QString &value) { return (new Text())->init(&value); }
 
-    void initFork(const QString *value = NULL, bool *isTranslatable = NULL, QList<IntPair> *interpolableSlices = NULL);
+    Text *init(const QString *value = NULL, bool *isTranslatable = NULL, QList<IntPair> *interpolableSlices = NULL);
 
     virtual ~Text();
 
     LIU_DECLARE_AND_DEFINE_COPY_METHOD(Text);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Text);
+    LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Text);
 
     LIU_DECLARE_NATIVE_METHOD(init);
 
@@ -62,6 +61,9 @@ public:
     virtual bool empty() const;
 
     virtual Iterator *iterator() const;
+
+    virtual void append(Node *item);
+    virtual void remove(Node *item, bool *wasFoundPtr = NULL);
 
     virtual bool isEqualTo(const Node *other) const;
     LIU_DECLARE_NATIVE_METHOD(equal_to);

@@ -6,25 +6,15 @@ LIU_BEGIN
 
 // === Iterable ===
 
-LIU_DEFINE(Iterable, Object, Object);
-
-Iterable::Iterable(Node *origin) : Object(origin) {}
+LIU_DEFINE_2(Iterable, Object, Object);
 
 void Iterable::initRoot() {
-    LIU_ADD_NATIVE_METHOD(Iterable, init);
-
     LIU_ADD_NATIVE_METHOD(Iterable, iterator);
 
     LIU_ADD_NATIVE_METHOD(Iterable, contains);
     LIU_ADD_NATIVE_METHOD(Iterable, count);
     LIU_ADD_NATIVE_METHOD(Iterable, size);
     LIU_ADD_NATIVE_METHOD(Iterable, empty);
-
-    LIU_ADD_NATIVE_METHOD(Iterable, equal_to, ==);
-}
-
-LIU_DEFINE_NATIVE_METHOD(Iterable, init) {
-    return this;
 }
 
 LIU_DEFINE_NATIVE_METHOD(Iterable, iterator) {
@@ -33,9 +23,9 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, iterator) {
     return iterator();
 }
 
-bool Iterable::contains(Node *what) const {
+bool Iterable::contains(Node *value) const {
     QScopedPointer<Iterator> i(iterator());
-    while(i->hasNext()) if(i->next()->isEqualTo(what)) return true;
+    while(i->hasNext()) if(i->next()->isEqualTo(value)) return true;
     return false;
 }
 
@@ -43,22 +33,22 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, contains) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_QUESTION_MARK;
     LIU_CHECK_INPUT_SIZE(1);
-    Node *what = message->runFirstInput();
-    return LIU_BOOLEAN(contains(what));
+    Node *value = message->runFirstInput();
+    return LIU_BOOLEAN(contains(value));
 }
 
-int Iterable::count(Node *what) const {
+int Iterable::count(Node *value) const {
     QScopedPointer<Iterator> i(iterator());
     int counter = 0;
-    while(i->hasNext()) if(i->next()->isEqualTo(what)) counter++;
+    while(i->hasNext()) if(i->next()->isEqualTo(value)) counter++;
     return counter;
 }
 
 LIU_DEFINE_NATIVE_METHOD(Iterable, count) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
-    Node *what = message->runFirstInput();
-    return LIU_NUMBER(count(what));
+    Node *value = message->runFirstInput();
+    return LIU_NUMBER(count(value));
 }
 
 int Iterable::size() const {
@@ -89,39 +79,13 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, empty) {
     return LIU_BOOLEAN(empty());
 }
 
-bool Iterable::isEqualTo(const Node *other) const {
-    const Iterable *otherIterable = Iterable::dynamicCast(other);
-    return otherIterable && false; // [...]
-}
+// === Iterator ===
 
-LIU_DEFINE_NATIVE_METHOD(Iterable, equal_to) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1);
-    return LIU_BOOLEAN(false); // [...]
-}
-
-//QString Iterable::toString(bool debug, short level) const {
-//    Q_UNUSED(level);
-//    return debug ? "\"[...]\"" : "[...]";
-//}
-
-// === Iterable::Iterator ===
-
-LIU_DEFINE(Iterable::Iterator, Object, Iterable);
-
-Iterable::Iterator::Iterator(Node *origin) : Object(origin) {}
+LIU_DEFINE_2(Iterable::Iterator, Object, Iterable);
 
 void Iterable::Iterator::initRoot() {
-    LIU_ADD_NATIVE_METHOD(Iterable::Iterator, init);
-
     LIU_ADD_NATIVE_METHOD(Iterable::Iterator, read);
     LIU_ADD_NATIVE_METHOD(Iterable::Iterator, skip);
-
-    LIU_ADD_NATIVE_METHOD(Iterable::Iterator, equal_to, ==);
-}
-
-LIU_DEFINE_NATIVE_METHOD(Iterable::Iterator, init) {
-    return this;
 }
 
 Node *Iterable::Iterator::next() {
@@ -145,21 +109,5 @@ LIU_DEFINE_NATIVE_METHOD(Iterable::Iterator, skip) {
     skipNext();
     return this;
 }
-
-bool Iterable::Iterator::isEqualTo(const Node *other) const {
-    const Iterator *otherIterator = Iterator::dynamicCast(other);
-    return otherIterator && false; // [...]
-}
-
-LIU_DEFINE_NATIVE_METHOD(Iterable::Iterator, equal_to) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1);
-    return LIU_BOOLEAN(false); // [...]
-}
-
-//QString Iterable::Iterator::toString(bool debug, short level) const {
-//    Q_UNUSED(level);
-//    return debug ? "\"[...]\"" : "[...]";
-//}
 
 LIU_END

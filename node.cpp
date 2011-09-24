@@ -107,7 +107,7 @@ const QString Node::nodeName() const {
 }
 
 void Node::setNodeName(const QString &name) {
-    addOrSetChild("__name__", new Text(Text::root(), name));
+    addOrSetChild("__name__", (new Text(Text::root()))->init(&name));
 }
 
 const QString Node::nodePath() const {

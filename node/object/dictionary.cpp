@@ -36,7 +36,7 @@ LIU_DEFINE_NATIVE_METHOD(Dictionary, init) {
             QString entrie = i.next();
             int index = entrie.indexOf(separator2);
             if(index == -1) LIU_THROW_CONVERSION_EXCEPTION("key separator not found when building a Dictionary");
-            set(LIU_TEXT(entrie.mid(0, index)), LIU_TEXT(entrie.mid(index + separator2.size())));
+            set(Text::make(entrie.mid(0, index)), Text::make(entrie.mid(index + separator2.size())));
         }
         return this;
     }
@@ -56,7 +56,7 @@ LIU_DEFINE_NATIVE_METHOD(Dictionary, make) {
             if(msg->inputs(false) || msg->outputs(false) || msg->isEscaped() || msg->isParented()
                     || msg->isEllipsed() || msg->hasCodeInput())
                 LIU_THROW(ArgumentException, "invalid key in Dictionary initialization");
-            key = LIU_TEXT(msg->name());
+            key = Text::make(msg->name());
         } else
             key = primitive->run();
         dict->set(key, message->runInput(i));

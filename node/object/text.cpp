@@ -7,15 +7,17 @@ LIU_BEGIN
 
 // === Text ===
 
-LIU_DEFINE(Text, Object, Object);
+LIU_DEFINE_2(Text, Object, Object);
 
-void Text::initFork(const QString *value, bool *isTranslatable, QList<IntPair> *interpolableSlices) {
+Text *Text::init(const QString *value, bool *isTranslatable, QList<IntPair> *interpolableSlices) {
+    Object::init();
     _value = NULL;
     _isTranslatable = NULL;
     _interpolableSlices = NULL;
     setValue(value);
     setIsTranslatable(isTranslatable);
     setInterpolableSlices(interpolableSlices);
+    return this;
 }
 
 Text::~Text() {
@@ -25,7 +27,7 @@ Text::~Text() {
 }
 
 void Text::initRoot() {
-    addExtension(Iterable::root());
+    addExtension(Collection::root());
 
     LIU_ADD_NATIVE_METHOD(Text, init);
 
@@ -103,7 +105,7 @@ Node *Text::run(Node *receiver) {
             result.replace(offset + slice.first, slice.second, str);
             offset += str.size() - slice.second;
         }
-        return LIU_TEXT(result);
+        return Text::make(result);
     } else
         return this;
 }
@@ -118,26 +120,26 @@ LIU_DEFINE_NATIVE_METHOD(Text, get) {
     int size = message->hasASecondInput() ? message->runSecondInput()->toDouble() : 1;
     if(size < 0) size = max + (size + 1) - index;
     if(size < 0 || index + size > max) LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
-    return LIU_TEXT(value().mid(index, size));
+    return Text::make(value().mid(index, size));
 }
 
 LIU_DEFINE_NATIVE_METHOD(Text, concatenate) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
-    return LIU_TEXT(value() + message->runFirstInput()->toString());
+    return Text::make(value() + message->runFirstInput()->toString());
 }
 
 LIU_DEFINE_NATIVE_METHOD(Text, multiply) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
-    return LIU_TEXT(value().repeated(message->runFirstInput()->toDouble()));
+    return Text::make(value().repeated(message->runFirstInput()->toDouble()));
 }
 
 LIU_DEFINE_NATIVE_METHOD(Text, uppercase) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     if(!message->isExclaimed())
-        return LIU_TEXT(value().toUpper());
+        return Text::make(value().toUpper());
     else {
         setValue(value().toUpper());
         return this;
@@ -148,7 +150,7 @@ LIU_DEFINE_NATIVE_METHOD(Text, lowercase) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     if(!message->isExclaimed())
-        return LIU_TEXT(value().toLower());
+        return Text::make(value().toLower());
     else {
         setValue(value().toLower());
         return this;
@@ -164,7 +166,7 @@ LIU_DEFINE_NATIVE_METHOD(Text, capitalize) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     if(!message->isExclaimed())
-        return LIU_TEXT(capitalize(value()));
+        return Text::make(capitalize(value()));
     else {
         setValue(capitalize(value()));
         return this;
@@ -190,7 +192,7 @@ LIU_DEFINE_NATIVE_METHOD(Text, extract_between) {
     } else {
         to = text.size() - 1;
     }
-    Node *result = LIU_TEXT(text.mid(from + after.size(),
+    Node *result = Text::make(text.mid(from + after.size(),
                          (to - before.size()) - (from + after.size()) + 1));
     if(message->isExclaimed())
         setValue(text.remove(from, to - from + 1));
@@ -210,7 +212,7 @@ LIU_DEFINE_NATIVE_METHOD(Text, remove_after) {
         setValue(text);
         return this;
     } else
-        return LIU_TEXT(text);
+        return Text::make(text);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Text, replace) {
@@ -225,7 +227,7 @@ LIU_DEFINE_NATIVE_METHOD(Text, replace) {
         setValue(source);
         return this;
     } else
-        return LIU_TEXT(source);
+        return Text::make(source);
 }
 
 bool Text::contains(Node *what) const {
@@ -246,6 +248,25 @@ bool Text::empty() const {
 
 Iterable::Iterator *Text::iterator() const {
     return LIU_TEXT_ITERATOR(constCast(this));
+}
+
+void Text::append(Node *item) {
+    setValue(value() + item->toString());
+}
+
+void Text::remove(Node *item, bool *wasFoundPtr) {
+    QString source = value();
+    QString str = item->toString();
+    int index = source.indexOf(str);
+    bool wasFound = index != -1;
+    if(wasFound) {
+        source.remove(index, str.size());
+        setValue(source);
+    }
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound)
+        LIU_THROW(NotFoundException, "value not found");
 }
 
 bool Text::isEqualTo(const Node *other) const {
@@ -399,7 +420,7 @@ bool Text::Iterator::hasNext() const {
 Text *Text::Iterator::peekNext() const {
     if(!_text) LIU_THROW(NullPointerException, "Text pointer is NULL");
     if(_index >= _text->value().size()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
-    return LIU_TEXT(_text->value().at(_index));
+    return Text::make(_text->value().at(_index));
 }
 
 void Text::Iterator::skipNext() {
@@ -436,7 +457,7 @@ LIU_DEFINE_NATIVE_METHOD(Text::Iterator, value) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     if(!message->isQuestioned())
-        return LIU_TEXT(value());
+        return Text::make(value());
     else
         return LIU_BOOLEAN(hasValue());
 }

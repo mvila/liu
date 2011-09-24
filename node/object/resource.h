@@ -22,7 +22,7 @@ public:
     LIU_DECLARE_NATIVE_METHOD(init);
 
     const QString url() const { return child("url")->toString(); }
-    void setUrl(const QString &url) { addOrSetChild("url", LIU_TEXT(url)); }
+    void setUrl(const QString &url) { addOrSetChild("url", Text::make(url)); }
 
     LIU_DECLARE_NATIVE_METHOD(get);
 
