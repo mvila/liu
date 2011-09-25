@@ -62,19 +62,59 @@ Object Text {
         ?: txt[0] == "H"
         ?: txt[1] == "e"
         ?: IndexOutOfBoundsException throw? { txt[5] }
+        !: txt[5]?
         ?: txt[-1] == "o"
         ?: txt[-2] == "l"
         ?: IndexOutOfBoundsException throw? { txt[-6] }
-        ?: txt[0, 0] == ""
-        ?: txt[0, 3] == "Hel"
-        ?: txt[1, 3] == "ell"
-        ?: txt[0, -1] == "Hello"
-        ?: txt[0, -2] == "Hell"
-        ?: txt[0, -5] == "H"
-        ?: txt[0, -6] == ""
-        ?: IndexOutOfBoundsException throw? { txt[0, -7] }
-        ?: txt[-1, 1] == "o"
-        ?: txt[-1, -1] == "o"
+//        ?: txt[0, 0] == ""
+//        ?: txt[0, 3] == "Hel"
+//        ?: txt[1, 3] == "ell"
+//        ?: txt[0, -1] == "Hello"
+//        ?: txt[0, -2] == "Hell"
+//        ?: txt[0, -5] == "H"
+//        ?: txt[0, -6] == ""
+//        ?: IndexOutOfBoundsException throw? { txt[0, -7] }
+//        ?: txt[-1, 1] == "o"
+//        ?: txt[-1, -1] == "o"
+    }
+
+    \`[]=` {
+    test:
+        txt := "abcxef"
+        txt[3] = 'd'
+        ?: txt == "abcdef"
+        txt[-1] = "F"
+        ?: txt == "abcdeF"
+        txt[3] = "123"
+        ?: txt == "abc123eF"
+        ?: IndexOutOfBoundsException throw? { txt[10] = 'x' }
+        !: txt[10]? = 'x'
+    }
+
+    \`[]:=` {
+    test:
+        txt := "abcxef"
+        txt[3] := 'd'
+        ?: txt == "abcdef"
+        txt[-1] := "F"
+        ?: txt == "abcdeF"
+        txt[3] := "123"
+        ?: txt == "abc123eF"
+        ?: IndexOutOfBoundsException throw? { txt[10] := 'x' }
+        !: txt[10]? := 'x'
+        txt := ""
+        txt[0] := 'a'
+        ?: txt == "a"
+        txt[1] := 'b'
+        ?: txt == "ab"
+        txt[2] := "cdef"
+        ?: txt == "abcdef"
+    }
+
+    \`[]>>` {
+    test:
+        txt := "abc"
+        txt[0] >>
     }
 
     \`+` {
@@ -250,6 +290,14 @@ Object Text {
         ?: "abcd" third == "c"
     }
 
+    \last {
+    test:
+        ?: IndexOutOfBoundsException throw? { "" last }
+        !: "" last?
+        ?: "abc" last? == "c"
+        ?: "abcd" last == "d"
+    }
+
     \`==` {
     inputs:
         (\what)
@@ -287,6 +335,7 @@ test:
     ?: parent == Object
     ?: is?(Iterable)
     ?: is?(Collection)
+    ?: is?(Indexable)
 
     // interpolating...
     ?: "{}" == ""

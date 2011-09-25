@@ -63,7 +63,8 @@ SOURCES += main.cpp \
     node/object/resource.cpp \
     node/object/iterable.cpp \
     node/object/language/abstractmethod.cpp \
-    node/object/collection.cpp
+    node/object/collection.cpp \
+    node/object/indexable.cpp
 
 HEADERS += \
     liu.h \
@@ -117,7 +118,8 @@ HEADERS += \
     node/object/resource.h \
     node/object/iterable.h \
     node/object/language/abstractmethod.h \
-    node/object/collection.h
+    node/object/collection.h \
+    node/object/indexable.h
 
 OTHER_FILES += \
     README.txt \

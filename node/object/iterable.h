@@ -46,7 +46,10 @@ public:
 
     virtual Node *third(bool *wasFoundPtr = NULL) const;
     LIU_DECLARE_NATIVE_METHOD(third);
-public:
+
+    virtual Node *last(bool *wasFoundPtr = NULL) const;
+    LIU_DECLARE_NATIVE_METHOD(last);
+    public:
     // === Iterator ===
 
     class Iterator : public Object {

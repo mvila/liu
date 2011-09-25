@@ -22,7 +22,7 @@ public:
     virtual void append(Node *item) { Q_UNUSED(item); LIU_ABSTRACT_CALL; }
     LIU_DECLARE_NATIVE_METHOD(append);
 
-    virtual void remove(Node *item, bool *wasFoundPtr = NULL) { Q_UNUSED(item); Q_UNUSED(wasFoundPtr); LIU_ABSTRACT_CALL; }
+    virtual Node *remove(Node *item, bool *wasFoundPtr = NULL) { Q_UNUSED(item); Q_UNUSED(wasFoundPtr); LIU_ABSTRACT_CALL; }
     LIU_DECLARE_NATIVE_METHOD(remove);
 
     virtual void clear();

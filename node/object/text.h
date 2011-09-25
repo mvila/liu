@@ -2,17 +2,18 @@
 #define LIU_TEXT_H
 
 #include "node/object/element.h"
-#include "node/object/collection.h"
+#include "node/object/indexable.h"
 #include "node/object/boolean.h"
 #include "node/object/number.h"
+#include "node/object/character.h"
 #include "node/object/language/message.h"
 
 LIU_BEGIN
 
-class Text : public Collection {
+class Text : public Indexable {
     LIU_DECLARE(Text, Object, Object);
 public:
-    explicit Text(Node *origin = context()->child("Object", "Text")) : Collection(origin) {}
+    explicit Text(Node *origin = context()->child("Object", "Text")) : Indexable(origin) {}
 
     //    Text(const Text &other);
 
@@ -40,8 +41,6 @@ public:
 
     virtual Node *run(Node *receiver = context());
 
-    LIU_DECLARE_NATIVE_METHOD(get);
-
     LIU_DECLARE_NATIVE_METHOD(concatenate);
     LIU_DECLARE_NATIVE_METHOD(multiply);
 
@@ -63,7 +62,11 @@ public:
     virtual Iterator *iterator() const;
 
     virtual void append(Node *item);
-    virtual void remove(Node *item, bool *wasFoundPtr = NULL);
+    virtual Text *remove(Node *item, bool *wasFoundPtr = NULL);
+
+    virtual Character *get(Node *nodeIndex, bool *wasFoundPtr = NULL);
+    virtual void set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr = NULL);
+    virtual void append(Node *index, Node *item, bool *okPtr = NULL);
 
     virtual bool isEqualTo(const Node *other) const;
     LIU_DECLARE_NATIVE_METHOD(equal_to);

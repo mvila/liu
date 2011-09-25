@@ -27,7 +27,7 @@ Text::~Text() {
 }
 
 void Text::initRoot() {
-    addExtension(Collection::root());
+    addExtension(Indexable::root());
 
     LIU_ADD_NATIVE_METHOD(Text, init);
 
@@ -35,8 +35,6 @@ void Text::initRoot() {
     valueProperty->LIU_ADD_NATIVE_METHOD(Text, value_get, get);
     valueProperty->LIU_ADD_NATIVE_METHOD(Text, value_set, set);
     addChild("value", valueProperty);
-
-    LIU_ADD_NATIVE_METHOD(Text, get, []);
 
     LIU_ADD_NATIVE_METHOD(Text, concatenate, +);
     LIU_ADD_NATIVE_METHOD(Text, multiply, *);
@@ -110,18 +108,18 @@ Node *Text::run(Node *receiver) {
         return this;
 }
 
-LIU_DEFINE_NATIVE_METHOD(Text, get) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1, 2);
-    int index = message->runFirstInput()->toDouble();
-    int max = value().size();
-    if(index < 0) index = max + index;
-    if(index < 0 || index >= max) LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
-    int size = message->hasASecondInput() ? message->runSecondInput()->toDouble() : 1;
-    if(size < 0) size = max + (size + 1) - index;
-    if(size < 0 || index + size > max) LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
-    return Text::make(value().mid(index, size));
-}
+//LIU_DEFINE_NATIVE_METHOD(Text, get) {
+//    LIU_FIND_LAST_MESSAGE;
+//    LIU_CHECK_INPUT_SIZE(1, 2);
+//    int index = message->runFirstInput()->toDouble();
+//    int max = value().size();
+//    if(index < 0) index = max + index;
+//    if(index < 0 || index >= max) LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+//    int size = message->hasASecondInput() ? message->runSecondInput()->toDouble() : 1;
+//    if(size < 0) size = max + (size + 1) - index;
+//    if(size < 0 || index + size > max) LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+//    return Text::make(value().mid(index, size));
+//}
 
 LIU_DEFINE_NATIVE_METHOD(Text, concatenate) {
     LIU_FIND_LAST_MESSAGE;
@@ -254,12 +252,14 @@ void Text::append(Node *item) {
     setValue(value() + item->toString());
 }
 
-void Text::remove(Node *item, bool *wasFoundPtr) {
+Text *Text::remove(Node *item, bool *wasFoundPtr) {
     QString source = value();
     QString str = item->toString();
     int index = source.indexOf(str);
     bool wasFound = index != -1;
+    Text *result = NULL;
     if(wasFound) {
+        result = Text::make(source.mid(index, str.size()));
         source.remove(index, str.size());
         setValue(source);
     }
@@ -267,6 +267,54 @@ void Text::remove(Node *item, bool *wasFoundPtr) {
         *wasFoundPtr = wasFound;
     else if(!wasFound)
         LIU_THROW(NotFoundException, "value not found");
+    return result;
+}
+
+Character *Text::get(Node *nodeIndex, bool *wasFoundPtr) {
+    int index = nodeIndex->toDouble();
+    int max = value().size();
+    if(index < 0) index = max + index;
+    bool wasFound = index >= 0 && index < max;
+    Character *result = wasFound ? LIU_CHARACTER(value().at(index)) : NULL;
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound)
+        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+    return result;
+}
+
+void Text::set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr) {
+    int index = nodeIndex->toDouble();
+    QString str = value();
+    int max = str.size();
+    if(index < 0) index = max + index;
+    bool wasFound = index >= 0 && index < max;
+    if(wasFound) {
+        str.remove(index, 1);
+        str.insert(index, nodeValue->toString());
+        setValue(str);
+    }
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound)
+        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+}
+
+void Text::append(Node *nodeIndex, Node *nodeValue, bool *okPtr) {
+    int index = nodeIndex->toDouble();
+    QString str = value();
+    int max = str.size();
+    if(index < 0) index = max + index;
+    bool ok = index == max;
+    if(ok) setValue(value() + nodeValue->toString());
+    if(okPtr)
+        *okPtr = ok;
+    else if(!ok) {
+        if(index < max)
+            LIU_THROW(DuplicateException, "index already exists");
+        else
+            LIU_THROW(IndexOutOfBoundsException, "index is invalid");
+    }
 }
 
 bool Text::isEqualTo(const Node *other) const {

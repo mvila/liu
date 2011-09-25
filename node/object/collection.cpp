@@ -31,9 +31,9 @@ LIU_DEFINE_NATIVE_METHOD(Collection, remove) {
     }
     if(!value) LIU_THROW(ArgumentException, "a value is exepected (ex.: collection[:123] >>)");
     bool wasFound = true;
-    remove(value, message->isQuestioned() ? &wasFound : NULL);
+    Node *result = remove(value, message->isQuestioned() ? &wasFound : NULL);
     if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
-    return value;
+    return result;
 }
 
 void Collection::clear() {

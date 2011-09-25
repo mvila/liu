@@ -19,6 +19,7 @@ void Iterable::initRoot() {
     LIU_ADD_NATIVE_METHOD(Iterable, first);
     LIU_ADD_NATIVE_METHOD(Iterable, second);
     LIU_ADD_NATIVE_METHOD(Iterable, third);
+    LIU_ADD_NATIVE_METHOD(Iterable, last);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Iterable, iterator) {
@@ -125,6 +126,30 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, third) {
     LIU_CHECK_INPUT_SIZE(0);
     bool wasFound = true;
     Node *result = third(message->isQuestioned() ? &wasFound : NULL);
+    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    return result;
+}
+
+Node *Iterable::last(bool *wasFoundPtr) const {
+    QScopedPointer<Iterator> i(iterator());
+    Node *result = NULL;
+    bool wasFound = false;
+    while(i->hasNext()) {
+        wasFound = true;
+        result = i->next();
+    }
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound)
+        LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
+    return result;
+}
+
+LIU_DEFINE_NATIVE_METHOD(Iterable, last) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0);
+    bool wasFound = true;
+    Node *result = last(message->isQuestioned() ? &wasFound : NULL);
     if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
     return result;
 }

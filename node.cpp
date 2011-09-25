@@ -313,6 +313,8 @@ Node *Node::defineOrAssign(bool isDefine) {
             message->inputs()->set(0, msg->firstInput());
         else
             message->inputs()->remove(0);
+        if(msg->isQuestioned()) message->setIsQuestioned(true);
+        if(msg->isExclaimed()) message->setIsExclaimed(true);
         return message->run(this);
     }
     Node *value;
