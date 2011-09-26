@@ -2,7 +2,7 @@
 #define LIU_TEXT_H
 
 #include "node/object/element.h"
-#include "node/object/indexable.h"
+#include "node/object/insertable.h"
 #include "node/object/boolean.h"
 #include "node/object/number.h"
 #include "node/object/character.h"
@@ -10,10 +10,10 @@
 
 LIU_BEGIN
 
-class Text : public Indexable {
+class Text : public Insertable {
     LIU_DECLARE(Text, Object, Object);
 public:
-    explicit Text(Node *origin = context()->child("Object", "Text")) : Indexable(origin) {}
+    explicit Text(Node *origin = context()->child("Object", "Text")) : Insertable(origin) {}
 
     //    Text(const Text &other);
 
@@ -41,6 +41,44 @@ public:
 
     virtual Node *run(Node *receiver = context());
 
+    virtual bool isEqualTo(const Node *other) const;
+    LIU_DECLARE_NATIVE_METHOD(equal_to);
+
+    virtual short compare(const Node *other) const;
+    short compare(const QString &other) const;
+    LIU_DECLARE_NATIVE_METHOD(compare);
+
+    virtual uint hash() const { return qHash(_value); }
+
+    virtual double toDouble(bool *okPtr = NULL) const;
+    virtual QChar toChar() const;
+    virtual QString toString(bool debug = false, short level = 0) const;
+
+    // --- Iterable ---
+
+    class Iterator;
+    virtual Iterator *iterator() const;
+    virtual bool contains(Node *what) const;
+    virtual int count(Node *what) const;
+    virtual int size() const;
+    virtual bool empty() const;
+
+    // --- Collection ---
+
+    virtual void append(Node *item);
+    virtual Text *remove(Node *item, bool *wasFoundPtr = NULL);
+
+    // --- Indexable ---
+
+    virtual Character *get(Node *nodeIndex, bool *wasFoundPtr = NULL);
+    virtual void set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr = NULL);
+    virtual void append(Node *nodeIndex, Node *item, bool *okPtr = NULL);
+    virtual Character *unset(Node *nodeIndex, bool *wasFoundPtr = NULL);
+    class IndexIterator;
+    virtual IndexIterator *indexIterator() const;
+
+    // --- Text ---
+
     LIU_DECLARE_NATIVE_METHOD(concatenate);
     LIU_DECLARE_NATIVE_METHOD(multiply);
 
@@ -54,35 +92,8 @@ public:
     LIU_DECLARE_NATIVE_METHOD(remove_after);
     LIU_DECLARE_NATIVE_METHOD(replace);
 
-    virtual bool contains(Node *what) const;
-    virtual int count(Node *what) const;
-    virtual int size() const;
-    virtual bool empty() const;
-
-    virtual Iterator *iterator() const;
-
-    virtual void append(Node *item);
-    virtual Text *remove(Node *item, bool *wasFoundPtr = NULL);
-
-    virtual Character *get(Node *nodeIndex, bool *wasFoundPtr = NULL);
-    virtual void set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr = NULL);
-    virtual void append(Node *index, Node *item, bool *okPtr = NULL);
-
-    virtual bool isEqualTo(const Node *other) const;
-    LIU_DECLARE_NATIVE_METHOD(equal_to);
-
-    virtual short compare(const Node *other) const;
-    short compare(const QString &other) const;
-    LIU_DECLARE_NATIVE_METHOD(compare);
-
     static QString unescapeSequence(const QString &source, QList<IntPair> *interpolableSlices = NULL);
     static QChar unescapeSequenceNumber(const QString &source, int &i);
-
-    virtual uint hash() const { return qHash(_value); }
-
-    virtual double toDouble(bool *okPtr = NULL) const;
-    virtual QChar toChar() const;
-    virtual QString toString(bool debug = false, short level = 0) const;
 private:
     QString *_value;
     bool *_isTranslatable;
@@ -111,7 +122,32 @@ public:
         Text *_text;
         int _index;
     };
-/*
+
+    // === IndexIterator ===
+
+    #define LIU_TEXT_INDEX_ITERATOR(ARGS...) new IndexIterator(context()->child("Object", "Text", "IndexIterator"), ##ARGS)
+
+    class IndexIterator : public Iterable::Iterator {
+        LIU_DECLARE(IndexIterator, Object, Text);
+    public:
+        explicit IndexIterator(Node *origin, Text *text = NULL);
+
+        virtual ~IndexIterator() {}
+
+        LIU_DECLARE_AND_DEFINE_COPY_METHOD(IndexIterator);
+        LIU_DECLARE_AND_DEFINE_FORK_METHOD(IndexIterator);
+
+        LIU_DECLARE_NATIVE_METHOD(init);
+
+        virtual bool hasNext() const;
+        virtual Number *peekNext() const;
+        virtual void skipNext();
+    private:
+        Text *_text;
+        int _index;
+    };
+
+    /*
     #define LIU_TEXT_ITERATOR(ARGS...) new Iterator(context()->child("Object", "Text", "Iterator"), ##ARGS)
 
     #define LIU_CHECK_TEXT_ITERATOR_INDEX \

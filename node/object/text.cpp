@@ -27,7 +27,7 @@ Text::~Text() {
 }
 
 void Text::initRoot() {
-    addExtension(Indexable::root());
+    addExtension(Insertable::root());
 
     LIU_ADD_NATIVE_METHOD(Text, init);
 
@@ -108,6 +108,115 @@ Node *Text::run(Node *receiver) {
         return this;
 }
 
+bool Text::isEqualTo(const Node *other) const {
+    const Text *otherText = Text::dynamicCast(other);
+    return otherText && value() == otherText->value();
+}
+
+LIU_DEFINE_NATIVE_METHOD(Text, equal_to) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(1);
+    return LIU_BOOLEAN(value() == message->runFirstInput()->toString());
+}
+
+short Text::compare(const Node *other) const {
+    return compare(Text::cast(other)->value());
+}
+
+short Text::compare(const QString &other) const {
+    int result = value().compare(other);
+    if(result > 0) return 1;
+    else if(result < 0) return -1;
+    else return 0;
+}
+
+LIU_DEFINE_NATIVE_METHOD(Text, compare) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(1);
+    return LIU_NUMBER(compare(message->runFirstInput()->toString()));
+}
+
+double Text::toDouble(bool *okPtr) const {
+    bool ok;
+    double number = value().toDouble(&ok);
+    if(okPtr)
+        *okPtr = ok;
+    else if(!ok)
+        LIU_THROW_CONVERSION_EXCEPTION("conversion from Text to Number failed");
+    return ok ? number : 0;
+};
+
+QChar Text::toChar() const {
+    if(value().size() != 1) LIU_THROW_CONVERSION_EXCEPTION("conversion from Text to Character failed (size should be equal to 1)");
+    return value().at(0);
+};
+
+QString Text::toString(bool debug, short level) const {
+    Q_UNUSED(level);
+    return debug ? "\"" + value() + "\"" : value();
+}
+
+// --- Iterable ---
+
+Text::Iterator *Text::iterator() const {
+    return LIU_TEXT_ITERATOR(constCast(this));
+}
+
+int Text::size() const {
+    return value().size();
+}
+
+bool Text::empty() const {
+    return value().isEmpty();
+}
+
+bool Text::contains(Node *what) const {
+    return value().contains(what->toString());
+}
+
+int Text::count(Node *what) const {
+    return value().count(what->toString());
+}
+
+// --- Collection ---
+
+void Text::append(Node *item) {
+    setValue(value() + item->toString());
+}
+
+Text *Text::remove(Node *item, bool *wasFoundPtr) {
+    QString source = value();
+    QString str = item->toString();
+    int index = source.indexOf(str);
+    bool wasFound = index != -1;
+    Text *result = NULL;
+    if(wasFound) {
+        result = Text::make(source.mid(index, str.size()));
+        source.remove(index, str.size());
+        setValue(source);
+    }
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound)
+        LIU_THROW(NotFoundException, "value not found");
+    return result;
+}
+
+// --- Indexable ---
+
+Character *Text::get(Node *nodeIndex, bool *wasFoundPtr) {
+    int index = nodeIndex->toDouble();
+    int max = value().size();
+    if(index < 0) index = max + index;
+    bool wasFound = index >= 0 && index < max;
+    Character *result = wasFound ? LIU_CHARACTER(value().at(index)) : NULL;
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound)
+        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+    return result;
+}
+
 //LIU_DEFINE_NATIVE_METHOD(Text, get) {
 //    LIU_FIND_LAST_MESSAGE;
 //    LIU_CHECK_INPUT_SIZE(1, 2);
@@ -120,6 +229,65 @@ Node *Text::run(Node *receiver) {
 //    if(size < 0 || index + size > max) LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
 //    return Text::make(value().mid(index, size));
 //}
+
+void Text::set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr) {
+    int index = nodeIndex->toDouble();
+    QString str = value();
+    int max = str.size();
+    if(index < 0) index = max + index;
+    bool wasFound = index >= 0 && index < max;
+    if(wasFound) {
+        str.remove(index, 1);
+        str.insert(index, nodeValue->toString());
+        setValue(str);
+    }
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound)
+        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+}
+
+void Text::append(Node *nodeIndex, Node *nodeValue, bool *okPtr) {
+    int index = nodeIndex->toDouble();
+    QString str = value();
+    int max = str.size();
+    if(index < 0) index = max + index;
+    bool ok = index == max;
+    if(ok) setValue(value() + nodeValue->toString());
+    if(okPtr)
+        *okPtr = ok;
+    else if(!ok) {
+        if(index < max)
+            LIU_THROW(DuplicateException, "index already exists");
+        else
+            LIU_THROW(IndexOutOfBoundsException, "index is invalid");
+    }
+}
+
+Character *Text::unset(Node *nodeIndex, bool *wasFoundPtr) {
+    int index = nodeIndex->toDouble();
+    QString str = value();
+    int max = str.size();
+    if(index < 0) index = max + index;
+    bool wasFound = index >= 0 && index < max;
+    Character *result = NULL;
+    if(wasFound) {
+        result = LIU_CHARACTER(str.at(index));
+        str.remove(index, 1);
+        setValue(str);
+    }
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound)
+        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+    return result;
+}
+
+Text::IndexIterator *Text::indexIterator() const {
+    return LIU_TEXT_INDEX_ITERATOR(constCast(this));
+}
+
+// --- Text ---
 
 LIU_DEFINE_NATIVE_METHOD(Text, concatenate) {
     LIU_FIND_LAST_MESSAGE;
@@ -228,123 +396,6 @@ LIU_DEFINE_NATIVE_METHOD(Text, replace) {
         return Text::make(source);
 }
 
-bool Text::contains(Node *what) const {
-    return value().contains(what->toString());
-}
-
-int Text::count(Node *what) const {
-    return value().count(what->toString());
-}
-
-int Text::size() const {
-    return value().size();
-}
-
-bool Text::empty() const {
-    return value().isEmpty();
-}
-
-Iterable::Iterator *Text::iterator() const {
-    return LIU_TEXT_ITERATOR(constCast(this));
-}
-
-void Text::append(Node *item) {
-    setValue(value() + item->toString());
-}
-
-Text *Text::remove(Node *item, bool *wasFoundPtr) {
-    QString source = value();
-    QString str = item->toString();
-    int index = source.indexOf(str);
-    bool wasFound = index != -1;
-    Text *result = NULL;
-    if(wasFound) {
-        result = Text::make(source.mid(index, str.size()));
-        source.remove(index, str.size());
-        setValue(source);
-    }
-    if(wasFoundPtr)
-        *wasFoundPtr = wasFound;
-    else if(!wasFound)
-        LIU_THROW(NotFoundException, "value not found");
-    return result;
-}
-
-Character *Text::get(Node *nodeIndex, bool *wasFoundPtr) {
-    int index = nodeIndex->toDouble();
-    int max = value().size();
-    if(index < 0) index = max + index;
-    bool wasFound = index >= 0 && index < max;
-    Character *result = wasFound ? LIU_CHARACTER(value().at(index)) : NULL;
-    if(wasFoundPtr)
-        *wasFoundPtr = wasFound;
-    else if(!wasFound)
-        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
-    return result;
-}
-
-void Text::set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr) {
-    int index = nodeIndex->toDouble();
-    QString str = value();
-    int max = str.size();
-    if(index < 0) index = max + index;
-    bool wasFound = index >= 0 && index < max;
-    if(wasFound) {
-        str.remove(index, 1);
-        str.insert(index, nodeValue->toString());
-        setValue(str);
-    }
-    if(wasFoundPtr)
-        *wasFoundPtr = wasFound;
-    else if(!wasFound)
-        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
-}
-
-void Text::append(Node *nodeIndex, Node *nodeValue, bool *okPtr) {
-    int index = nodeIndex->toDouble();
-    QString str = value();
-    int max = str.size();
-    if(index < 0) index = max + index;
-    bool ok = index == max;
-    if(ok) setValue(value() + nodeValue->toString());
-    if(okPtr)
-        *okPtr = ok;
-    else if(!ok) {
-        if(index < max)
-            LIU_THROW(DuplicateException, "index already exists");
-        else
-            LIU_THROW(IndexOutOfBoundsException, "index is invalid");
-    }
-}
-
-bool Text::isEqualTo(const Node *other) const {
-    const Text *otherText = Text::dynamicCast(other);
-    return otherText && value() == otherText->value();
-}
-
-LIU_DEFINE_NATIVE_METHOD(Text, equal_to) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1);
-    return LIU_BOOLEAN(value() == message->runFirstInput()->toString());
-}
-
-short Text::compare(const Node *other) const {
-    return compare(Text::cast(other)->value());
-}
-
-short Text::compare(const QString &other) const {
-    int result = value().compare(other);
-    if(result > 0) return 1;
-    else if(result < 0) return -1;
-    else return 0;
-}
-
-LIU_DEFINE_NATIVE_METHOD(Text, compare) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1);
-    return LIU_NUMBER(compare(message->runFirstInput()->toString()));
-}
-
 QString Text::unescapeSequence(const QString &source, QList<IntPair> *interpolableSlices) {
     QString result;
     int i = 0;
@@ -418,26 +469,6 @@ QChar Text::unescapeSequenceNumber(const QString &source, int &i) {
     return QChar(code);
 }
 
-double Text::toDouble(bool *okPtr) const {
-    bool ok;
-    double number = value().toDouble(&ok);
-    if(okPtr)
-        *okPtr = ok;
-    else if(!ok)
-        LIU_THROW_CONVERSION_EXCEPTION("conversion from Text to Number failed");
-    return ok ? number : 0;
-};
-
-QChar Text::toChar() const {
-    if(value().size() != 1) LIU_THROW_CONVERSION_EXCEPTION("conversion from Text to Character failed (size should be equal to 1)");
-    return value().at(0);
-};
-
-QString Text::toString(bool debug, short level) const {
-    Q_UNUSED(level);
-    return debug ? "\"" + value() + "\"" : value();
-}
-
 // === Text::Iterator ===
 
 LIU_DEFINE(Text::Iterator, Iterable::Iterator, Text);
@@ -472,6 +503,43 @@ Text *Text::Iterator::peekNext() const {
 
 void Text::Iterator::skipNext() {
     if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
+    _index++;
+}
+
+// === Text::IndexIterator ===
+
+LIU_DEFINE(Text::IndexIterator, Iterable::Iterator, Text);
+
+Text::IndexIterator::IndexIterator(Node *origin, Text *text) :
+    Iterable::Iterator(origin), _text(text), _index(0) {}
+
+void Text::IndexIterator::initRoot() {
+    LIU_ADD_NATIVE_METHOD(Text::IndexIterator, init);
+}
+
+LIU_DEFINE_NATIVE_METHOD(Text::IndexIterator, init) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0, 1);
+    if(message->hasAnInput()) {
+        Text *text = Text::dynamicCast(message->runFirstInput());
+        if(!text) LIU_THROW(ArgumentException, "text argument is expected");
+        _text = text;
+    }
+    return this;
+}
+
+bool Text::IndexIterator::hasNext() const {
+    if(!_text) return false;
+    return _index < _text->value().size() ;
+}
+
+Number *Text::IndexIterator::peekNext() const {
+    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "IndexIterator is out of bounds");
+    return LIU_NUMBER(_index);
+}
+
+void Text::IndexIterator::skipNext() {
+    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "IndexIterator is out of bounds");
     _index++;
 }
 

@@ -42,7 +42,7 @@ while(i next?) { i current print }
 
 ---
 
-a[0..2] << "i" // remplace les 3 premiers éléments par "i"
+a[0..2] = "i" // remplace les 3 premiers éléments par "i"
 
 a[-1] >> v // supprime le dernier élément en l'assignant à v (équivalent à un pop)
 
@@ -55,10 +55,11 @@ a["Yo"] >>    // remove
 
 a["k1"]       // get
 a["k1"] = 7   // set
-a["k1"] >>    // delete
+a["k1"] >>    // unset
 a indexes     // indexes or keys
 
 a[3] << "Ya"  // insert
+a["k1", before: "k2"] << "Yo"  // insert
 
 -------------------------------------------------
 
@@ -74,9 +75,9 @@ attribute: uniqueValue?
 provide: append(iterable), remove_all(value), remove(iterable), replace, clear
 
 Indexable := Collection() // Dictionary
-require: get, set, append(index, value), unset, indexes
+require: get, set, append(index, value), unset, index_iterator
 attribute: uniqueIndex?
-provide: append_or_set, unset(iterable -> ex. : range), index_of(item, from, reverse?), slice,
+provide: append_or_set, indexes, unset(iterable -> ex. : range), index_of(item, from, reverse?), slice,
          swap, take, unite(indexable), first_index, last_index
 
 Insertable := Indexable() // List

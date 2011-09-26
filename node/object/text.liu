@@ -18,43 +18,166 @@ Object Text {
         ?: Y a == "B"
     }
 
-    \value {
+    \`==` {
+    inputs:
+        (\what)
     test:
-        ?: Text() value == ""
-        ?: "" value == ""
-        ?: "Hello" value == "Hello"
-        txt := "Hello"
-        txt value = "Bye"
-        ?: txt == "Bye"
-        txt value uppercase!
-        ?: txt value == "BYE"
-        ?: txt == "BYE"
-
-        X := Node()
-        X a := "a"
-        Y := X()
-        ?: Y a == "a"
-        X a value = "b"
-        ?: Y a == "b"
-
-        x := Text()
-        y := x()
-        x value = "Hi"
-        ?: y == "Hi"
-
-        !: Text value?
-        !: Text() value?
-        ?: "" value?
-        ?: "hello" value?
-
-        x := Text()
-        !: x value?
-        y := x()
-        !: y value?
-        x value = "Hi"
-        ?: x value?
-        ?: y value?
+        ?: "" == ""
+        !: "a" == ""
+        ?: "a" != ""
+        ?: "a" == "a"
+        ?: "a" != "A"
+        ?: "abc" == "abc"
+        ?: "1" == 1
+        ?: "3.14" == 3.14
+        ?: "3.14" != 3.15
+        ?: 3.14 == "3.14"
+        ?: 3.14 != "3.15"
+        ?: "true" != true
+        ?: "yes" == true
     }
+
+    \`<=>` {
+    test:
+        ?: ("" <=> "") == 0
+        ?: ("abc" <=> "abc") == 0
+        ?: "abc" >= "abc"
+        ?: "abc" <= "abc"
+        ?: ("a" <=> "b") == -1
+        ?: "a" < "b"
+        ?: ("b" <=> "a") == 1
+        ?: "b" > "a"
+        ?: ("abc" <=> "def") == -1
+        ?: "abc" < "def"
+    }
+
+    // --- Iterable ---
+
+    \iterator {
+//    inputs:
+//        (reverse: no)
+    test:
+        txt := "abc"
+        iter := txt iterator
+        ?: iter read?
+        ?: iter read == 'a'
+        ?: iter read! == 'a'
+        ?: iter read! == 'b'
+        ?: iter read! == 'c'
+        ?: IndexOutOfBoundsException throw? { iter read }
+        ?: IndexOutOfBoundsException throw? { iter read! }
+        !: iter read?
+    }
+
+    \size {
+    test:
+        ?: "" size == 0
+        ?: "a" size == 1
+        ?: "\r\n" size == 2
+    }
+
+    \empty? {
+    test:
+        ?: "" empty?
+        !: "a" empty?
+    }
+
+    \contains? {
+    test:
+        txt := "This is a beautiful world!"
+        ?: txt contains?("beautiful")
+        !: txt contains?("wonderful")
+    }
+
+    \count {
+    test:
+        txt := "This is a beautiful world!"
+        ?: txt count("beautiful") == 1
+        ?: txt count("wonderful") == 0
+        ?: txt count("i") == 3
+    }
+
+    \first {
+    test:
+        ?: IndexOutOfBoundsException throw? { "" first }
+        !: "" first?
+        ?: "a" first? == "a"
+        ?: "abc" first == "a"
+    }
+
+    \second {
+    test:
+        ?: IndexOutOfBoundsException throw? { "" second }
+        !: "" second?
+        ?: IndexOutOfBoundsException throw? { "a" second }
+        !: "a" second?
+        ?: "ab" second? == "b"
+        ?: "abc" second == "b"
+    }
+
+    \third {
+    test:
+        ?: IndexOutOfBoundsException throw? { "" third }
+        !: "" third?
+        ?: IndexOutOfBoundsException throw? { "a" third }
+        !: "a" third?
+        ?: IndexOutOfBoundsException throw? { "ab" third }
+        !: "ab" third?
+        ?: "abc" third? == "c"
+        ?: "abcd" third == "c"
+    }
+
+    \last {
+    test:
+        ?: IndexOutOfBoundsException throw? { "" last }
+        !: "" last?
+        ?: "abc" last? == "c"
+        ?: "abcd" last == "d"
+    }
+
+    // --- Collection ---
+
+    \`<<` {
+    test:
+        ?: "" << "" == ""
+        ?: "a" << 'b' == "ab"
+        txt := "abc"
+        ?: txt << "def" == "abcdef"
+    }
+
+    \`[]>>` {
+    test:
+        txt := ""
+        txt[:""] >>
+        ?: txt == ""
+        txt = "abc"
+        ?: txt[:'b'] >> == 'b'
+        ?: txt == "ac"
+        ?: NotFoundException throw? { txt[:'b'] >> }
+        !: txt[:'b']? >>
+        ?: txt[:'c']? >>
+        ?: txt == "a"
+        ?: txt[:'a'] >> == 'a'
+        ?: txt empty?
+
+        txt = "ababa"
+        txt[:"a"] >>
+        ?: txt == "baba"
+        ?: txt[:"ab"] >> == "ab"
+        ?: txt == "ba"
+    }
+
+    \clear! {
+    test:
+        ?: "" clear! == ""
+        ?: "a" clear! == ""
+        ?: "abab" clear! == ""
+        txt := "Hi there!"
+        txt clear!
+        ?: txt == ""
+    }
+
+    // --- Indexable ---
 
     \`[]` {
     test:
@@ -114,7 +237,76 @@ Object Text {
     \`[]>>` {
     test:
         txt := "abc"
-        txt[0] >>
+        ?: txt[0] >> == 'a'
+        ?: txt == "bc"
+        ?: txt[1] >> == 'c'
+        ?: txt == "b"
+        ?: txt[-1] >> == 'b'
+        ?: txt == ""
+        ?: IndexOutOfBoundsException throw? { txt[0] >> }
+        !: txt[0]? >>
+    }
+
+    \index_iterator {
+    test:
+        txt := "abc"
+        iter := txt index_iterator
+        ?: iter read?
+        ?: iter read == 0
+        ?: iter read! == 0
+        ?: iter read! == 1
+        ?: iter read! == 2
+        ?: IndexOutOfBoundsException throw? { iter read }
+        ?: IndexOutOfBoundsException throw? { iter read! }
+        !: iter read?
+    }
+
+    // --- Insertable ---
+
+    \`[]<<` {
+    test:
+        txt := "abc"
+//        txt[0] << "*"
+    }
+
+    // --- Text ---
+
+    \value {
+    test:
+        ?: Text() value == ""
+        ?: "" value == ""
+        ?: "Hello" value == "Hello"
+        txt := "Hello"
+        txt value = "Bye"
+        ?: txt == "Bye"
+        txt value uppercase!
+        ?: txt value == "BYE"
+        ?: txt == "BYE"
+
+        X := Node()
+        X a := "a"
+        Y := X()
+        ?: Y a == "a"
+        X a value = "b"
+        ?: Y a == "b"
+
+        x := Text()
+        y := x()
+        x value = "Hi"
+        ?: y == "Hi"
+
+        !: Text value?
+        !: Text() value?
+        ?: "" value?
+        ?: "hello" value?
+
+        x := Text()
+        !: x value?
+        y := x()
+        !: y value?
+        x value = "Hi"
+        ?: x value?
+        ?: y value?
     }
 
     \`+` {
@@ -165,21 +357,6 @@ Object Text {
         ?: txt == "Hello"
     }
 
-    \contains? {
-    test:
-        txt := "This is a beautiful world!"
-        ?: txt contains?("beautiful")
-        !: txt contains?("wonderful")
-    }
-
-    \count {
-    test:
-        txt := "This is a beautiful world!"
-        ?: txt count("beautiful") == 1
-        ?: txt count("wonderful") == 0
-        ?: txt count("i") == 3
-    }
-
     \extract_between {
     test:
         txt := "This is a beautiful world!"
@@ -201,141 +378,13 @@ Object Text {
         ?: txt replace!("beautiful", "wonderful") == "This is a wonderful world!"
         ?: txt == "This is a wonderful world!"
     }
-
-    \iterator {
-//    inputs:
-//        (reverse: no)
-    }
-
-    \`<<` {
-    test:
-        ?: "" << "" == ""
-        ?: "a" << 'b' == "ab"
-        txt := "abc"
-        ?: txt << "def" == "abcdef"
-    }
-
-    \`[]>>` {
-    test:
-        txt := ""
-        txt[:""] >>
-        ?: txt == ""
-        txt = "abc"
-        ?: txt[:'b'] >> == 'b'
-        ?: txt == "ac"
-        ?: NotFoundException throw? { txt[:'b'] >> }
-        !: txt[:'b']? >>
-        ?: txt[:'c']? >>
-        ?: txt == "a"
-        ?: txt[:'a'] >> == 'a'
-        ?: txt empty?
-
-        txt = "ababa"
-        txt[:"a"] >>
-        ?: txt == "baba"
-        ?: txt[:"ab"] >> == "ab"
-        ?: txt == "ba"
-    }
-
-    \size {
-    test:
-        ?: "" size == 0
-        ?: "a" size == 1
-        ?: "\r\n" size == 2
-    }
-
-    \empty? {
-    test:
-        ?: "" empty?
-        !: "a" empty?
-    }
-
-    \clear! {
-    test:
-        ?: "" clear! == ""
-        ?: "a" clear! == ""
-        ?: "abab" clear! == ""
-        txt := "Hi there!"
-        txt clear!
-        ?: txt == ""
-    }
-
-    \first {
-    test:
-        ?: IndexOutOfBoundsException throw? { "" first }
-        !: "" first?
-        ?: "a" first? == "a"
-        ?: "abc" first == "a"
-    }
-
-    \second {
-    test:
-        ?: IndexOutOfBoundsException throw? { "" second }
-        !: "" second?
-        ?: IndexOutOfBoundsException throw? { "a" second }
-        !: "a" second?
-        ?: "ab" second? == "b"
-        ?: "abc" second == "b"
-    }
-
-    \third {
-    test:
-        ?: IndexOutOfBoundsException throw? { "" third }
-        !: "" third?
-        ?: IndexOutOfBoundsException throw? { "a" third }
-        !: "a" third?
-        ?: IndexOutOfBoundsException throw? { "ab" third }
-        !: "ab" third?
-        ?: "abc" third? == "c"
-        ?: "abcd" third == "c"
-    }
-
-    \last {
-    test:
-        ?: IndexOutOfBoundsException throw? { "" last }
-        !: "" last?
-        ?: "abc" last? == "c"
-        ?: "abcd" last == "d"
-    }
-
-    \`==` {
-    inputs:
-        (\what)
-    test:
-        ?: "" == ""
-        !: "a" == ""
-        ?: "a" != ""
-        ?: "a" == "a"
-        ?: "a" != "A"
-        ?: "abc" == "abc"
-        ?: "1" == 1
-        ?: "3.14" == 3.14
-        ?: "3.14" != 3.15
-        ?: 3.14 == "3.14"
-        ?: 3.14 != "3.15"
-        ?: "true" != true
-        ?: "yes" == true
-    }
-
-    \`<=>` {
-    test:
-        ?: ("" <=> "") == 0
-        ?: ("abc" <=> "abc") == 0
-        ?: "abc" >= "abc"
-        ?: "abc" <= "abc"
-        ?: ("a" <=> "b") == -1
-        ?: "a" < "b"
-        ?: ("b" <=> "a") == 1
-        ?: "b" > "a"
-        ?: ("abc" <=> "def") == -1
-        ?: "abc" < "def"
-    }
 test:
     ?: origin == Object
     ?: parent == Object
     ?: is?(Iterable)
     ?: is?(Collection)
     ?: is?(Indexable)
+    ?: is?(Insertable)
 
     // interpolating...
     ?: "{}" == ""

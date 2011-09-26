@@ -1,3 +1,5 @@
+"arf" << "a" * 3 // problème de priorité !
+
 //X := Node()
 //X a := "a"
 //Y := X()

@@ -10,6 +10,8 @@ void Indexable::initRoot() {
     LIU_ADD_NATIVE_METHOD(Indexable, set, []=);
     LIU_ADD_NATIVE_METHOD(Indexable, append_or_set, []:=);
     LIU_ADD_NATIVE_METHOD(Indexable, unset, []>>);
+
+    LIU_ADD_NATIVE_METHOD(Indexable, index_iterator);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Indexable, get) {
@@ -72,6 +74,12 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, unset) {
         result = unset(index, message->isQuestioned() ? &wasFound : NULL);
     if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
     return result;
+}
+
+LIU_DEFINE_NATIVE_METHOD(Indexable, index_iterator) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0);
+    return indexIterator();
 }
 
 LIU_END

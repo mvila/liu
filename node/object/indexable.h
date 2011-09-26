@@ -36,6 +36,9 @@ public:
     virtual Node *unset(Node *index, bool *wasFoundPtr = NULL) {
         Q_UNUSED(index); Q_UNUSED(wasFoundPtr); LIU_ABSTRACT_CALL; }
     LIU_DECLARE_NATIVE_METHOD(unset);
+
+    virtual Iterator *indexIterator() const { LIU_ABSTRACT_CALL; }
+    LIU_DECLARE_NATIVE_METHOD(index_iterator);
 };
 
 LIU_END
