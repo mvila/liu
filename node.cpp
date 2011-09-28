@@ -366,11 +366,11 @@ LIU_DEFINE_NATIVE_METHOD(Node, remove) {
     LIU_CHECK_INPUT_SIZE(1);
     Message *msg = Message::dynamicCast(message->firstInput()->value()->value());
     if(!msg) LIU_THROW(ArgumentException, "left-hand side is not a message");
-    if(msg->name() == "[]") {
-        msg = msg->fork();
-        msg->setName("[]>>");
-        return msg->run(this);
-    }
+//    if(msg->name() == "[]") {
+//        msg = msg->fork();
+//        msg->setName("[]>>");
+//        return msg->run(this);
+//    }
     bool wasFound = true;
     removeChild(msg->name(), msg->isQuestioned() ? &wasFound : NULL);
     if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));

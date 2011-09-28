@@ -334,8 +334,13 @@ namespace Language {
                                     LIU_PRIMITIVE(LIU_MESSAGE(currentOp->name), token()->sourceCodeRef));
             } else {
                 if(!currentPrimitive) throw parserException(QString("missing primitive before '%1'").arg(currentOp->name));
-                Message *message = LIU_MESSAGE(currentOp->name);
-                message->inputs()->append(currentPrimitive->last());
+                Message *message = Message::dynamicCast(currentPrimitive->last()->value());
+                if(message && message->name() == "[]") {
+                    message->setName("[]" + currentOp->name);
+                } else {
+                    message = LIU_MESSAGE(currentOp->name);
+                    message->inputs()->append(currentPrimitive->last());
+                }
                 Primitive *primitive = LIU_PRIMITIVE(message, token()->sourceCodeRef);
                 if(currentPrimitive->hasNext())
                     currentPrimitive->last()->previous()->setNext(primitive);
