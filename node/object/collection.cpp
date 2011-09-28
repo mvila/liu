@@ -15,13 +15,6 @@ void Collection::initRoot() {
 LIU_DEFINE_NATIVE_METHOD(Collection, append) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
-    Message *msg = Message::dynamicCast(message->firstInput()->value()->value());
-    if(msg && msg->name() == "[]") {
-        PP;
-        msg = msg->fork();
-        msg->setName("[]<<");
-        return msg->run(this);
-    }
     Node *value = message->runFirstInput();
     append(value);
     return this;

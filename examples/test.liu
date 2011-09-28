@@ -1,4 +1,5 @@
-"arf" << "a" * 3 // problème de priorité !
+a := "Yo"
+a[0] << "!"
 
 //X := Node()
 //X a := "a"

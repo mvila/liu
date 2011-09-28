@@ -50,9 +50,10 @@ namespace Language {
         ops->append("&", Operator::Binary, 461);
         ops->append("|", Operator::Binary, 451);
         ops->append("^", Operator::Binary, 451);
-        ops->append("<<", Operator::Binary, 461);
 
         ops->append("..", Operator::Binary, 451);
+
+        ops->append("<<", Operator::Binary, 446, Operator::RightAssociative, false);
 
         ops->append("<=>", Operator::Binary, 441);
 

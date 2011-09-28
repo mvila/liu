@@ -1,4 +1,5 @@
 #define LIU_CATCH_EXCEPTIONS
+#define LIU_RUN_TEST_SUITE
 
 #include <QtCore/QFile>
 
@@ -29,10 +30,11 @@ void init() {
                 interpreter->loadSourceCode(liuFile)->run();
             }
         }
+        #ifdef LIU_RUN_TEST_SUITE
         interpreter->testSuite()->run();
         P(QString("All tests passed (%1 sections, %2 assertions)").
           arg(interpreter->testSuite()->size()).arg(Node::passedAssertionCount()));
-
+        #endif
         // run Application
         pushContext(Application::root());
         SourceCode *source = interpreter->loadSourceCode("../liu/examples/test.liu");

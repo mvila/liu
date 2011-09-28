@@ -390,19 +390,34 @@ namespace Language {
                 throw parserException("unimplemented special operator");
         } else {
             checkRightHandSide(rhs);
-            if(op->useLHSAsReceiver) {
+            bool useLHSAsReceiver = op->useLHSAsReceiver;
+            if(!useLHSAsReceiver) {
+                Message *message = Message::dynamicCast(lhs->last()->value());
+                if(message && message->name() == "[]") {
+                    message->setName("[]" + op->name);
+                    message->inputs()->append(rhs);
+                    Primitive *primitive = LIU_PRIMITIVE(message, sourceCodeRef);
+                    if(lhs->hasNext())
+                        lhs->last()->previous()->setNext(primitive);
+                    else
+                        lhs = primitive;
+                } else if(op->name == "<<") {
+                    useLHSAsReceiver = true;
+                } else {
+                    Message *message = LIU_MESSAGE(op->name);
+                    message->inputs()->append(lhs->last());
+                    message->inputs()->append(rhs);
+                    Primitive *primitive = LIU_PRIMITIVE(message, sourceCodeRef);
+                    if(lhs->hasNext())
+                        lhs->last()->previous()->setNext(primitive);
+                    else
+                        lhs = primitive;
+                }
+            }
+            if(useLHSAsReceiver) {
                 Message *message = LIU_MESSAGE(op->name);
                 message->inputs()->append(rhs);
                 LIU_PRIMITIVE_ADD(lhs, LIU_PRIMITIVE(message, sourceCodeRef));
-            } else {
-                Message *message = LIU_MESSAGE(op->name);
-                message->inputs()->append(lhs->last());
-                message->inputs()->append(rhs);
-                Primitive *primitive = LIU_PRIMITIVE(message, sourceCodeRef);
-                if(lhs->hasNext())
-                    lhs->last()->previous()->setNext(primitive);
-                else
-                    lhs = primitive;
             }
         }
         return lhs;

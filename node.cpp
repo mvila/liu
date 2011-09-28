@@ -306,17 +306,17 @@ Node *Node::defineOrAssign(bool isDefine) {
     LIU_CHECK_INPUT_SIZE(2);
     Message *msg = Message::dynamicCast(message->firstInput()->value()->value());
     if(!msg) LIU_THROW(ArgumentException, "left-hand side is not a message");
-    if(msg->name() == "[]") {
-        message = message->fork();
-        message->setName(isDefine ? "[]:=" : "[]=");
-        if(msg->hasAnInput())
-            message->inputs()->set(0, msg->firstInput());
-        else
-            message->inputs()->remove(0);
-        if(msg->isQuestioned()) message->setIsQuestioned(true);
-        if(msg->isExclaimed()) message->setIsExclaimed(true);
-        return message->run(this);
-    }
+//    if(msg->name() == "[]") {
+//        message = message->fork();
+//        message->setName(isDefine ? "[]:=" : "[]=");
+//        if(msg->hasAnInput())
+//            message->inputs()->set(0, msg->firstInput());
+//        else
+//            message->inputs()->remove(0);
+//        if(msg->isQuestioned()) message->setIsQuestioned(true);
+//        if(msg->isExclaimed()) message->setIsExclaimed(true);
+//        return message->run(this);
+//    }
     Node *value;
     Block *block = Block::dynamicCast(message->secondInput()->value()->value());
     if(block) { // if rhs is a block, we have a method definition shorthand
