@@ -82,7 +82,7 @@ provide: append_or_set, indexes, unset(iterable -> ex. : range), index_of(item, 
 
 Insertable := Indexable() // List
 require: insert
-provide: move(from, to), prepend, push, pop
+provide: move(from, to)
 
 ---
 

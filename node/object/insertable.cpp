@@ -10,14 +10,14 @@ void Insertable::initRoot() {
 }
 
 LIU_DEFINE_NATIVE_METHOD(Insertable, insert) {
-    PP;
     LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1);
-    Node *index = message->runFirstInput();
+    LIU_CHECK_INPUT_SIZE(1, 2);
+    Node *index = message->hasASecondInput() ? message->runFirstInput() : NULL;
+    Node *item = message->runLastInput();
     bool wasFound = true;
-    Node *result = get(index, message->isQuestioned() ? &wasFound : NULL);
+    insert(index, item, message->isQuestioned() ? &wasFound : NULL);
     if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
-    return result;
+    return this;
 }
 
 LIU_END

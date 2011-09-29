@@ -37,8 +37,6 @@ public:
 
     LIU_DECLARE_ACCESSOR(QList<IntPair>, interpolableSlices, InterpolableSlices);
 
-    virtual void hasChanged() {}
-
     virtual Node *run(Node *receiver = context());
 
     virtual bool isEqualTo(const Node *other) const;
@@ -77,6 +75,10 @@ public:
     class IndexIterator;
     virtual IndexIterator *indexIterator() const;
 
+    // --- Indexable ---
+
+    virtual void insert(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr = NULL);
+
     // --- Text ---
 
     LIU_DECLARE_NATIVE_METHOD(concatenate);
@@ -101,50 +103,60 @@ private:
 public:
     // === Iterator ===
 
-    #define LIU_TEXT_ITERATOR(ARGS...) new Iterator(context()->child("Object", "Text", "Iterator"), ##ARGS)
-
     class Iterator : public Iterable::Iterator {
         LIU_DECLARE(Iterator, Object, Text);
     public:
-        explicit Iterator(Node *origin, Text *text = NULL);
+        explicit Iterator(Node *origin = context()->child("Object", "Text", "Iterator")) :
+            Iterable::Iterator(origin) {};
 
-        virtual ~Iterator() {}
+        static Iterator *make() { return (new Iterator())->init(); }
+        static Iterator *make(Text *text) { return (new Iterator())->init(&text); }
+
+        Iterator *init(Text **text = NULL, int *index = NULL);
+
+        virtual ~Iterator();
 
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(Iterator);
         LIU_DECLARE_AND_DEFINE_FORK_METHOD(Iterator);
 
-        LIU_DECLARE_NATIVE_METHOD(init);
+        LIU_DECLARE_ACCESSOR(TextPtr, text, Text);
+        LIU_DECLARE_ACCESSOR(int, index, Index);
 
         virtual bool hasNext() const;
         virtual Text *peekNext() const;
         virtual void skipNext();
     private:
-        Text *_text;
-        int _index;
+        Text **_text;
+        int *_index;
     };
 
     // === IndexIterator ===
 
-    #define LIU_TEXT_INDEX_ITERATOR(ARGS...) new IndexIterator(context()->child("Object", "Text", "IndexIterator"), ##ARGS)
-
     class IndexIterator : public Iterable::Iterator {
         LIU_DECLARE(IndexIterator, Object, Text);
     public:
-        explicit IndexIterator(Node *origin, Text *text = NULL);
+        explicit IndexIterator(Node *origin = context()->child("Object", "Text", "IndexIterator")) :
+            Iterable::Iterator(origin) {};
 
-        virtual ~IndexIterator() {}
+        static IndexIterator *make() { return (new IndexIterator())->init(); }
+        static IndexIterator *make(Text *text) { return (new IndexIterator())->init(&text); }
+
+        IndexIterator *init(Text **text = NULL, int *index = NULL);
+
+        virtual ~IndexIterator();
 
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(IndexIterator);
         LIU_DECLARE_AND_DEFINE_FORK_METHOD(IndexIterator);
 
-        LIU_DECLARE_NATIVE_METHOD(init);
+        LIU_DECLARE_ACCESSOR(TextPtr, text, Text);
+        LIU_DECLARE_ACCESSOR(int, index, Index);
 
         virtual bool hasNext() const;
         virtual Number *peekNext() const;
         virtual void skipNext();
     private:
-        Text *_text;
-        int _index;
+        Text **_text;
+        int *_index;
     };
 
     /*

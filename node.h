@@ -62,7 +62,7 @@ TYPE NAME() const; \
 void set##NAME_CAP(const TYPE *NAME = NULL); \
 void set##NAME_CAP(const TYPE &NAME) { set##NAME_CAP(&NAME); }
 
-#define LIU_DEFINE_ACCESSOR(CLASS, TYPE, NAME, NAME_CAP) \
+#define LIU_DEFINE_ACCESSOR(CLASS, TYPE, NAME, NAME_CAP, DEFAULT) \
 TYPE *CLASS::has##NAME_CAP() const { \
     if(_##NAME) return _##NAME; \
     if(CLASS *orig = CLASS::dynamicCast(origin())) return orig->has##NAME_CAP(); \
@@ -71,7 +71,7 @@ TYPE *CLASS::has##NAME_CAP() const { \
 \
 TYPE CLASS::NAME() const { \
     TYPE *has = has##NAME_CAP(); \
-    return has ? *has : TYPE(); \
+    return has ? *has : TYPE(DEFAULT); \
 } \
 \
 void CLASS::set##NAME_CAP(const TYPE *NAME) { \
@@ -84,7 +84,7 @@ void CLASS::set##NAME_CAP(const TYPE *NAME) { \
         delete _##NAME; \
         _##NAME = NULL; \
     } \
-    hasChanged(); \
+    CLASS::hasChanged(); \
 }
 
 #define LIU_CHECK_POINTER(POINTER) \
@@ -283,6 +283,8 @@ public:
     LIU_DECLARE_NATIVE_METHOD(assert_true) { return assert(true); }
     LIU_DECLARE_NATIVE_METHOD(assert_false) { return assert(false); }
 
+    virtual void hasChanged() {}
+
     void inspect() const { P(toString(true).toUtf8()); } // TODO: use Console print
     LIU_DECLARE_NATIVE_METHOD(inspect);
 
@@ -352,6 +354,7 @@ public: \
     static NAME *root(); \
     virtual void initRoot(); \
     static const bool isInitialized; \
+    typedef NAME *NAME##Ptr; \
 private:
 
 #define LIU_DEFINE(NAME, ORIGIN, PARENT) \
