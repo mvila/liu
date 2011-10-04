@@ -9,6 +9,7 @@ LIU_DEFINE_2(List, Object, Object);
 
 List *List::init() {
     Object::init();
+    _operations = NULL;
     return this;
 }
 
@@ -70,24 +71,47 @@ Node *List::remove(Node *item, bool *wasFoundPtr) {
 // --- Indexable ---
 
 Node *List::get(Node *nodeIndex, bool *wasFoundPtr) {
-//    int index = nodeIndex->toDouble();
-//    int max = value().size();
-//    if(index < 0) index = max + index;
-//    bool wasFound = index >= 0 && index < max;
-//    Character *result = wasFound ? LIU_CHARACTER(value().at(index)) : NULL;
-//    if(wasFoundPtr)
-//        *wasFoundPtr = wasFound;
-//    else if(!wasFound)
-//        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
-//    return result;
-    Q_UNUSED(nodeIndex);
-    Q_UNUSED(wasFoundPtr);
-    return NULL;
+    int index = nodeIndex->toDouble();
+    int max = size();
+    if(index < 0) index = max + index;
+    bool wasFound = index >= 0 && index < max;
+    Node *result = wasFound ? _get(index) : NULL;
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound)
+        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+    return result;
 }
 
 Node *List::_get(int index) {
-    Q_UNUSED(index);
-    return NULL;
+    int offset = 0;
+    if(_operations) {
+        foreach(const Operation &operation, *_operations) {
+            int newIndex = operation.index;
+            switch(operation.type) {
+            case Operation::Set:
+                newIndex += operation.size;
+                break;
+            case Operation::Insert:
+                if(newIndex < index) offset -= operation.size;
+                newIndex += operation.size;
+                break;
+            case Operation::Remove:
+                if(newIndex < index) offset += operation.size;
+                break;
+            default:
+                LIU_THROW(RuntimeException, "unknown operation");
+            }
+            if(newIndex > index) {
+                if(operation.data && operation.index <= index)
+                    return operation.data->at(index - (newIndex - operation.size));
+                else
+                    break;
+            }
+        }
+    }
+    if(List *orig = List::dynamicCast(origin())) return orig->_get(index + offset);
+    LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
 }
 
 void List::set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr) {

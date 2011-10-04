@@ -1,4 +1,6 @@
 Object List {
+    // --- Iterable ---
+
     \size {
     test:
         ?: List size == 0
@@ -6,8 +8,31 @@ Object List {
         list := List()
         list << "a"
         ?: list size == 1
+        ?: list() size == 1
         list[] := "b"
         ?: list size == 2
+        ?: list() size == 2
+    }
+
+    // --- Indexable ---
+
+    \`[]` {
+    test:
+        list := List()
+        list << "a"
+        list << "b"
+        list[1] inspect
+        list2 := list()
+        list2 << "c"
+        list2[1] inspect
+//        txt := "Hello"
+//        ?: txt[0] == "H"
+//        ?: txt[1] == "e"
+//        ?: IndexOutOfBoundsException throw? { txt[5] }
+//        !: txt[5]?
+//        ?: txt[-1] == "o"
+//        ?: txt[-2] == "l"
+//        ?: IndexOutOfBoundsException throw? { txt[-6] }
     }
 
 test:
