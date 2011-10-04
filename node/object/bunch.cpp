@@ -2,7 +2,7 @@
 
 LIU_BEGIN
 
-LIU_DEFINE(Bunch, List, Object);
+LIU_DEFINE(Bunch, OldList, Object);
 
 void Bunch::initRoot() {
 }

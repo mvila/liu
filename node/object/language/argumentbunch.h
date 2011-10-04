@@ -37,9 +37,9 @@ namespace Language {
             GenericList<Argument *>(
                 origin, LIU_ARGUMENT(argument1), LIU_ARGUMENT(argument2), true) {}
 
-        ArgumentBunch(Node *origin, List *list) : GenericList<Argument *>(origin, true) {
+        ArgumentBunch(Node *origin, OldList *list) : GenericList<Argument *>(origin, true) {
             if(list) {
-                List::Iterator i(list);
+                OldList::Iterator i(list);
                 while(Node *node = i.next()) {
                     Primitive *primitive = Primitive::dynamicCast(node);
                     if(!primitive) LIU_THROW(ArgumentException, "Primitive expected");

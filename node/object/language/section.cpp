@@ -3,7 +3,7 @@
 LIU_BEGIN
 
 namespace Language {
-    LIU_DEFINE(Section, List, Language);
+    LIU_DEFINE(Section, OldList, Language);
 
     void Section::initRoot() {
     }

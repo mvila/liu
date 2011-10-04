@@ -19,7 +19,7 @@ namespace Language {
             if(!primitive) LIU_THROW(ArgumentException, "code parameter must be a Primitive");
             setCode(primitive);
             if(message->hasASecondInput()) {
-                List *list = List::dynamicCast(message->runSecondInput());
+                OldList *list = OldList::dynamicCast(message->runSecondInput());
                 if(!list) LIU_THROW(ArgumentException, "inputs parameter must be a List");
     //            setInputs(list);
             }

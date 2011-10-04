@@ -36,8 +36,9 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, set) {
 }
 
 void Indexable::appendOrSet(Node *index, Node *item, bool *okPtr) {
-    bool ok;
-    set(index, item, &ok);
+    bool ok = false;
+    if(index)
+        set(index, item, &ok);
     if(ok) {
         if(okPtr) *okPtr = true;
     } else {
@@ -47,9 +48,9 @@ void Indexable::appendOrSet(Node *index, Node *item, bool *okPtr) {
 
 LIU_DEFINE_NATIVE_METHOD(Indexable, append_or_set) {
     LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(2);
-    Node *index = message->runFirstInput();
-    Node *item = message->runSecondInput();
+    LIU_CHECK_INPUT_SIZE(1, 2);
+    Node *index = message->hasASecondInput() ? message->runFirstInput() : NULL;
+    Node *item = message->runLastInput();
     bool wasFound = true;
     appendOrSet(index, item, message->isQuestioned() ? &wasFound : NULL);
     if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));

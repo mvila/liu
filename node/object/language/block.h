@@ -10,7 +10,7 @@ namespace Language {
     new Language::Block(context()->child("Object", "Language", "Block"), ##ARGS)
 
     class Block : public GenericList<Section *> {
-        LIU_DECLARE(Block, List, Language);
+        LIU_DECLARE(Block, OldList, Language);
     public:
         explicit Block(Node *origin) : GenericList<Section *>(origin),
             _doc(NULL), _docIsCached(false), _body(NULL), _bodyIsCached(false), _test(NULL), _testIsCached(false),

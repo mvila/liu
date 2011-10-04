@@ -13,7 +13,7 @@ namespace Language {
     new Language::OperatorTable(context()->child("Object", "Language", "OperatorTable"), ##ARGS)
 
     class OperatorTable : public GenericList<Operator *> {
-        LIU_DECLARE(OperatorTable, List, Language);
+        LIU_DECLARE(OperatorTable, OldList, Language);
     public:
         explicit OperatorTable(Node *origin) : GenericList<Operator *>(origin) {}
 

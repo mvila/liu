@@ -11,7 +11,7 @@ namespace Language {
     new Language::TestSuite(context()->child("Object", "Language", "TestSuite"), ##ARGS)
 
     class TestSuite : public GenericList<Test *> {
-        LIU_DECLARE(TestSuite, List, Language);
+        LIU_DECLARE(TestSuite, OldList, Language);
     public:
         explicit TestSuite(Node *origin) : GenericList<Test *>(origin) {}
 

@@ -8,7 +8,7 @@ LIU_BEGIN
 #define LIU_BUNCH(ARGS...) new Bunch(context()->child("Object", "Bunch"), ##ARGS)
 
 class Bunch : public GenericList<Node *> {
-    LIU_DECLARE(Bunch, List, Object);
+    LIU_DECLARE(Bunch, OldList, Object);
 public:
     explicit Bunch(Node *origin) : GenericList<Node *>(origin, true) {}
 

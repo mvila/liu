@@ -75,7 +75,7 @@ public:
     class IndexIterator;
     virtual IndexIterator *indexIterator() const;
 
-    // --- Indexable ---
+    // --- Insertable ---
 
     virtual void insert(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr = NULL);
 

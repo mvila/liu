@@ -6,7 +6,7 @@
 LIU_BEGIN
 
 namespace Language {
-    LIU_DEFINE(Block, List, Language);
+    LIU_DEFINE(Block, OldList, Language);
 
     void Block::initRoot() {
     }

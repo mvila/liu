@@ -3,7 +3,7 @@
 LIU_BEGIN
 
 namespace Language {
-    LIU_DEFINE(ParameterList, List, Language);
+    LIU_DEFINE(ParameterList, OldList, Language);
 
     void ParameterList::initRoot() {
     }

@@ -248,9 +248,9 @@ void Text::set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr) {
 }
 
 void Text::append(Node *nodeIndex, Node *nodeValue, bool *okPtr) {
-    int index = nodeIndex->toDouble();
     QString str = value();
     int max = str.size();
+    int index = nodeIndex ? nodeIndex->toDouble() : max;
     if(index < 0) index = max + index;
     bool ok = index == max;
     if(ok) setValue(value() + nodeValue->toString());

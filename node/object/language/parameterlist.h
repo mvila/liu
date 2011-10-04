@@ -11,7 +11,7 @@ namespace Language {
     new Language::ParameterList(context()->child("Object", "Language", "ParameterList"), ##ARGS)
 
     class ParameterList : public GenericList<Parameter *> {
-        LIU_DECLARE(ParameterList, List, Language);
+        LIU_DECLARE(ParameterList, OldList, Language);
     public:
         explicit ParameterList(Node *origin) : GenericList<Parameter *>(origin) {}
 

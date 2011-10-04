@@ -304,19 +304,19 @@ public:
     };
 };
 
-// === List ===
+// === OldList ===
 
-#define LIU_LIST(ARGS...) new List(context()->child("Object", "List"), ##ARGS)
+#define LIU_OLD_LIST(ARGS...) new OldList(context()->child("Object", "OldList"), ##ARGS)
 
-class List : public GenericList<Node *> {
-    LIU_DECLARE(List, AbstractList, Object);
+class OldList : public GenericList<Node *> {
+    LIU_DECLARE(OldList, AbstractList, Object);
 public:
-    explicit List(Node *origin) : GenericList<Node *>(origin) {}
+    explicit OldList(Node *origin) : GenericList<Node *>(origin) {}
 
-    List(Node *origin, const QList<Node *> &other) : GenericList<Node *>(origin, other) {}
+    OldList(Node *origin, const QList<Node *> &other) : GenericList<Node *>(origin, other) {}
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(List);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(List);
+    LIU_DECLARE_AND_DEFINE_COPY_METHOD(OldList);
+    LIU_DECLARE_AND_DEFINE_FORK_METHOD(OldList);
 
     LIU_DECLARE_NATIVE_METHOD(init);
     LIU_DECLARE_NATIVE_METHOD(make);

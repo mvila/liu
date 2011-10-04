@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core
-QT       += testlib
 QT       -= gui
 
 TARGET = liu
@@ -55,11 +54,6 @@ SOURCES += main.cpp \
     node/object/language/lexer.cpp \
     node/object/language/parser.cpp \
     node/object/language/interpreter.cpp \
-    tests/nodetest.cpp \
-    tests/objecttest.cpp \
-    tests/texttest.cpp \
-    tests/listtest.cpp \
-    tests/dictionarytest.cpp \
     node/object/resource.cpp \
     node/object/iterable.cpp \
     node/object/language/abstractmethod.cpp \
@@ -108,14 +102,6 @@ HEADERS += \
     node/object/language/lexer.h \
     node/object/language/parser.h \
     node/object/language/interpreter.h \
-    tests/testbegin.h \
-    tests/testend.h \
-    tests/runalltests.h \
-    tests/nodetest.h \
-    tests/objecttest.h \
-    tests/texttest.h \
-    tests/listtest.h \
-    tests/dictionarytest.h \
     node/object/resource.h \
     node/object/iterable.h \
     node/object/language/abstractmethod.h \

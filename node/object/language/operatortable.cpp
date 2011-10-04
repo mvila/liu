@@ -3,7 +3,7 @@
 LIU_BEGIN
 
 namespace Language {
-    LIU_DEFINE(OperatorTable, List, Language);
+    LIU_DEFINE(OperatorTable, OldList, Language);
 
     void OperatorTable::initRoot() {
     }

@@ -11,7 +11,7 @@ namespace Language {
     new Language::Section(context()->child("Object", "Language", "Section"), ##ARGS)
 
     class Section : public GenericList<Primitive *> {
-        LIU_DECLARE(Section, List, Language);
+        LIU_DECLARE(Section, OldList, Language);
     public:
         explicit Section(Node *origin, Primitive *label = NULL) :
             GenericList<Primitive *>(origin), _label(label) {}

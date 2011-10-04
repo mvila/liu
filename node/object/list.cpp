@@ -110,16 +110,16 @@ LIU_DEFINE_NATIVE_METHOD(AbstractList, empty) {
     return LIU_BOOLEAN(isEmpty());
 }
 
-// === List ===
+// === OldList ===
 
-LIU_DEFINE(List, AbstractList, Object);
+LIU_DEFINE(OldList, AbstractList, Object);
 
-void List::initRoot() {
-    LIU_ADD_NATIVE_METHOD(List, init);
-    LIU_ADD_NATIVE_METHOD(List, make);
+void OldList::initRoot() {
+    LIU_ADD_NATIVE_METHOD(OldList, init);
+    LIU_ADD_NATIVE_METHOD(OldList, make);
 }
 
-LIU_DEFINE_NATIVE_METHOD(List, init) {
+LIU_DEFINE_NATIVE_METHOD(OldList, init) {
     LIU_FIND_LAST_MESSAGE;
     if(!message->hasAnInput()) return this;
     LIU_CHECK_INPUT_SIZE(1, 2);
@@ -136,9 +136,9 @@ LIU_DEFINE_NATIVE_METHOD(List, init) {
     LIU_THROW_CONVERSION_EXCEPTION("cannot build a List with these arguments");
 }
 
-LIU_DEFINE_NATIVE_METHOD(List, make) {
+LIU_DEFINE_NATIVE_METHOD(OldList, make) {
     LIU_FIND_LAST_MESSAGE;
-    List *list = fork();
+    OldList *list = fork();
     for(int i = 0; i < message->numInputs(); ++i)
         list->append(message->runInput(i));
     return list;

@@ -3,7 +3,7 @@
 LIU_BEGIN
 
 namespace Language {
-    LIU_DEFINE(TestSuite, List, Language);
+    LIU_DEFINE(TestSuite, OldList, Language);
 
     void TestSuite::initRoot() {
     }
