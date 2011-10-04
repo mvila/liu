@@ -1,7 +1,6 @@
 #ifndef LIU_TEXT_H
 #define LIU_TEXT_H
 
-#include "node/object/element.h"
 #include "node/object/insertable.h"
 #include "node/object/boolean.h"
 #include "node/object/number.h"

@@ -1,7 +1,7 @@
 #ifndef LIU_BUNCH_H
 #define LIU_BUNCH_H
 
-#include "node/object/list.h"
+#include "node/object/oldlist.h"
 
 LIU_BEGIN
 

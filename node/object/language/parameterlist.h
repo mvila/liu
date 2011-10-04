@@ -1,7 +1,7 @@
 #ifndef LIU_LANGUAGE_PARAMETER_LIST_H
 #define LIU_LANGUAGE_PARAMETER_LIST_H
 
-#include "node/object/list.h"
+#include "node/object/oldlist.h"
 #include "node/object/language/parameter.h"
 
 LIU_BEGIN

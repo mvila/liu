@@ -71,6 +71,8 @@ Object Text {
 
     \size {
     test:
+        ?: Text size == 0
+        ?: Text() size == 0
         ?: "" size == 0
         ?: "a" size == 1
         ?: "\r\n" size == 2

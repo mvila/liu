@@ -1,7 +1,7 @@
 #ifndef LIU_LANGUAGE_TEST_SUITE_H
 #define LIU_LANGUAGE_TEST_SUITE_H
 
-#include "node/object/list.h"
+#include "node/object/oldlist.h"
 #include "node/object/language/test.h"
 
 LIU_BEGIN

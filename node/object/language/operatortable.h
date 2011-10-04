@@ -3,7 +3,7 @@
 
 #include <QtCore/QSet>
 
-#include "node/object/list.h"
+#include "node/object/oldlist.h"
 #include "node/object/language/operator.h"
 
 LIU_BEGIN

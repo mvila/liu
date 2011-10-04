@@ -1,152 +1,261 @@
 #include "node/object/list.h"
-#include "node/object/number.h"
-#include "node/object/text.h"
 #include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
 
-// === AbastractList ===
+// === List ===
 
-LIU_DEFINE(AbstractList, Object, Object);
+LIU_DEFINE_2(List, Object, Object);
 
-void AbstractList::initRoot() {
-    LIU_ADD_NATIVE_METHOD(AbstractList, get, []);
-    LIU_ADD_NATIVE_METHOD(AbstractList, set, []=);
-    LIU_ADD_NATIVE_METHOD(AbstractList, append_or_set, []:=);
-
-    LIU_ADD_NATIVE_METHOD(AbstractList, append);
-    LIU_ADD_NATIVE_METHOD(AbstractList, remove, []>>);
-
-    LIU_ADD_NATIVE_METHOD(AbstractList, size);
-    LIU_ADD_NATIVE_METHOD(AbstractList, empty);
-}
-
-LIU_DEFINE_NATIVE_METHOD(AbstractList, get) { // TODO: use multiple return values (-> index, found)
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1);
-    Node *value = NULL;
-    if(Primitive *label = message->firstInput()->label()) {
-        Message *msg = Message::dynamicCast(label->value());
-        if(msg && msg->name() == "value")
-            value = message->runFirstInput();
-    }
-    bool wasFound = true;
-    if(value) {
-        int index = get(&value, message->isQuestioned() ? &wasFound : NULL);
-        if(wasFound) return LIU_NUMBER(index);
-    } else {
-        int index = message->runFirstInput()->toDouble();
-        value = get(index, message->isQuestioned() ? &wasFound : NULL);
-        if(wasFound) return value;
-    }
-    Primitive::skip(LIU_BOOLEAN(false));
-}
-
-LIU_DEFINE_NATIVE_METHOD(AbstractList, set) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(2);
-    int index = message->runFirstInput()->toDouble();
-    return set(index, message->runSecondInput());
-}
-
-LIU_DEFINE_NATIVE_METHOD(AbstractList, append_or_set) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1, 2);
-    int index;
-    if(message->hasASecondInput())
-        index = message->runFirstInput()->toDouble();
-    else
-        index = size();
-    Node *value = message->runLastInput();
-    if(hasIndex(index))
-        return set(index, value);
-    else {
-        int numBlanksToAppend = index - size();
-        for(int i = 1; i <= numBlanksToAppend; ++i) append(LIU_NODE());
-        return append(value);
-    }
-}
-
-LIU_DEFINE_NATIVE_METHOD(AbstractList, append) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1);
-    Node *value = message->runFirstInput();
-    append(value);
+List *List::init() {
+    Object::init();
     return this;
 }
 
-LIU_DEFINE_NATIVE_METHOD(AbstractList, remove) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1);
-    Node *value = NULL;
-    if(Primitive *label = message->firstInput()->label()) { // TODO: DRY!
-        Message *msg = Message::dynamicCast(label->value());
-        if(msg && msg->name() == "value")
-            value = message->runFirstInput();
+List::~List() {
+    if(_operations) delete _operations;
+}
+
+void List::initRoot() {
+    addExtension(Insertable::root());
+}
+
+// --- Iterable ---
+
+List::Iterator *List::iterator() const {
+    return List::Iterator::make(constCast(this));
+}
+
+int List::size() const {
+    int result = 0;
+    if(_operations) {
+        foreach(const Operation &operation, *_operations) {
+            if(operation.type == Operation::Insert)
+                result += operation.size;
+            else if (operation.type == Operation::Remove)
+                result -= operation.size;
+        }
     }
-    int index;
-    bool wasFound = true;
-    if(value) {
-        index = get(&value, message->isQuestioned() ? &wasFound : NULL);
-    } else {
-        index = message->runFirstInput()->toDouble();
-        value = get(index, message->isQuestioned() ? &wasFound : NULL);
+    if(List *orig = List::dynamicCast(origin())) result += orig->size();
+    return result;
+}
+
+// --- Collection ---
+
+void List::append(Node *item) {
+    _insert(size(), item);
+}
+
+Node *List::remove(Node *item, bool *wasFoundPtr) {
+//    QString source = value();
+//    QString str = item->toString();
+//    int index = source.indexOf(str);
+//    bool wasFound = index != -1;
+//    Text *result = NULL;
+//    if(wasFound) {
+//        result = Text::make(source.mid(index, str.size()));
+//        source.remove(index, str.size());
+//        setValue(source);
+//    }
+//    if(wasFoundPtr)
+//        *wasFoundPtr = wasFound;
+//    else if(!wasFound)
+//        LIU_THROW(NotFoundException, "value not found");
+//    return result;
+    Q_UNUSED(item);
+    Q_UNUSED(wasFoundPtr);
+    return NULL;
+}
+
+// --- Indexable ---
+
+Node *List::get(Node *nodeIndex, bool *wasFoundPtr) {
+//    int index = nodeIndex->toDouble();
+//    int max = value().size();
+//    if(index < 0) index = max + index;
+//    bool wasFound = index >= 0 && index < max;
+//    Character *result = wasFound ? LIU_CHARACTER(value().at(index)) : NULL;
+//    if(wasFoundPtr)
+//        *wasFoundPtr = wasFound;
+//    else if(!wasFound)
+//        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+//    return result;
+    Q_UNUSED(nodeIndex);
+    Q_UNUSED(wasFoundPtr);
+    return NULL;
+}
+
+Node *List::_get(int index) {
+    Q_UNUSED(index);
+    return NULL;
+}
+
+void List::set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr) {
+//    int index = nodeIndex->toDouble();
+//    QString str = value();
+//    int max = str.size();
+//    if(index < 0) index = max + index;
+//    bool wasFound = index >= 0 && index < max;
+//    if(wasFound) {
+//        str.remove(index, 1);
+//        str.insert(index, nodeValue->toString());
+//        setValue(str);
+//    }
+//    if(wasFoundPtr)
+//        *wasFoundPtr = wasFound;
+//    else if(!wasFound)
+//        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+    Q_UNUSED(nodeIndex);
+    Q_UNUSED(nodeValue);
+    Q_UNUSED(wasFoundPtr);
+}
+
+void List::append(Node *nodeIndex, Node *nodeValue, bool *okPtr) {
+    int max = size();
+    int index = nodeIndex ? nodeIndex->toDouble() : max;
+    if(index < 0) index = max + index;
+    bool ok = index == max;
+    if(ok) _insert(index, nodeValue);
+    if(okPtr)
+        *okPtr = ok;
+    else if(!ok) {
+        if(index < max)
+            LIU_THROW(DuplicateException, "index already exists");
+        else
+            LIU_THROW(IndexOutOfBoundsException, "index is invalid");
     }
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
-    remove(index);
-    return value;
 }
 
-LIU_DEFINE_NATIVE_METHOD(AbstractList, size) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(0);
-    return LIU_NUMBER(size());
+Node *List::unset(Node *nodeIndex, bool *wasFoundPtr) {
+//    int index = nodeIndex->toDouble();
+//    QString str = value();
+//    int max = str.size();
+//    if(index < 0) index = max + index;
+//    bool wasFound = index >= 0 && index < max;
+//    Character *result = NULL;
+//    if(wasFound) {
+//        result = LIU_CHARACTER(str.at(index));
+//        str.remove(index, 1);
+//        setValue(str);
+//    }
+//    if(wasFoundPtr)
+//        *wasFoundPtr = wasFound;
+//    else if(!wasFound)
+//        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+//    return result;
+    Q_UNUSED(nodeIndex);
+    Q_UNUSED(wasFoundPtr);
+    return NULL;
 }
 
-LIU_DEFINE_NATIVE_METHOD(AbstractList, empty) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_QUESTION_MARK;
-    LIU_CHECK_INPUT_SIZE(0);
-    return LIU_BOOLEAN(isEmpty());
+List::IndexIterator *List::indexIterator() const {
+    return List::IndexIterator::make(constCast(this));
 }
 
-// === OldList ===
+// --- Insertable ---
 
-LIU_DEFINE(OldList, AbstractList, Object);
-
-void OldList::initRoot() {
-    LIU_ADD_NATIVE_METHOD(OldList, init);
-    LIU_ADD_NATIVE_METHOD(OldList, make);
+void List::insert(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr) {
+//    QString str = value();
+//    int max = str.size();
+//    int index = nodeIndex ? nodeIndex->toDouble() : max;
+//    if(index < 0) index = max + index;
+//    bool wasFound = index >= 0 && index <= max;
+//    if(wasFound) {
+//        str.insert(index, nodeValue->toString());
+//        setValue(str);
+//    }
+//    if(wasFoundPtr)
+//        *wasFoundPtr = wasFound;
+//    else if(!wasFound)
+//        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+    Q_UNUSED(nodeIndex);
+    Q_UNUSED(nodeValue);
+    Q_UNUSED(wasFoundPtr);
 }
 
-LIU_DEFINE_NATIVE_METHOD(OldList, init) {
-    LIU_FIND_LAST_MESSAGE;
-    if(!message->hasAnInput()) return this;
-    LIU_CHECK_INPUT_SIZE(1, 2);
-    Text *text = Text::dynamicCast(message->runFirstInput());
-    if(text) {
-        LIU_CHECK_INPUT_SIZE(2);
-        QString source = text->value();
-        QString separator = message->runSecondInput()->toString();
-        QStringList list = source.split(separator);
-        QStringListIterator i(list);
-        while (i.hasNext()) append(Text::make(i.next()));
-        return this;
-    }
-    LIU_THROW_CONVERSION_EXCEPTION("cannot build a List with these arguments");
+void List::_insert(int index, Node *item) {
+    if(!_operations) _operations = new QList<Operation>;
+    QList<Node *> *data = new QList<Node *>;
+    data->append(item);
+    _operations->append(Operation(Operation::Insert, index, 1, data));
 }
 
-LIU_DEFINE_NATIVE_METHOD(OldList, make) {
-    LIU_FIND_LAST_MESSAGE;
-    OldList *list = fork();
-    for(int i = 0; i < message->numInputs(); ++i)
-        list->append(message->runInput(i));
-    return list;
+// === List::Iterator ===
+
+LIU_DEFINE_2(List::Iterator, Iterable::Iterator, List);
+
+List::Iterator *List::Iterator::init(List **list, int *index) {
+    Object::init();
+    _list = NULL;
+    _index = NULL;
+    setList(list);
+    setIndex(index);
+    return this;
 }
 
-LIU_DEFINE(VirtualList, AbstractList, Object);
+List::Iterator::~Iterator() {
+    setList();
+    setIndex();
+}
 
-void VirtualList::initRoot() {
+void List::Iterator::initRoot() {
+}
+
+LIU_DEFINE_ACCESSOR(List::Iterator, List::ListPtr, list, List, NULL);
+LIU_DEFINE_ACCESSOR(List::Iterator, int, index, Index, 0);
+
+bool List::Iterator::hasNext() const {
+    if(!list()) return false;
+    return index() < list()->size();
+}
+
+Node *List::Iterator::peekNext() const {
+    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
+    return list()->_get(index());
+}
+
+void List::Iterator::skipNext() {
+    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
+    setIndex(index() + 1);
+}
+
+// === List::IndexIterator ===
+
+LIU_DEFINE_2(List::IndexIterator, Iterable::Iterator, List);
+
+List::IndexIterator *List::IndexIterator::init(List **list, int *index) {
+    Object::init();
+    _list = NULL;
+    _index = NULL;
+    setList(list);
+    setIndex(index);
+    return this;
+}
+
+List::IndexIterator::~IndexIterator() {
+    setList();
+    setIndex();
+}
+
+void List::IndexIterator::initRoot() {
+}
+
+LIU_DEFINE_ACCESSOR(List::IndexIterator, List::ListPtr, list, List, NULL);
+LIU_DEFINE_ACCESSOR(List::IndexIterator, int, index, Index, 0);
+
+bool List::IndexIterator::hasNext() const {
+    if(!list()) return false;
+    return index() < list()->size();
+}
+
+Number *List::IndexIterator::peekNext() const {
+    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "IndexIterator is out of bounds");
+    return LIU_NUMBER(index());
+}
+
+void List::IndexIterator::skipNext() {
+    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "IndexIterator is out of bounds");
+    setIndex(index() + 1);
 }
 
 LIU_END

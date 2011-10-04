@@ -1,0 +1,20 @@
+Object List {
+    \size {
+    test:
+        ?: List size == 0
+        ?: List() size == 0
+        list := List()
+        list << "a"
+        ?: list size == 1
+        list[] := "b"
+        ?: list size == 2
+    }
+
+test:
+    ?: origin == Object
+    ?: parent == Object
+    ?: is?(Iterable)
+    ?: is?(Collection)
+    ?: is?(Indexable)
+    ?: is?(Insertable)
+}

@@ -29,7 +29,6 @@ SOURCES += main.cpp \
     node/object/character.cpp \
     node/object/text.cpp \
     node/object/pair.cpp \
-    node/object/list.cpp \
     node/object/bunch.cpp \
     node/object/dictionary.cpp \
     node/object/application.cpp \
@@ -59,7 +58,9 @@ SOURCES += main.cpp \
     node/object/language/abstractmethod.cpp \
     node/object/collection.cpp \
     node/object/indexable.cpp \
-    node/object/insertable.cpp
+    node/object/insertable.cpp \
+    node/object/oldlist.cpp \
+    node/object/list.cpp
 
 HEADERS += \
     liu.h \
@@ -77,7 +78,6 @@ HEADERS += \
     node/object/character.h \
     node/object/text.h \
     node/object/pair.h \
-    node/object/list.h \
     node/object/bunch.h \
     node/object/dictionary.h \
     node/object/application.h \
@@ -107,7 +107,9 @@ HEADERS += \
     node/object/language/abstractmethod.h \
     node/object/collection.h \
     node/object/indexable.h \
-    node/object/insertable.h
+    node/object/insertable.h \
+    node/object/oldlist.h \
+    node/object/list.h
 
 OTHER_FILES += \
     README.txt \
@@ -132,4 +134,5 @@ OTHER_FILES += \
     node/controlflow.liu \
     node/object/boolean.liu \
     node/object/character.liu \
-    node/object/iterable.liu
+    node/object/iterable.liu \
+    node/object/list.liu

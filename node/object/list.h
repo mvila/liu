@@ -1,379 +1,129 @@
 #ifndef LIU_LIST_H
 #define LIU_LIST_H
 
-#include "node/object.h"
+#include "node/object/insertable.h"
+#include "node/object/boolean.h"
+#include "node/object/number.h"
+#include "node/object/language/message.h"
 
 LIU_BEGIN
 
-#define LIU_CHECK_VALUE(VALUE) \
-if(!(VALUE)) LIU_THROW(NullPointerException, "value is NULL")
-
-// === GenericAbstractList ===
-
-template<class T>
-class GenericAbstractList : public Object {
+class List : public Insertable {
+    LIU_DECLARE(List, Object, Object);
 public:
-    explicit GenericAbstractList(Node *origin) : Object(origin), _areDuplicateValuesNotAllowed(false) { initFork(); }
+    explicit List(Node *origin = context()->child("Object", "List")) : Insertable(origin) {}
 
-    void initFork() {
-        GenericAbstractList *orig = dynamic_cast<GenericAbstractList *>(origin());
-        if(orig) setAreDuplicateValuesNotAllowed(orig->areDuplicateValuesNotAllowed());
-    }
+    //    List(const List &other);
 
-    bool areDuplicateValuesNotAllowed() const { return _areDuplicateValuesNotAllowed; }
-    void setAreDuplicateValuesNotAllowed(bool value) { _areDuplicateValuesNotAllowed = value; }
+    static List *make() { return (new List())->init(); }
 
-    T get(int i, bool *wasFoundPtr = NULL) const {
-        bool wasFound = hasIndex(i);
-        if(wasFoundPtr)
-            *wasFoundPtr = wasFound;
-        else if(!wasFound)
-            LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
-        return wasFound ? doGet(i) : NULL;
-    }
+    List *init();
 
-    virtual T doGet(int i) const {
-        Q_UNUSED(i);
-        LIU_ABSTRACT_CALL;
-    }
+    virtual ~List();
 
-    T first() const { return get(0); }
-    T second() const { return get(1); }
-    T third() const { return get(2); }
-    T fourth() const { return get(3); }
-    T fifth() const { return get(4); }
-    T last() const { return get(size()-1); }
+    LIU_DECLARE_AND_DEFINE_COPY_METHOD(List);
+    LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(List);
 
-    int get(T *value, bool *wasFoundPtr = NULL) const {
-        LIU_CHECK_VALUE(*value);
-        bool wasFound = false;
-        int i;
-        T val;
-        for(i = 0; i < size(); ++i) {
-            val = get(i);
-            if(val->isEqualTo(*value)) {
-                wasFound = true;
-                *value = val;
-                break;
-            }
-        }
-        if(wasFoundPtr)
-            *wasFoundPtr = wasFound;
-        else if(!wasFound)
-            LIU_THROW(NotFoundException, "value not found");
-        return i;
-    }
+    // --- Iterable ---
 
-    T set(int i, const T &value) {
-        checkIndex(i);
-        LIU_CHECK_VALUE(value);
-        if(!doGet(i)->isEqualTo(value)) {
-            checkIfValueIsAllowed(value);
-            doSet(i, value);
-            hasChanged();
-        }
-        return value;
-    }
+    class Iterator;
+    virtual Iterator *iterator() const;
+    virtual int size() const;
 
-    virtual void doSet(int i, const T &value) {
-        Q_UNUSED(i);
-        Q_UNUSED(value);
-        LIU_ABSTRACT_CALL;
-    }
+    // --- Collection ---
 
-    T insert(int i, const T &value) {
-        checkIndex(i, true);
-        LIU_CHECK_VALUE(value);
-        checkIfValueIsAllowed(value);
-        doInsert(i, value);
-        hasChanged();
-        return value;
-    }
+    virtual void append(Node *item);
+    virtual Node *remove(Node *item, bool *wasFoundPtr = NULL);
 
-    virtual void doInsert(int i, const T &value) {
-        Q_UNUSED(i);
-        Q_UNUSED(value);
-        LIU_ABSTRACT_CALL;
-    }
+    // --- Indexable ---
 
-    const GenericAbstractList *insert(int i, const GenericAbstractList *otherList) {
-        checkIndex(i, true);
-        if(!otherList) LIU_THROW(NullPointerException, "List pointer is NULL");
-        for(int j = 0; j < otherList->size(); j++) {
-            doInsert(i + j, otherList->get(j));
-        }
-        hasChanged();
-        return otherList;
-    }
-
-    T append(const T &value) { return insert(size(), value); }
-    const GenericAbstractList *append(const GenericAbstractList *otherList) { return insert(size(), otherList); }
-    T prepend(const T &value) { return insert(0, value); }
-    const GenericAbstractList *prepend(const GenericAbstractList *otherList) { return insert(0, otherList); }
-
-    void remove(int i) {
-        checkIndex(i);
-        doRemove(i);
-        hasChanged();
-    }
-
-    virtual void doRemove(int i) {
-        Q_UNUSED(i);
-        LIU_ABSTRACT_CALL;
-    }
-
-    void clear() {
-        if(size() > 0) {
-            doClear();
-            hasChanged();
-        }
-    }
-
-    virtual void doClear() {
-        LIU_ABSTRACT_CALL;
-    }
-
-    bool hasIndex(int i) const { return i >= 0 && i < size(); }
-
-    bool hasValue(T value) const {
-        bool wasFound;
-        get(&value, &wasFound);
-        return wasFound;
-    }
-
-    void checkIfValueIsAllowed(const T &value) const {
-        if(areDuplicateValuesNotAllowed() && hasValue(value))
-            LIU_THROW(DuplicateException, "cannot add something which is already there");
-    }
-
-    virtual int size() const {
-        LIU_ABSTRACT_CALL;
-    }
-    bool isEmpty() const { return size() == 0; }
-    bool isNotEmpty() const { return size() > 0; }
-
-    const QString join(const QString &separator = "", const QString &prefix = "",
-                       const QString &suffix = "", bool debug = false, short level = 0) const {
-        QString str;
-        for(int i = 0; i < size(); ++i) {
-            if(i > 0) str += separator;
-            str += prefix + get(i)->toString(debug, level) + suffix;
-        }
-        return str;
-    }
-
-    void checkIndex(int i, bool insertMode = false) const {
-        int max = size();
-        if(!insertMode) max--;
-        if(i < 0) LIU_THROW(IndexOutOfBoundsException, "index is less than zero");
-        if(i > max) {
-            if(insertMode)
-                LIU_THROW(IndexOutOfBoundsException, "index is greater than size");
-            else
-                LIU_THROW(IndexOutOfBoundsException, "index is greater than size-1");
-        }
-    }
-
-    virtual void hasChanged() {}
-
-    virtual QString toString(bool debug = false, short level = 0) const {
-        return "[" + join(", ", "", "", debug, level) + "]";
-    }
+    virtual Node *get(Node *nodeIndex, bool *wasFoundPtr = NULL);
 private:
-    bool _areDuplicateValuesNotAllowed;
-};
-
-// === AbstractList ===
-
-#define LIU_ABSTRACT_LIST(ARGS...) new AbstractList(context()->child("Object", "AbstractList"), ##ARGS)
-
-class AbstractList : public GenericAbstractList<Node *> {
-    LIU_DECLARE(AbstractList, Object, Object);
+    Node *_get(int index);
 public:
-    explicit AbstractList(Node *origin) : GenericAbstractList<Node *>(origin) {}
+    virtual void set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr = NULL);
+    virtual void append(Node *nodeIndex, Node *item, bool *okPtr = NULL);
+    virtual Node *unset(Node *nodeIndex, bool *wasFoundPtr = NULL);
+    class IndexIterator;
+    virtual IndexIterator *indexIterator() const;
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(AbstractList);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(AbstractList);
+    // --- Insertable ---
 
-    LIU_DECLARE_NATIVE_METHOD(get);
-    LIU_DECLARE_NATIVE_METHOD(set);
-    LIU_DECLARE_NATIVE_METHOD(append_or_set);
-
-    LIU_DECLARE_NATIVE_METHOD(append);
-    LIU_DECLARE_NATIVE_METHOD(remove);
-
-    LIU_DECLARE_NATIVE_METHOD(size);
-    LIU_DECLARE_NATIVE_METHOD(empty);
-};
-
-// === GenericList ===
-
-template<class T>
-class GenericList : public GenericAbstractList<T> {
-public:
-    using GenericAbstractList<T>::origin;
-    using GenericAbstractList<T>::removeAnonymousChild;
-    using GenericAbstractList<T>::checkIndex;
-    using GenericAbstractList<T>::hasChanged;
-
-    explicit GenericList(Node *origin, bool isBunch = false) :
-        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) { initFork(); }
-
-    GenericList(Node *origin, const T &value, bool isBunch = false) :
-        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) { initFork(); append(value); }
-
-    GenericList(Node *origin, const T &value1, const T &value2, bool isBunch = false) :
-        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) { initFork(); append(value1); append(value2); }
-
-    GenericList(Node *origin, const T &value1, const T &value2, const T &value3, bool isBunch = false) :
-        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) { initFork(); append(value1); append(value2); append(value3); }
-
-    GenericList(Node *origin, const QList<T> &other, bool isBunch = false) :
-        GenericAbstractList<T>(origin), _list(NULL), _isBunch(isBunch) {
-        initFork();
-        if(!other.isEmpty()) {
-            foreach(T node, other) doInsert(size(), node);
-            hasChanged();
-        }
-    }
-
-    GenericList(const GenericList &other) : GenericAbstractList<T>(other), _list(NULL), _isBunch(other._isBunch) {
-        if(other.isNotEmpty()) {
-            foreach(T node, *other._list) doInsert(size(), node);
-            hasChanged();
-        }
-    }
-
-    virtual ~GenericList() {
-        if(_list) {
-            foreach(T node, *_list) removeAnonymousChild(node);
-            delete _list;
-        }
-    }
-
-    void initFork() {
-        GenericList *orig = dynamic_cast<GenericList *>(origin());
-        if(orig && orig->isNotEmpty()) {
-            foreach(T node, *orig->_list) doInsert(size(), node->fork());
-            hasChanged();
-        }
-    }
-
-    virtual T doGet(int i) const {
-        return _list->at(i);
-    }
-
-    virtual void doSet(int i, const T &value) {
-        removeAnonymousChild(_list->at(i));
-        _list->replace(i, value);
-        addAnonymousChild(value);
-    }
-
-    virtual void doInsert(int i, const T &value) {
-        if(!_list) { _list = new QList<T>; }
-        _list->insert(i, value);
-        addAnonymousChild(value);
-    }
-
-    virtual void doRemove(int i) {
-        removeAnonymousChild(_list->at(i));
-        _list->removeAt(i);
-    }
-
-    virtual void doClear() {
-        if(_list) {
-            foreach(Node *node, *_list) removeAnonymousChild(node);
-            _list->clear();
-        }
-    }
-
-    virtual int size() const { return _list ? _list->size() : 0; }
+    virtual void insert(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr = NULL);
 private:
-    QList<T> *_list;
-    bool _isBunch;
+    void _insert(int index, Node *item);
 public:
-    class Iterator {
-    public:
-        Iterator(const GenericList *list) : _iterator(list->_list ? new QListIterator<T>(*list->_list) : NULL) {}
-        ~Iterator() { delete _iterator; }
-
-        bool hasNext() const { return _iterator && _iterator->hasNext(); }
-        const T next() { return hasNext() ? _iterator->next() : NULL; }
-    private:
-        QListIterator<T> *_iterator;
+private:
+    struct Operation {
+        enum Type { Null, Set, Insert, Remove };
+        Operation(const Type theType = Null, const int theIndex = 0,
+                  const int theSize = 0, QList<Node *> *theData = NULL) :
+            type(theType), index(theIndex), size(theSize), data(theData) {};
+        Type type;
+        int index;
+        int size;
+        QList<Node *> *data;
     };
-};
 
-// === OldList ===
-
-#define LIU_OLD_LIST(ARGS...) new OldList(context()->child("Object", "OldList"), ##ARGS)
-
-class OldList : public GenericList<Node *> {
-    LIU_DECLARE(OldList, AbstractList, Object);
+    QList<Operation> *_operations;
 public:
-    explicit OldList(Node *origin) : GenericList<Node *>(origin) {}
+    // === Iterator ===
 
-    OldList(Node *origin, const QList<Node *> &other) : GenericList<Node *>(origin, other) {}
+    class Iterator : public Iterable::Iterator {
+        LIU_DECLARE(Iterator, Object, List);
+    public:
+        explicit Iterator(Node *origin = context()->child("Object", "List", "Iterator")) :
+            Iterable::Iterator(origin) {};
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(OldList);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(OldList);
+        static Iterator *make() { return (new Iterator())->init(); }
+        static Iterator *make(List *list) { return (new Iterator())->init(&list); }
 
-    LIU_DECLARE_NATIVE_METHOD(init);
-    LIU_DECLARE_NATIVE_METHOD(make);
-};
+        Iterator *init(List **list = NULL, int *index = NULL);
 
-// === GenericVirtualList ===
+        virtual ~Iterator();
 
-template<class T>
-class GenericVirtualList : public GenericAbstractList<T> {
-public:
-    using GenericAbstractList<T>::checkIndex;
-    using GenericAbstractList<T>::hasChanged;
+        LIU_DECLARE_AND_DEFINE_COPY_METHOD(Iterator);
+        LIU_DECLARE_AND_DEFINE_FORK_METHOD(Iterator);
 
-    explicit GenericVirtualList(Node *origin, QList<T> **source = NULL) : GenericAbstractList<T>(origin), _source(source) {}
+        LIU_DECLARE_ACCESSOR(ListPtr, list, List);
+        LIU_DECLARE_ACCESSOR(int, index, Index);
 
-    GenericVirtualList(const GenericVirtualList &other) : GenericAbstractList<T>(other), _source(other._source) {}
+        virtual bool hasNext() const;
+        virtual Node *peekNext() const;
+        virtual void skipNext();
+    private:
+        List **_list;
+        int *_index;
+    };
 
-    QList<T> **source() const { return _source; }
-    void setSource(QList<T> **source) { _source = source; }
+    // === IndexIterator ===
 
-    virtual T doGet(int i) const {
-        return (*_source)->at(i);
-    }
+    class IndexIterator : public Iterable::Iterator {
+        LIU_DECLARE(IndexIterator, Object, List);
+    public:
+        explicit IndexIterator(Node *origin = context()->child("Object", "List", "IndexIterator")) :
+            Iterable::Iterator(origin) {};
 
-    virtual void doSet(int i, const T &value) {
-        (*_source)->replace(i, value);
-    }
+        static IndexIterator *make() { return (new IndexIterator())->init(); }
+        static IndexIterator *make(List *list) { return (new IndexIterator())->init(&list); }
 
-    virtual void doInsert(int i, const T &value) {
-        if(!*_source) { *_source = new QList<T>; }
-        (*_source)->insert(i, value);
-    }
+        IndexIterator *init(List **list = NULL, int *index = NULL);
 
-    virtual void doRemove(int i) {
-        (*_source)->removeAt(i);
-    }
+        virtual ~IndexIterator();
 
-    virtual void doClear() {
-        if(*_source) (*_source)->clear();
-    }
+        LIU_DECLARE_AND_DEFINE_COPY_METHOD(IndexIterator);
+        LIU_DECLARE_AND_DEFINE_FORK_METHOD(IndexIterator);
 
-    virtual int size() const { return *_source ? (*_source)->size() : 0; }
-private:
-    QList<T> **_source;
-};
+        LIU_DECLARE_ACCESSOR(ListPtr, list, List);
+        LIU_DECLARE_ACCESSOR(int, index, Index);
 
-// === VirtualList ===
-
-#define LIU_VIRTUAL_LIST(ARGS...) new VirtualList(context()->child("Object", "VirtualList"), ##ARGS)
-
-class VirtualList : public GenericVirtualList<Node *> {
-    LIU_DECLARE(VirtualList, AbstractList, Object);
-public:
-    explicit VirtualList(Node *origin, QList<Node *> **source = NULL) : GenericVirtualList<Node *>(origin, source) {}
-
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(VirtualList);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(VirtualList, source());
+        virtual bool hasNext() const;
+        virtual Number *peekNext() const;
+        virtual void skipNext();
+    private:
+        List **_list;
+        int *_index;
+    };
 };
 
 LIU_END
