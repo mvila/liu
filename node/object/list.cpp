@@ -87,30 +87,38 @@ Node *List::_get(int index) {
     int offset = 0;
     if(_operations) {
         foreach(const Operation &operation, *_operations) {
-            int newIndex = operation.index;
-            switch(operation.type) {
-            case Operation::Set:
-                newIndex += operation.size;
-                break;
-            case Operation::Insert:
-                if(newIndex < index) offset -= operation.size;
-                newIndex += operation.size;
-                break;
-            case Operation::Remove:
-                if(newIndex < index) offset += operation.size;
-                break;
-            default:
-                LIU_THROW(RuntimeException, "unknown operation");
-            }
-            if(newIndex > index) {
-                if(operation.data && operation.index <= index)
-                    return operation.data->at(index - (newIndex - operation.size));
-                else
-                    break;
-            }
+            if(operation.index > index) break;
+            if(operation.data && index < operation.index + operation.size)
+                return operation.data->at(index - operation.index);
+            else if(operation.type == Operation::Insert)
+                offset += operation.size;
+            else if(operation.type == Operation::Remove)
+                offset -= operation.size;
+
+//            int newIndex = operation.index;
+//            switch(operation.type) {
+//            case Operation::Set:
+//                newIndex += operation.size;
+//                break;
+//            case Operation::Insert:
+//                if(newIndex < index) offset -= operation.size;
+//                newIndex += operation.size;
+//                break;
+//            case Operation::Remove:
+//                if(newIndex < index) offset += operation.size;
+//                break;
+//            default:
+//                LIU_THROW(RuntimeException, "unknown operation");
+//            }
+//            if(newIndex > index) {
+//                if(operation.data && operation.index <= index)
+//                    return operation.data->at(index - (newIndex - operation.size));
+//                else
+//                    break;
+//            }
         }
     }
-    if(List *orig = List::dynamicCast(origin())) return orig->_get(index + offset);
+    if(List *orig = List::dynamicCast(origin())) return orig->_get(index - offset);
     LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
 }
 
