@@ -22,6 +22,22 @@ void Iterable::initRoot() {
     LIU_ADD_NATIVE_METHOD(Iterable, last);
 }
 
+QString Iterable::toString(bool debug, short level) const {
+    QString str;
+    if(debug) str += "[";
+    QScopedPointer<Iterator> i(iterator());
+    bool first = true;
+    while(i->hasNext()) {
+        if(!first) {
+            if(debug) str += ", ";
+        } else
+            first = false;
+        str += i->next()->toString(debug, level);
+    }
+    if(debug) str += "]";
+    return str;
+}
+
 LIU_DEFINE_NATIVE_METHOD(Iterable, iterator) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);

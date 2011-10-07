@@ -22,6 +22,8 @@ public:
     LIU_DECLARE_AND_DEFINE_COPY_METHOD(Iterable);
     LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Iterable);
 
+    virtual QString toString(bool debug = false, short level = 0) const;
+
     class Iterator;
     virtual Iterator *iterator() const { LIU_ABSTRACT_CALL; }
     LIU_DECLARE_NATIVE_METHOD(iterator);

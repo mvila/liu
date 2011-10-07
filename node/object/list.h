@@ -24,6 +24,8 @@ public:
     LIU_DECLARE_AND_DEFINE_COPY_METHOD(List);
     LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(List);
 
+    virtual QString toString(bool debug = false, short level = 0) const;
+
     // --- Iterable ---
 
     class Iterator;
@@ -49,7 +51,7 @@ public:
 
     // --- Insertable ---
 
-    virtual void insert(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr = NULL);
+    virtual void insert(Node *nodeIndex, Node *nodeValue, bool *okPtr = NULL);
 private:
     void _insert(int index, Node *item);
 public:

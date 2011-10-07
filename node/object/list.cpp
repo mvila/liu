@@ -21,6 +21,29 @@ void List::initRoot() {
     addExtension(Insertable::root());
 }
 
+QString List::toString(bool debug, short level) const {
+    if(!debug) return Insertable::toString(debug, level);
+    QString str;
+    if(!_operations)
+        str = "_operations is NULL";
+    else {
+        str = "[";
+        foreach(const Operation &operation, *_operations) {
+            if(str.size() != 1)
+                str += ", ";
+            if(operation.type == Operation::Set)
+                str += "S";
+            else if(operation.type == Operation::Insert)
+                str += "I";
+            else if (operation.type == Operation::Remove)
+                str += "R";
+            str += QString("[%1..%2]").arg(operation.index).arg(operation.index + operation.size - 1);
+        }
+        str += "]";
+    }
+    return str;
+}
+
 // --- Iterable ---
 
 List::Iterator *List::iterator() const {
@@ -84,19 +107,18 @@ Node *List::get(Node *nodeIndex, bool *wasFoundPtr) {
 }
 
 Node *List::_get(int index) {
-    int offset = 0;
     if(_operations) {
         foreach(const Operation &operation, *_operations) {
             if(operation.index > index) break;
             if(operation.data && index < operation.index + operation.size)
                 return operation.data->at(index - operation.index);
             else if(operation.type == Operation::Insert)
-                offset += operation.size;
+                index -= operation.size;
             else if(operation.type == Operation::Remove)
-                offset -= operation.size;
+                index += operation.size;
         }
     }
-    if(List *orig = List::dynamicCast(origin())) return orig->_get(index - offset);
+    if(List *orig = List::dynamicCast(origin())) return orig->_get(index);
     LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
 }
 
@@ -164,39 +186,39 @@ List::IndexIterator *List::indexIterator() const {
 
 // --- Insertable ---
 
-void List::insert(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr) {
-//    QString str = value();
-//    int max = str.size();
-//    int index = nodeIndex ? nodeIndex->toDouble() : max;
-//    if(index < 0) index = max + index;
-//    bool wasFound = index >= 0 && index <= max;
-//    if(wasFound) {
-//        str.insert(index, nodeValue->toString());
-//        setValue(str);
-//    }
-//    if(wasFoundPtr)
-//        *wasFoundPtr = wasFound;
-//    else if(!wasFound)
-//        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
-    Q_UNUSED(nodeIndex);
-    Q_UNUSED(nodeValue);
-    Q_UNUSED(wasFoundPtr);
+void List::insert(Node *nodeIndex, Node *nodeValue, bool *okPtr) {
+    int max = size();
+    int index = nodeIndex ? nodeIndex->toDouble() : max;
+    if(index < 0) index = max + index;
+    bool ok = index >= 0 && index <= max;
+    if(ok) _insert(index, nodeValue);
+    if(okPtr)
+        *okPtr = ok;
+    else if(!ok) {
+        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+    }
 }
 
 void List::_insert(int index, Node *item) {
     if(!_operations) _operations = new QList<Operation>;
-//    foreach(const Operation &operation, *_operations) {
-//        if(operation.index > index) break;
-//        if(operation.data && index < operation.index + operation.size)
-//            return operation.data->at(index - operation.index);
-//        else if(operation.type == Operation::Insert)
-//            offset += operation.size;
-//        else if(operation.type == Operation::Remove)
-//            offset -= operation.size;
-//    }
+    int size = _operations->size();
+    int i;
+    for (i = 0; i < size; ++i) {
+        Operation &operation = (*_operations)[i];
+        if(operation.index > index) break;
+        if(operation.type == Operation::Insert) {
+            if(index <= operation.index + operation.size) {
+                operation.data->insert(index - operation.index, item);
+                operation.size++;
+                return;
+            } else
+                index -= operation.size;
+        } else if(operation.type == Operation::Remove)
+            index += operation.size;
+    }
     QList<Node *> *data = new QList<Node *>;
     data->append(item);
-    _operations->append(Operation(Operation::Insert, index, 1, data));
+    _operations->insert(i, Operation(Operation::Insert, index, 1, data));
 }
 
 // === List::Iterator ===

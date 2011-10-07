@@ -21,10 +21,11 @@ Object List {
         list := List()
         list << "a"
         list << "b"
-        list[1] inspect
+        list << "c"
+        list inspect
         list2 := list()
-        list2 << "c"
-        list2[1] inspect
+        list2[0] << "!"
+        list2 print
 //        txt := "Hello"
 //        ?: txt[0] == "H"
 //        ?: txt[1] == "e"
