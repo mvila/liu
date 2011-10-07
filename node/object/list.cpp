@@ -93,12 +93,12 @@ Node *List::remove(Node *item, bool *wasFoundPtr) {
 
 // --- Indexable ---
 
-Node *List::get(Node *nodeIndex, bool *wasFoundPtr) {
-    int index = nodeIndex->toDouble();
+Node *List::get(Node *index, bool *wasFoundPtr) {
+    int i = index->toDouble();
     int max = size();
-    if(index < 0) index = max + index;
-    bool wasFound = index >= 0 && index < max;
-    Node *result = wasFound ? _get(index) : NULL;
+    if(i < 0) i = max + i;
+    bool wasFound = i >= 0 && i < max;
+    Node *result = wasFound ? _get(i) : NULL;
     if(wasFoundPtr)
         *wasFoundPtr = wasFound;
     else if(!wasFound)
@@ -122,43 +122,69 @@ Node *List::_get(int index) {
     LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
 }
 
-void List::set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr) {
-//    int index = nodeIndex->toDouble();
-//    QString str = value();
-//    int max = str.size();
-//    if(index < 0) index = max + index;
-//    bool wasFound = index >= 0 && index < max;
-//    if(wasFound) {
-//        str.remove(index, 1);
-//        str.insert(index, nodeValue->toString());
-//        setValue(str);
-//    }
-//    if(wasFoundPtr)
-//        *wasFoundPtr = wasFound;
-//    else if(!wasFound)
-//        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
-    Q_UNUSED(nodeIndex);
-    Q_UNUSED(nodeValue);
-    Q_UNUSED(wasFoundPtr);
+void List::set(Node *index, Node *item, bool *wasFoundPtr) {
+    int max = size();
+    int i = index ? index->toDouble() : max;
+    if(i < 0) i = max + i;
+    bool wasFound = i >= 0 && i < max;
+    if(wasFound) _set(i, item);
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound) {
+        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+    }
 }
 
-void List::append(Node *nodeIndex, Node *nodeValue, bool *okPtr) {
+void List::_set(int index, Node *item) {
+    if(!_operations) _operations = new QList<Operation>;
+    int i;
+    int size = _operations->size();
+    for(i = 0; i < size; ++i) {
+        Operation &operation = (*_operations)[i];
+        if(operation.type == Operation::Set && operation.index - 1 <= index && index <= operation.index + operation.size) {
+            if(index == operation.index - 1) {
+                operation.data->prepend(item);
+                operation.index--;
+                operation.size++;
+            } else if(index == operation.index + operation.size) {
+                operation.data->append(item);
+                operation.size++;
+            } else
+                operation.data->replace(index - operation.index, item);
+            return;
+        }
+        if(operation.index > index) break;
+        if(operation.type == Operation::Insert) {
+            if(index < operation.index + operation.size) {
+                operation.data->replace(index - operation.index, item);
+                return;
+            } else
+                index -= operation.size;
+        } else if(operation.type == Operation::Remove)
+            index += operation.size;
+    }
+    QList<Node *> *data = new QList<Node *>;
+    data->append(item);
+    _operations->insert(i, Operation(Operation::Set, index, 1, data));
+}
+
+void List::append(Node *index, Node *value, bool *okPtr) {
     int max = size();
-    int index = nodeIndex ? nodeIndex->toDouble() : max;
-    if(index < 0) index = max + index;
-    bool ok = index == max;
-    if(ok) _insert(index, nodeValue);
+    int i = index ? index->toDouble() : max;
+    if(i < 0) i = max + i;
+    bool ok = i == max;
+    if(ok) _insert(i, value);
     if(okPtr)
         *okPtr = ok;
     else if(!ok) {
-        if(index < max)
+        if(i < max)
             LIU_THROW(DuplicateException, "index already exists");
         else
             LIU_THROW(IndexOutOfBoundsException, "index is invalid");
     }
 }
 
-Node *List::unset(Node *nodeIndex, bool *wasFoundPtr) {
+Node *List::unset(Node *index, bool *wasFoundPtr) {
 //    int index = nodeIndex->toDouble();
 //    QString str = value();
 //    int max = str.size();
@@ -175,7 +201,7 @@ Node *List::unset(Node *nodeIndex, bool *wasFoundPtr) {
 //    else if(!wasFound)
 //        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
 //    return result;
-    Q_UNUSED(nodeIndex);
+    Q_UNUSED(index);
     Q_UNUSED(wasFoundPtr);
     return NULL;
 }
@@ -186,12 +212,12 @@ List::IndexIterator *List::indexIterator() const {
 
 // --- Insertable ---
 
-void List::insert(Node *nodeIndex, Node *nodeValue, bool *okPtr) {
+void List::insert(Node *index, Node *item, bool *okPtr) {
     int max = size();
-    int index = nodeIndex ? nodeIndex->toDouble() : max;
-    if(index < 0) index = max + index;
-    bool ok = index >= 0 && index <= max;
-    if(ok) _insert(index, nodeValue);
+    int i = index ? index->toDouble() : max;
+    if(i < 0) i = max + i;
+    bool ok = i >= 0 && i <= max;
+    if(ok) _insert(i, item);
     if(okPtr)
         *okPtr = ok;
     else if(!ok) {
@@ -201,9 +227,9 @@ void List::insert(Node *nodeIndex, Node *nodeValue, bool *okPtr) {
 
 void List::_insert(int index, Node *item) {
     if(!_operations) _operations = new QList<Operation>;
-    int size = _operations->size();
     int i;
-    for (i = 0; i < size; ++i) {
+    int size = _operations->size();
+    for(i = 0; i < size; ++i) {
         Operation &operation = (*_operations)[i];
         if(operation.index > index) break;
         if(operation.type == Operation::Insert) {

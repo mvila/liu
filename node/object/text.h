@@ -67,16 +67,16 @@ public:
 
     // --- Indexable ---
 
-    virtual Character *get(Node *nodeIndex, bool *wasFoundPtr = NULL);
-    virtual void set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr = NULL);
-    virtual void append(Node *nodeIndex, Node *item, bool *okPtr = NULL);
-    virtual Character *unset(Node *nodeIndex, bool *wasFoundPtr = NULL);
+    virtual Character *get(Node *index, bool *wasFoundPtr = NULL);
+    virtual void set(Node *index, Node *item, bool *wasFoundPtr = NULL);
+    virtual void append(Node *index, Node *item, bool *okPtr = NULL);
+    virtual Character *unset(Node *index, bool *wasFoundPtr = NULL);
     class IndexIterator;
     virtual IndexIterator *indexIterator() const;
 
     // --- Insertable ---
 
-    virtual void insert(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr = NULL);
+    virtual void insert(Node *index, Node *item, bool *wasFoundPtr = NULL);
 
     // --- Text ---
 

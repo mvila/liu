@@ -39,19 +39,22 @@ public:
 
     // --- Indexable ---
 
-    virtual Node *get(Node *nodeIndex, bool *wasFoundPtr = NULL);
+    virtual Node *get(Node *index, bool *wasFoundPtr = NULL);
 private:
     Node *_get(int index);
 public:
-    virtual void set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr = NULL);
-    virtual void append(Node *nodeIndex, Node *item, bool *okPtr = NULL);
-    virtual Node *unset(Node *nodeIndex, bool *wasFoundPtr = NULL);
+    virtual void set(Node *index, Node *item, bool *wasFoundPtr = NULL);
+private:
+    void _set(int index, Node *item);
+public:
+    virtual void append(Node *index, Node *item, bool *okPtr = NULL);
+    virtual Node *unset(Node *index, bool *wasFoundPtr = NULL);
     class IndexIterator;
     virtual IndexIterator *indexIterator() const;
 
     // --- Insertable ---
 
-    virtual void insert(Node *nodeIndex, Node *nodeValue, bool *okPtr = NULL);
+    virtual void insert(Node *index, Node *item, bool *okPtr = NULL);
 private:
     void _insert(int index, Node *item);
 public:

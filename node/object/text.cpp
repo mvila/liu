@@ -204,12 +204,12 @@ Text *Text::remove(Node *item, bool *wasFoundPtr) {
 
 // --- Indexable ---
 
-Character *Text::get(Node *nodeIndex, bool *wasFoundPtr) {
-    int index = nodeIndex->toDouble();
+Character *Text::get(Node *index, bool *wasFoundPtr) {
+    int i = index->toDouble();
     int max = value().size();
-    if(index < 0) index = max + index;
-    bool wasFound = index >= 0 && index < max;
-    Character *result = wasFound ? LIU_CHARACTER(value().at(index)) : NULL;
+    if(i < 0) i = max + i;
+    bool wasFound = i >= 0 && i < max;
+    Character *result = wasFound ? LIU_CHARACTER(value().at(i)) : NULL;
     if(wasFoundPtr)
         *wasFoundPtr = wasFound;
     else if(!wasFound)
@@ -230,15 +230,15 @@ Character *Text::get(Node *nodeIndex, bool *wasFoundPtr) {
 //    return Text::make(value().mid(index, size));
 //}
 
-void Text::set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr) {
-    int index = nodeIndex->toDouble();
+void Text::set(Node *index, Node *item, bool *wasFoundPtr) {
+    int i = index->toDouble();
     QString str = value();
     int max = str.size();
-    if(index < 0) index = max + index;
-    bool wasFound = index >= 0 && index < max;
+    if(i < 0) i = max + i;
+    bool wasFound = i >= 0 && i < max;
     if(wasFound) {
-        str.remove(index, 1);
-        str.insert(index, nodeValue->toString());
+        str.remove(i, 1);
+        str.insert(i, item->toString());
         setValue(str);
     }
     if(wasFoundPtr)
@@ -247,33 +247,33 @@ void Text::set(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr) {
         LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
 }
 
-void Text::append(Node *nodeIndex, Node *nodeValue, bool *okPtr) {
+void Text::append(Node *index, Node *item, bool *okPtr) {
     QString str = value();
     int max = str.size();
-    int index = nodeIndex ? nodeIndex->toDouble() : max;
-    if(index < 0) index = max + index;
-    bool ok = index == max;
-    if(ok) setValue(value() + nodeValue->toString());
+    int i = index ? index->toDouble() : max;
+    if(i < 0) i = max + i;
+    bool ok = i == max;
+    if(ok) setValue(value() + item->toString());
     if(okPtr)
         *okPtr = ok;
     else if(!ok) {
-        if(index < max)
+        if(i < max)
             LIU_THROW(DuplicateException, "index already exists");
         else
             LIU_THROW(IndexOutOfBoundsException, "index is invalid");
     }
 }
 
-Character *Text::unset(Node *nodeIndex, bool *wasFoundPtr) {
-    int index = nodeIndex->toDouble();
+Character *Text::unset(Node *index, bool *wasFoundPtr) {
+    int i = index->toDouble();
     QString str = value();
     int max = str.size();
-    if(index < 0) index = max + index;
-    bool wasFound = index >= 0 && index < max;
+    if(i < 0) i = max + i;
+    bool wasFound = i >= 0 && i < max;
     Character *result = NULL;
     if(wasFound) {
-        result = LIU_CHARACTER(str.at(index));
-        str.remove(index, 1);
+        result = LIU_CHARACTER(str.at(i));
+        str.remove(i, 1);
         setValue(str);
     }
     if(wasFoundPtr)
@@ -289,14 +289,14 @@ Text::IndexIterator *Text::indexIterator() const {
 
 // --- Insertable ---
 
-void Text::insert(Node *nodeIndex, Node *nodeValue, bool *wasFoundPtr) {
+void Text::insert(Node *index, Node *item, bool *wasFoundPtr) {
     QString str = value();
     int max = str.size();
-    int index = nodeIndex ? nodeIndex->toDouble() : max;
-    if(index < 0) index = max + index;
-    bool wasFound = index >= 0 && index <= max;
+    int i = index ? index->toDouble() : max;
+    if(i < 0) i = max + i;
+    bool wasFound = i >= 0 && i <= max;
     if(wasFound) {
-        str.insert(index, nodeValue->toString());
+        str.insert(i, item->toString());
         setValue(str);
     }
     if(wasFoundPtr)

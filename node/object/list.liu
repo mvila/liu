@@ -23,9 +23,19 @@ Object List {
         list << "b"
         list << "c"
         list inspect
+        list print
         list2 := list()
-        list2[0] << "!"
+        list2[1] = "x"
+        list2 inspect
         list2 print
+        list2[0] = "!"
+        list2 inspect
+        list2 print
+        list2[0] << "z"
+        list2 inspect
+        list2 print
+//        list2 print
+
 //        txt := "Hello"
 //        ?: txt[0] == "H"
 //        ?: txt[1] == "e"

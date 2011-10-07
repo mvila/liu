@@ -32,7 +32,7 @@ public:
     template<class T>
     T *find(bool *okPtr = NULL) const {
         T *run = NULL;
-        for (int i = _stack.size() - 1; i > 0; --i) {
+        for(int i = _stack.size() - 1; i > 0; --i) {
             run = T::dynamicCast(_stack.at(i));
             if(run) break;
         }
