@@ -19,22 +19,16 @@ Object List {
     \`[]` {
     test:
         list := List()
-        list << "a"
-        list << "b"
+        list << "x"
+        list << "y"
         list << "c"
         list inspect
         list print
-        list2 := list()
-        list2[1] = "x"
+        list2 := list fork
+        list2[1] << "o"
+        list2[2] >>
         list2 inspect
         list2 print
-        list2[0] = "!"
-        list2 inspect
-        list2 print
-        list2[0] << "z"
-        list2 inspect
-        list2 print
-//        list2 print
 
 //        txt := "Hello"
 //        ?: txt[0] == "H"

@@ -14,7 +14,7 @@ List *List::init() {
 }
 
 List::~List() {
-    if(_operations) delete _operations;
+    delete _operations;
 }
 
 void List::initRoot() {
@@ -110,8 +110,9 @@ Node *List::_get(int index) {
     if(_operations) {
         foreach(const Operation &operation, *_operations) {
             if(operation.index > index) break;
-            if(operation.data && index < operation.index + operation.size)
-                return operation.data->at(index - operation.index);
+            if((operation.type == Operation::Set || operation.type == Operation::Insert)
+                    && index < operation.index + operation.size)
+                return operation.data.at(index - operation.index);
             else if(operation.type == Operation::Insert)
                 index -= operation.size;
             else if(operation.type == Operation::Remove)
@@ -143,28 +144,28 @@ void List::_set(int index, Node *item) {
         Operation &operation = (*_operations)[i];
         if(operation.type == Operation::Set && operation.index - 1 <= index && index <= operation.index + operation.size) {
             if(index == operation.index - 1) {
-                operation.data->prepend(item);
+                operation.data.prepend(item);
                 operation.index--;
                 operation.size++;
             } else if(index == operation.index + operation.size) {
-                operation.data->append(item);
+                operation.data.append(item);
                 operation.size++;
             } else
-                operation.data->replace(index - operation.index, item);
+                operation.data.replace(index - operation.index, item);
             return;
         }
         if(operation.index > index) break;
         if(operation.type == Operation::Insert) {
             if(index < operation.index + operation.size) {
-                operation.data->replace(index - operation.index, item);
+                operation.data.replace(index - operation.index, item);
                 return;
             } else
                 index -= operation.size;
         } else if(operation.type == Operation::Remove)
             index += operation.size;
     }
-    QList<Node *> *data = new QList<Node *>;
-    data->append(item);
+    QList<Node *> data;
+    data.append(item);
     _operations->insert(i, Operation(Operation::Set, index, 1, data));
 }
 
@@ -185,25 +186,58 @@ void List::append(Node *index, Node *value, bool *okPtr) {
 }
 
 Node *List::unset(Node *index, bool *wasFoundPtr) {
-//    int index = nodeIndex->toDouble();
-//    QString str = value();
-//    int max = str.size();
-//    if(index < 0) index = max + index;
-//    bool wasFound = index >= 0 && index < max;
-//    Character *result = NULL;
-//    if(wasFound) {
-//        result = LIU_CHARACTER(str.at(index));
-//        str.remove(index, 1);
-//        setValue(str);
-//    }
-//    if(wasFoundPtr)
-//        *wasFoundPtr = wasFound;
-//    else if(!wasFound)
-//        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
-//    return result;
-    Q_UNUSED(index);
-    Q_UNUSED(wasFoundPtr);
-    return NULL;
+    int i = index->toDouble();
+    int max = size();
+    if(i < 0) i = max + i;
+    bool wasFound = i >= 0 && i < max;
+    Node *result = NULL;
+    if(wasFound) {
+        result = _get(i);
+        _unset(i);
+    }
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound) {
+        LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
+    }
+    return result;
+}
+
+void List::_unset(int index) {
+    if(!_operations) _operations = new QList<Operation>;
+    int i;
+    int size = _operations->size();
+    for(i = 0; i < size; ++i) {
+        Operation &operation = (*_operations)[i];
+        if(operation.index > index) break;
+        if(operation.type == Operation::Set) {
+            if(index < operation.index + operation.size) {
+//                if(index > operation.index) {
+//                    int s = index - operation.index;
+//                    QList<Node *> data;
+//                    for(int j = 0; j < s; ++j) data.append(operation.data.takeAt(0));
+//                    operation.size -= s;
+//                    int indexCopy = operation.index;
+//                    operation.index = index;
+//                    _operations->insert(i, Operation(Operation::Set, indexCopy, s, data));
+//                    i++;
+//                }
+//                break;
+            }
+        } else if(operation.type == Operation::Insert) {
+            if(index < operation.index + operation.size) {
+                if(operation.size > 1) {
+                    operation.data.removeAt(index - operation.index);
+                    operation.size--;
+                } else
+                    _operations->removeAt(i);
+                return;
+            } else
+                index -= operation.size;
+        } else if(operation.type == Operation::Remove)
+            index += operation.size;
+    }
+    _operations->insert(i, Operation(Operation::Remove, index, 1));
 }
 
 List::IndexIterator *List::indexIterator() const {
@@ -232,9 +266,23 @@ void List::_insert(int index, Node *item) {
     for(i = 0; i < size; ++i) {
         Operation &operation = (*_operations)[i];
         if(operation.index > index) break;
-        if(operation.type == Operation::Insert) {
+        if(operation.type == Operation::Set) {
+            if(index < operation.index + operation.size) {
+                if(index > operation.index) {
+                    int s = index - operation.index;
+                    QList<Node *> data;
+                    for(int j = 0; j < s; ++j) data.append(operation.data.takeAt(0));
+                    operation.size -= s;
+                    int indexCopy = operation.index;
+                    operation.index = index;
+                    _operations->insert(i, Operation(Operation::Set, indexCopy, s, data));
+                    i++;
+                }
+                break;
+            }
+        } else if(operation.type == Operation::Insert) {
             if(index <= operation.index + operation.size) {
-                operation.data->insert(index - operation.index, item);
+                operation.data.insert(index - operation.index, item);
                 operation.size++;
                 return;
             } else
@@ -242,8 +290,8 @@ void List::_insert(int index, Node *item) {
         } else if(operation.type == Operation::Remove)
             index += operation.size;
     }
-    QList<Node *> *data = new QList<Node *>;
-    data->append(item);
+    QList<Node *> data;
+    data.append(item);
     _operations->insert(i, Operation(Operation::Insert, index, 1, data));
 }
 

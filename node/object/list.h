@@ -49,6 +49,9 @@ private:
 public:
     virtual void append(Node *index, Node *item, bool *okPtr = NULL);
     virtual Node *unset(Node *index, bool *wasFoundPtr = NULL);
+private:
+    void _unset(int index);
+public:
     class IndexIterator;
     virtual IndexIterator *indexIterator() const;
 
@@ -61,15 +64,13 @@ public:
 private:
     struct Operation {
         enum Type { Null, Set, Insert, Remove };
-        Operation(const Type theType = Null, const int theIndex = 0,
-                  const int theSize = 0, QList<Node *> *theData = NULL) :
+        Operation(const Type theType, const int theIndex, const int theSize, const QList<Node *> theData = QList<Node *>()) :
             type(theType), index(theIndex), size(theSize), data(theData) {};
         Type type;
         int index;
         int size;
-        QList<Node *> *data;
+        QList<Node *> data;
     };
-
     QList<Operation> *_operations;
 public:
     // === Iterator ===
