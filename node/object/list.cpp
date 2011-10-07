@@ -209,20 +209,27 @@ void List::_unset(int index) {
     int size = _operations->size();
     for(i = 0; i < size; ++i) {
         Operation &operation = (*_operations)[i];
+        if(operation.type == Operation::Remove && (index == operation.index - 1 || index == operation.index)) {
+            if(index == operation.index - 1) operation.index--;
+            operation.size++;
+            return;
+        }
         if(operation.index > index) break;
         if(operation.type == Operation::Set) {
             if(index < operation.index + operation.size) {
-//                if(index > operation.index) {
-//                    int s = index - operation.index;
-//                    QList<Node *> data;
-//                    for(int j = 0; j < s; ++j) data.append(operation.data.takeAt(0));
-//                    operation.size -= s;
-//                    int indexCopy = operation.index;
-//                    operation.index = index;
-//                    _operations->insert(i, Operation(Operation::Set, indexCopy, s, data));
-//                    i++;
-//                }
-//                break;
+                int s = index - operation.index;
+                QList<Node *> data;
+                for(int j = 0; j < s; ++j) data.append(operation.data.takeAt(0));
+                int indexCopy = operation.index;
+                operation.size -= s;
+                if(operation.size > 1) {
+                    operation.data.removeFirst();
+                    operation.size--;
+                    operation.index = index + 1;
+                } else
+                    _operations->removeAt(i);
+                if(s > 0) _operations->insert(i++, Operation(Operation::Set, indexCopy, s, data));
+                break;
             }
         } else if(operation.type == Operation::Insert) {
             if(index < operation.index + operation.size) {
@@ -275,8 +282,7 @@ void List::_insert(int index, Node *item) {
                     operation.size -= s;
                     int indexCopy = operation.index;
                     operation.index = index;
-                    _operations->insert(i, Operation(Operation::Set, indexCopy, s, data));
-                    i++;
+                    _operations->insert(i++, Operation(Operation::Set, indexCopy, s, data));
                 }
                 break;
             }

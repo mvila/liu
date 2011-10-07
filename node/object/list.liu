@@ -19,14 +19,21 @@ Object List {
     \`[]` {
     test:
         list := List()
-        list << "x"
-        list << "y"
+        list << "a"
+        list << "b"
         list << "c"
+        list << "d"
+        list << "e"
+        list << "f"
         list inspect
         list print
         list2 := list fork
-        list2[1] << "o"
-        list2[2] >>
+        list2[1] >>
+        list2[1] >>
+        list2[1] >>
+        list2 inspect
+        list2 print
+        list2[0] >>
         list2 inspect
         list2 print
 
