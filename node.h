@@ -272,6 +272,8 @@ public:
     LIU_DECLARE_NATIVE_METHOD(equal_to);
     LIU_DECLARE_NATIVE_METHOD(different_from);
 
+    virtual short compare(const Node *other) const;
+
     LIU_DECLARE_NATIVE_METHOD(throw);
 
     static HugeUnsignedInteger &passedAssertionCount() {

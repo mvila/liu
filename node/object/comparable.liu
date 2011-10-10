@@ -1,0 +1,24 @@
+Object Comparable {
+    \`<` {
+    inputs:
+        (\value)
+    }
+
+    \`<=` {
+    inputs:
+        (\value)
+    }
+
+    \`>` {
+    inputs:
+        (\value)
+    }
+
+    \`>=` {
+    inputs:
+        (\value)
+    }
+test:
+    ?: origin == Object
+    ?: parent == Object
+}

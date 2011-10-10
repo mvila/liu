@@ -280,7 +280,16 @@ Object Text {
     \`[]<<` {
     test:
         txt := "abc"
-//        txt[0] << "*"
+        ?: IndexOutOfBoundsException throw? { txt[4] << "*" }
+        !: txt[4]? << "*"
+        txt[3] << "*"
+        ?: txt == "abc*"
+        txt[-2] << "*"
+        ?: txt == "ab*c*"
+        txt[1] << "*"
+        ?: txt == "a*b*c*"
+        txt[0] << "*"
+        ?: txt == "*a*b*c*"
     }
 
     // --- Text ---
@@ -395,6 +404,7 @@ Object Text {
 test:
     ?: origin == Object
     ?: parent == Object
+    ?: is?(Comparable)
     ?: is?(Iterable)
     ?: is?(Collection)
     ?: is?(Indexable)

@@ -1,4 +1,5 @@
 #include "node/object/text.h"
+#include "node/object/comparable.h"
 #include "node/object/property.h"
 #include "node/object/language/interpreter.h"
 #include "node/object/language/nativemethod.h"
@@ -27,6 +28,7 @@ Text::~Text() {
 }
 
 void Text::initRoot() {
+    addExtension(Comparable::root());
     addExtension(Insertable::root());
 
     LIU_ADD_NATIVE_METHOD(Text, init);

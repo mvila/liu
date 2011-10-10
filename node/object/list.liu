@@ -295,8 +295,8 @@ Object List {
 
     \index_iterator {
     test:
-        txt := "abc"
-        iter := txt index_iterator
+        list := ["a", "b", "c"]
+        iter := list index_iterator
         ?: iter read?
         ?: iter read == 0
         ?: iter read! == 0
@@ -309,14 +309,45 @@ Object List {
 
     \index {
     test:
-        ?: NotFoundException throw? { "" index("x") }
-        !: "" index?("x")
-        ?: NotFoundException throw? { "abc" index("x") }
-        !: "abc" index?("x")
-        ?: "xbc" index("x") == 0
-        ?: "xbc" index('x') == 0
-        ?: "axc" index('x') == 1
-        ?: "abx" index('x') == 2
+        ?: NotFoundException throw? { List index("x") }
+        ?: NotFoundException throw? { [] index("x") }
+        !: [] index?("x")
+        ?: NotFoundException throw? { ["a", "b", "c"] index("x") }
+        !: ["a", "b", "c"] index?("x")
+        ?: ["x", "b", "c"] index("x") == 0
+        ?: ["a", "x", "c"] index("x") == 1
+        ?: ["a", "b", "x"] index("x") == 2
+    }
+
+    // --- Insertable ---
+
+    \`[]<<` {
+    test:
+        list := ["a", "b", "c", "d", "e"]
+        ?: IndexOutOfBoundsException throw? { list[6] << "*" }
+        !: list[6]? << "*"
+        list2 := list fork
+        list2[1] = "B"
+        list2[2] = "C"
+        list2[3] = "D"
+        list2[1] << "*"
+        ?: Text(list2) == "a*BCDe"
+        list3 := list fork
+        list3[1] = "B"
+        list3[2] = "C"
+        list3[3] = "D"
+        list3[2] << "*" // S[1..3] + I[2] -> S[1] + I[2] + S[2..3]
+        ?: Text(list3) == "aB*CDe"
+        list4 := list fork
+        list4[1] << "x"
+        list4[2] << "y"
+        list4[1] << "*" // I[1..2] + I[1] -> I[1..3]
+        ?: Text(list4) == "a*xybcde"
+        list5 := list fork
+        list5[1] >>
+        list5[1] >>
+        list5[1] << "*" // R[1..2] + I[1] -> S[1] + R[2]
+        ?: Text(list5) == "a*de"
     }
 test:
     ?: origin == Object

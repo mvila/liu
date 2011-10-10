@@ -29,26 +29,6 @@ Object {
     inputs:
         (\target, \value)
     }
-
-    \`<` {
-    inputs:
-        (\value)
-    }
-
-    \`<=` {
-    inputs:
-        (\value)
-    }
-
-    \`>` {
-    inputs:
-        (\value)
-    }
-
-    \`>=` {
-    inputs:
-        (\value)
-    }
 test:
     ?: origin == Node
     ?: parent == Node

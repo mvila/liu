@@ -543,6 +543,11 @@ LIU_DEFINE_NATIVE_METHOD(Node, different_from) {
     return LIU_BOOLEAN(!Boolean::cast(LIU_MESSAGE("==", message->inputs(false))->run(this))->value());
 }
 
+short Node::compare(const Node *other) const {
+    Q_UNUSED(other);
+    LIU_ABSTRACT_CALL;
+}
+
 LIU_DEFINE_NATIVE_METHOD(Node, throw) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);

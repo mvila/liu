@@ -60,7 +60,8 @@ SOURCES += main.cpp \
     node/object/indexable.cpp \
     node/object/insertable.cpp \
     node/object/oldlist.cpp \
-    node/object/list.cpp
+    node/object/list.cpp \
+    node/object/comparable.cpp
 
 HEADERS += \
     liu.h \
@@ -109,7 +110,8 @@ HEADERS += \
     node/object/indexable.h \
     node/object/insertable.h \
     node/object/oldlist.h \
-    node/object/list.h
+    node/object/list.h \
+    node/object/comparable.h
 
 OTHER_FILES += \
     README.txt \
@@ -135,4 +137,5 @@ OTHER_FILES += \
     node/object/boolean.liu \
     node/object/character.liu \
     node/object/iterable.liu \
-    node/object/list.liu
+    node/object/list.liu \
+    node/object/comparable.liu

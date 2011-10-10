@@ -19,11 +19,6 @@ void Object::initRoot() {
     LIU_ADD_NATIVE_METHOD(Object, multiply_assign, *=);
     LIU_ADD_NATIVE_METHOD(Object, divide_assign, /=);
     LIU_ADD_NATIVE_METHOD(Object, modulo_assign, %=);
-
-    LIU_ADD_NATIVE_METHOD(Object, less_than, <);
-    LIU_ADD_NATIVE_METHOD(Object, less_than_or_equal_to, <=);
-    LIU_ADD_NATIVE_METHOD(Object, greater_than, >);
-    LIU_ADD_NATIVE_METHOD(Object, greater_than_or_equal_to, >=);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Object, postfix_increment) {
@@ -75,26 +70,6 @@ LIU_DEFINE_NATIVE_METHOD(Object, modulo_assign) {
     LIU_CHECK_INPUT_SIZE(2);
     Node *result = LIU_MESSAGE("%", message->secondInput())->run(message->runFirstInput());
     return LIU_MESSAGE("=", message->firstInput(), result)->run();
-}
-
-LIU_DEFINE_NATIVE_METHOD(Object, less_than) {
-    LIU_FIND_LAST_MESSAGE;
-    return LIU_BOOLEAN(Number::cast(LIU_MESSAGE("<=>", message->inputs(false))->run(this))->value() < 0);
-}
-
-LIU_DEFINE_NATIVE_METHOD(Object, less_than_or_equal_to) {
-    LIU_FIND_LAST_MESSAGE;
-    return LIU_BOOLEAN(Number::cast(LIU_MESSAGE("<=>", message->inputs(false))->run(this))->value() <= 0);
-}
-
-LIU_DEFINE_NATIVE_METHOD(Object, greater_than) {
-    LIU_FIND_LAST_MESSAGE;
-    return LIU_BOOLEAN(Number::cast(LIU_MESSAGE("<=>", message->inputs(false))->run(this))->value() > 0);
-}
-
-LIU_DEFINE_NATIVE_METHOD(Object, greater_than_or_equal_to) {
-    LIU_FIND_LAST_MESSAGE;
-    return LIU_BOOLEAN(Number::cast(LIU_MESSAGE("<=>", message->inputs(false))->run(this))->value() >= 0);
 }
 
 LIU_END

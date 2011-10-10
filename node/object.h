@@ -25,11 +25,6 @@ public:
     LIU_DECLARE_NATIVE_METHOD(multiply_assign);
     LIU_DECLARE_NATIVE_METHOD(divide_assign);
     LIU_DECLARE_NATIVE_METHOD(modulo_assign);
-
-    LIU_DECLARE_NATIVE_METHOD(less_than);
-    LIU_DECLARE_NATIVE_METHOD(less_than_or_equal_to);
-    LIU_DECLARE_NATIVE_METHOD(greater_than);
-    LIU_DECLARE_NATIVE_METHOD(greater_than_or_equal_to);
 };
 
 LIU_END

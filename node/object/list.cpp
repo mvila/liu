@@ -287,7 +287,7 @@ void List::_insert(int index, Node *item) {
         if(operation.index > index) break;
         if(operation.type == Operation::Set) {
             if(index < operation.index + operation.size) {
-                if(index > operation.index) {
+                if(index > operation.index) { // S[1..3] + I[2] -> S[1] + I[2] + S[2..3]
                     int s = index - operation.index;
                     QList<Node *> data;
                     for(int j = 0; j < s; ++j) data.append(operation.data.takeAt(0));
@@ -299,14 +299,14 @@ void List::_insert(int index, Node *item) {
                 break;
             }
         } else if(operation.type == Operation::Insert) {
-            if(index <= operation.index + operation.size) {
+            if(index <= operation.index + operation.size) { // I[1..2] + I[1] -> I[1..3]
                 operation.data.insert(index - operation.index, item);
                 operation.size++;
                 return;
             } else
                 index -= operation.size;
         } else if(operation.type == Operation::Remove) {
-            if(index == operation.index) { // R[1..2] + I[1] -> S[1] + R[1]
+            if(index == operation.index) { // R[1..2] + I[1] -> S[1] + R[2]
                 if(operation.size > 1) {
                     operation.index++;
                     operation.size--;
