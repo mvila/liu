@@ -21,9 +21,7 @@ public:
     LIU_DECLARE_AND_DEFINE_COPY_METHOD(Character);
     LIU_DECLARE_AND_DEFINE_FORK_METHOD(Character, value());
 
-    virtual bool isEqualTo(const Node *other) const {
-        return value() == cast(other)->value();
-    }
+    virtual bool isEqualTo(const Node *other) const;
 
     LIU_DECLARE_NATIVE_METHOD(equal_to) {
         LIU_FIND_LAST_MESSAGE;

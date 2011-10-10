@@ -24,6 +24,8 @@ public:
     LIU_DECLARE_AND_DEFINE_COPY_METHOD(List);
     LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(List);
 
+    LIU_DECLARE_NATIVE_METHOD(make);
+
     virtual QString toString(bool debug = false, short level = 0) const;
 
     // --- Iterable ---
@@ -36,6 +38,7 @@ public:
 
     virtual void append(Node *item);
     virtual Node *remove(Node *item, bool *wasFoundPtr = NULL);
+    virtual void clear();
 
     // --- Indexable ---
 
@@ -89,7 +92,7 @@ public:
         virtual ~Iterator();
 
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(Iterator);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(Iterator);
+        LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Iterator);
 
         LIU_DECLARE_ACCESSOR(ListPtr, list, List);
         LIU_DECLARE_ACCESSOR(int, index, Index);
@@ -118,7 +121,7 @@ public:
         virtual ~IndexIterator();
 
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(IndexIterator);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(IndexIterator);
+        LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(IndexIterator);
 
         LIU_DECLARE_ACCESSOR(ListPtr, list, List);
         LIU_DECLARE_ACCESSOR(int, index, Index);

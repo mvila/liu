@@ -1,6 +1,51 @@
 Object List {
     // --- Iterable ---
 
+    \iterator {
+    test:
+        list := List()
+        list << "a"
+        list << "b"
+        list << "c"
+        iter := list iterator
+        ?: iter read?
+        ?: iter read == 'a'
+        ?: iter read! == 'a'
+        ?: iter read! == 'b'
+        ?: iter read! == 'c'
+        ?: IndexOutOfBoundsException throw? { iter read }
+        ?: IndexOutOfBoundsException throw? { iter read! }
+        !: iter read?
+    }
+
+    \contains? {
+    test:
+        !: List contains?(7)
+        !: List() contains?(7)
+        list := List()
+        !: list contains?(7)
+        list << 3
+        !: list contains?(7)
+        list << 7
+        ?: list contains?(7)
+    }
+
+    \count {
+    test:
+        ?: List count(7) == 0
+        ?: List() count(7) == 0
+        list := List()
+        ?: list count(7) == 0
+        list << 3
+        ?: list count(7) == 0
+        list << 7
+        ?: list count(7) == 1
+        list << 3
+        ?: list count(7) == 1
+        list << 7
+        ?: list count(7) == 2
+    }
+
     \size {
     test:
         ?: List size == 0
@@ -9,44 +54,270 @@ Object List {
         list << "a"
         ?: list size == 1
         ?: list() size == 1
-        list[] := "b"
+        list << "b"
         ?: list size == 2
-        ?: list() size == 2
+        list[-1] >>
+        ?: list size == 1
+        list[-1] >>
+        ?: list size == 0
+        list << "a"
+        list << "b"
+        ?: list size == 2
+        list2 := list()
+        ?: list2 size == 2
+        list2 << "b"
+        ?: list2 size == 3
+        list2[-1] >>
+        ?: list2 size == 2
+        list2[1] = "!"
+        list2[0] >>
+        ?: list2 size == 1
+        list2[0] >>
+        ?: list2 size == 0
+    }
+
+    \empty? {
+    test:
+        ?: List empty?
+        ?: List() empty?
+        list := List()
+        ?: list empty?
+        list << "a"
+        !: list empty?
+        list << "a"
+        !: list empty?
+        list[0] >>
+        !: list empty?
+        list[0] >>
+        ?: list empty?
+    }
+
+    \first {
+    test:
+        list := List()
+        ?: IndexOutOfBoundsException throw? { list first }
+        !: list first?
+        list << "a"
+        ?: list first? == "a"
+        list << "b"
+        list << "c"
+        ?: list first == "a"
+    }
+
+    \last {
+    test:
+        list := List()
+        ?: IndexOutOfBoundsException throw? { list last }
+        !: list last?
+        list << "a"
+        ?: list last? == "a"
+        list << "b"
+        list << "c"
+        ?: list last == "c"
+    }
+
+    // --- Collection ---
+
+    \`<<` {
+    test:
+        list := List()
+        ?: Text(list) == ""
+        list << "a"
+        ?: Text(list) == "a"
+        list << "b"
+        ?: Text(list) == "ab"
+        list2 := list fork
+        ?: Text(list2) == "ab"
+        list2 << "c"
+        ?: Text(list2) == "abc"
+        ?: Text(list) == "ab"
+    }
+
+    \`[]>>` {
+    test:
+        list := List()
+        ?: NotFoundException throw? { list[:"a"] >> }
+        !: list[:"a"]? >>
+        list << "a"
+        ?: NotFoundException throw? { list[:"b"] >> }
+        ?: list[:"a"] >> == "a"
+        !: list[:"a"]? >>
+        ?: list empty?
+        list << "a"
+        list << "a"
+        list << "a"
+        ?: Text(list) == "aaa"
+        list[:"a"] >>
+        ?: list size == 2
+        list[:"a"] >>
+        ?: list size == 1
+        list[:"a"] >>
+        ?: list size == 0
+        list << "a"
+        list << "b"
+        ?: Text(list) == "ab"
+        list2 := list fork
+        list2 << "c"
+        ?: Text(list2) == "abc"
+        ?: list2[:"a"] >> == "a"
+        ?: Text(list2) == "bc"
+        ?: list2[:"c"]? >>
+        ?: Text(list2) == "b"
+        list2[:"b"] >>
+        ?: list2 empty?
+        ?: Text(list) == "ab"
+    }
+
+    \clear! {
+    test:
+        list := List()
+        list clear!
+        ?: list empty?
+        list << "a"
+        list clear!
+        ?: list empty?
+        list << "a" << "b" << "c"
+        ?: list size == 3
+        list clear!
+        ?: list empty?
+        list << "a" << "b" << "c"
+        ?: list size == 3
+        list2 := list fork
+        ?: Text(list2) == "abc"
+        list2 clear!
+        ?: list2 empty?
+        ?: list size == 3
+        list2 << "x"
+        ?: list2 size == 1
+        list2 clear!
+        ?: list2 empty?
     }
 
     // --- Indexable ---
 
     \`[]` {
     test:
-        list := List()
-        list << "a"
-        list << "b"
-        list << "c"
-        list << "d"
-        list << "e"
-        list << "f"
-        list inspect
-        list print
+        list := ["H", "e", "l", "l", "o"]
+        ?: list[0] == "H"
+        ?: list[1] == "e"
+        ?: IndexOutOfBoundsException throw? { list[5] }
+        !: list[5]?
+        ?: list[-1] == "o"
+        ?: list[-2] == "l"
+        ?: IndexOutOfBoundsException throw? { list[-6] }
         list2 := list fork
-        list2[1] >>
-        list2[1] >>
-        list2[1] >>
-        list2 inspect
-        list2 print
-        list2[0] >>
-        list2 inspect
-        list2 print
-
-//        txt := "Hello"
-//        ?: txt[0] == "H"
-//        ?: txt[1] == "e"
-//        ?: IndexOutOfBoundsException throw? { txt[5] }
-//        !: txt[5]?
-//        ?: txt[-1] == "o"
-//        ?: txt[-2] == "l"
-//        ?: IndexOutOfBoundsException throw? { txt[-6] }
+        ?: list2[0] == "H"
+        ?: list2[-1] == "o"
     }
 
+    \`[]=` {
+    test:
+        list := ["a", "b", "c", "x", "e", "f"]
+        list[3] = 'd'
+        ?: Text(list) == "abcdef"
+        list[-1] = "!"
+        ?: Text(list) == "abcde!"
+        ?: IndexOutOfBoundsException throw? { list[6] = 'x' }
+        !: list[6]? = 'x'
+        list2 := list fork
+        ?: Text(list2) == "abcde!"
+        list[-1] = "F"
+        ?: Text(list2) == "abcdeF"
+        list2[-1] = "f"
+        ?: Text(list2) == "abcdef"
+        ?: Text(list) == "abcdeF"
+        list2[2] = "C"
+        list2[1] = "B" // S[1..2] + S[0] -> S[0..2]
+        list2[3] = "D" // S[1..2] + S[3] -> S[1..3]
+        ?: Text(list2) == "aBCDef"
+        list2[2] = "c" // S[1..2] + S[1] -> S[1..2]
+        ?: Text(list2) == "aBcDef"
+        list2[2] << "x"
+        list2[3] << "y"
+        ?: Text(list2) == "aBxycDef"
+        list2[2] = "X" // I[1..2] + S[1] -> I[1..2]
+        ?: Text(list2) == "aBXycDef"
+    }
+
+    \`[]:=` {
+    test:
+        list := []
+        list[0] := "a"
+        ?: list[0] == "a"
+        ?: IndexOutOfBoundsException throw? { list[2] := 'x' }
+        !: list[2]? := 'x'
+        list[1] := "B"
+        list[1] := "b"
+        ?: Text(list) == "ab"
+        list2 := list fork
+        list2[2] := "c"
+        ?: Text(list2) == "abc"
+        list2[0] := "A"
+        ?: Text(list2) == "Abc"
+        ?: Text(list) == "ab"
+        ?: IndexOutOfBoundsException throw? { list2[4] := 'x' }
+    }
+
+    \`[]>>` {
+    test:
+        ?: IndexOutOfBoundsException throw? { List[0] >> }
+        !: List[0]? >>
+        list := ["a", "b", "c", "d", "e", "f"]
+        ?: IndexOutOfBoundsException throw? { list[6] >> }
+        !: list[6]? >>
+        ?: list[-1] >> == "f"
+        ?: Text(list) == "abcde"
+        ?: list[0] >> == "a"
+        ?: Text(list) == "bcde"
+        list2 := list fork
+        ?: list2[2] >> == "d"
+        ?: list2[-1] >> == "e"
+        ?: Text(list2) == "bc"
+        ?: Text(list) == "bcde"
+        list3 := list fork
+        list3[-1] >>
+        list3[-1] >>
+        ?: list3[0] >> == "b" // R[1..2] + R[0] -> R[0..2]
+        ?: list3[0] == "c"
+        list4 := list fork
+        list4[-1] >>
+        list4[-1] >>
+        ?: list4[1] >> == "c" // R[1..2] + R[1] -> R[1..3]
+        ?: list4[0] == "b"
+        list5 := ["a", "b", "c", "d", "e", "f"]
+        list6 := list5 fork
+        list6[1] = "B"
+        list6[2] = "C"
+        list6[3] = "D"
+        ?: list6[2] >> == "C" // S[1..3] + R[2] -> S[1..1] + R[2..2] + S[3..3]
+        ?: Text(list6) == "aBDef"
+    }
+
+    \index_iterator {
+    test:
+        txt := "abc"
+        iter := txt index_iterator
+        ?: iter read?
+        ?: iter read == 0
+        ?: iter read! == 0
+        ?: iter read! == 1
+        ?: iter read! == 2
+        ?: IndexOutOfBoundsException throw? { iter read }
+        ?: IndexOutOfBoundsException throw? { iter read! }
+        !: iter read?
+    }
+
+    \index {
+    test:
+        ?: NotFoundException throw? { "" index("x") }
+        !: "" index?("x")
+        ?: NotFoundException throw? { "abc" index("x") }
+        !: "abc" index?("x")
+        ?: "xbc" index("x") == 0
+        ?: "xbc" index('x') == 0
+        ?: "axc" index('x') == 1
+        ?: "abx" index('x') == 2
+    }
 test:
     ?: origin == Object
     ?: parent == Object

@@ -64,6 +64,7 @@ public:
 
     virtual void append(Node *item);
     virtual Text *remove(Node *item, bool *wasFoundPtr = NULL);
+    virtual void clear();
 
     // --- Indexable ---
 
@@ -116,7 +117,7 @@ public:
         virtual ~Iterator();
 
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(Iterator);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(Iterator);
+        LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Iterator);
 
         LIU_DECLARE_ACCESSOR(TextPtr, text, Text);
         LIU_DECLARE_ACCESSOR(int, index, Index);
@@ -145,7 +146,7 @@ public:
         virtual ~IndexIterator();
 
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(IndexIterator);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(IndexIterator);
+        LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(IndexIterator);
 
         LIU_DECLARE_ACCESSOR(TextPtr, text, Text);
         LIU_DECLARE_ACCESSOR(int, index, Index);

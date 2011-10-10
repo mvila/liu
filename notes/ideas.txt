@@ -77,7 +77,7 @@ provide: append(iterable), remove_all(value), remove(iterable), replace, clear
 Indexable := Collection() // Dictionary
 require: get, set, append(index, value), unset, index_iterator
 attribute: uniqueIndex?
-provide: append_or_set, indexes, unset(iterable -> ex. : range), index_of(item, from, reverse?), slice,
+provide: append_or_set, indexes, unset(iterable -> ex. : range), index(item, from, reverse?), slice,
          swap, take, unite(indexable), first_index, last_index
 
 Insertable := Indexable() // List

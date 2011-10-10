@@ -202,6 +202,10 @@ Text *Text::remove(Node *item, bool *wasFoundPtr) {
     return result;
 }
 
+void Text::clear() {
+    setValue(QString());
+}
+
 // --- Indexable ---
 
 Character *Text::get(Node *index, bool *wasFoundPtr) {

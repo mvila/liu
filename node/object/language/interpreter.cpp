@@ -53,7 +53,7 @@ namespace Language {
 
         ops->append("..", Operator::Binary, 451);
 
-        ops->append("<<", Operator::Binary, 446, Operator::RightAssociative, false);
+        ops->append("<<", Operator::Binary, 446, Operator::LeftAssociative, false);
 
         ops->append("<=>", Operator::Binary, 441);
 

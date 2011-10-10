@@ -12,6 +12,8 @@ void Indexable::initRoot() {
     LIU_ADD_NATIVE_METHOD(Indexable, unset, []>>);
 
     LIU_ADD_NATIVE_METHOD(Indexable, index_iterator);
+
+    LIU_ADD_NATIVE_METHOD(Indexable, index);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Indexable, get) {
@@ -81,6 +83,35 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, index_iterator) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     return indexIterator();
+}
+
+Node *Indexable::index(Node *item, bool *wasFoundPtr) {
+    Node *result = NULL;
+    bool wasFound = false;
+    QScopedPointer<Iterator> i(indexIterator());
+    while(i->hasNext()) {
+        Node *index = i->next();
+        if(get(index)->isEqualTo(item)) {
+            result = index;
+            wasFound = true;
+            break;
+        }
+    }
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound)
+        LIU_THROW(NotFoundException, "value not found");
+    return result;
+}
+
+LIU_DEFINE_NATIVE_METHOD(Indexable, index) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(1);
+    Node *item = message->runFirstInput();
+    bool wasFound = true;
+    Node *result = index(item, message->isQuestioned() ? &wasFound : NULL);
+    if(!wasFound) Primitive::skip(LIU_BOOLEAN());
+    return result;
 }
 
 LIU_END

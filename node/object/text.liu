@@ -69,21 +69,6 @@ Object Text {
         !: iter read?
     }
 
-    \size {
-    test:
-        ?: Text size == 0
-        ?: Text() size == 0
-        ?: "" size == 0
-        ?: "a" size == 1
-        ?: "\r\n" size == 2
-    }
-
-    \empty? {
-    test:
-        ?: "" empty?
-        !: "a" empty?
-    }
-
     \contains? {
     test:
         txt := "This is a beautiful world!"
@@ -97,6 +82,21 @@ Object Text {
         ?: txt count("beautiful") == 1
         ?: txt count("wonderful") == 0
         ?: txt count("i") == 3
+    }
+
+    \size {
+    test:
+        ?: Text size == 0
+        ?: Text() size == 0
+        ?: "" size == 0
+        ?: "a" size == 1
+        ?: "\r\n" size == 2
+    }
+
+    \empty? {
+    test:
+        ?: "" empty?
+        !: "a" empty?
     }
 
     \first {
@@ -261,6 +261,18 @@ Object Text {
         ?: IndexOutOfBoundsException throw? { iter read }
         ?: IndexOutOfBoundsException throw? { iter read! }
         !: iter read?
+    }
+
+    \index {
+    test:
+        ?: NotFoundException throw? { "" index("x") }
+        !: "" index?("x")
+        ?: NotFoundException throw? { "abc" index("x") }
+        !: "abc" index?("x")
+        ?: "xbc" index("x") == 0
+        ?: "xbc" index('x') == 0
+        ?: "axc" index('x') == 1
+        ?: "abx" index('x') == 2
     }
 
     // --- Insertable ---

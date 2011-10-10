@@ -39,6 +39,9 @@ public:
 
     virtual Iterator *indexIterator() const { LIU_ABSTRACT_CALL; }
     LIU_DECLARE_NATIVE_METHOD(index_iterator);
+
+    virtual Node *index(Node *item, bool *wasFoundPtr = NULL);
+    LIU_DECLARE_NATIVE_METHOD(index);
 };
 
 LIU_END
