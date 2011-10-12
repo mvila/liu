@@ -119,6 +119,12 @@ public:
         return LIU_NUMBER(1 / zero);
     }
 
+    LIU_DECLARE_NATIVE_METHOD(random) {
+        LIU_FIND_LAST_MESSAGE;
+        LIU_CHECK_INPUT_SIZE(0);
+        return LIU_NUMBER(qrand());
+    }
+
     virtual bool isEqualTo(const Node *other) const {
         return value() == Number::cast(other)->value();
     }

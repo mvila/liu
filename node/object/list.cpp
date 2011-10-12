@@ -21,6 +21,8 @@ void List::initRoot() {
     addExtension(Insertable::root());
 
     LIU_ADD_NATIVE_METHOD(List, make);
+
+    LIU_ADD_NATIVE_METHOD(List, sort);
 }
 
 LIU_DEFINE_NATIVE_METHOD(List, make) {
@@ -32,7 +34,10 @@ LIU_DEFINE_NATIVE_METHOD(List, make) {
 }
 
 QString List::toString(bool debug, short level) const {
-    if(!debug) return Insertable::toString(debug, level);
+    return Insertable::toString(debug, level);
+}
+
+void List::inspectInternal() const {
     QString str;
     if(!_operations)
         str = "_operations is NULL";
@@ -51,7 +56,7 @@ QString List::toString(bool debug, short level) const {
         }
         str += "]";
     }
-    return str;
+    P(str.toUtf8());
 }
 
 // --- Iterable ---
@@ -161,6 +166,17 @@ void List::_set(int index, Node *item) {
             } else if(index == operation.index + operation.size) { // S[1..2] + S[3] -> S[1..3]
                 operation.data.append(item);
                 operation.size++;
+                if(i + 1 < size) {
+                    Operation &nextOperation = (*_operations)[i + 1];
+                    if(nextOperation.type == Operation::Set && nextOperation.index == index) {
+                        if(nextOperation.size > 1) {
+                            nextOperation.data.removeAt(0);
+                            nextOperation.index++;
+                            nextOperation.size--;
+                        } else
+                            _operations->removeAt(i + 1);
+                    }
+                }
             } else // S[1..2] + S[1] -> S[1..2]
                 operation.data.replace(index - operation.index, item);
             return;
@@ -323,6 +339,46 @@ void List::_insert(int index, Node *item) {
     QList<Node *> data;
     data.append(item);
     _operations->insert(i, Operation(Operation::Insert, index, 1, data));
+}
+
+int List::_partition(int left, int right, int pivotIndex) {
+    int index, store;
+    Node *pivot = _get(pivotIndex);
+    // move pivot to the end of the array
+    Node *tmp = _get(right);
+    _set(right, pivot);
+    _set(pivotIndex, tmp);
+    // all values <= pivot are moved to front of array
+    // and pivot inserted just after them
+    store = left;
+    for(index = left; index < right; index++) {
+        Node *current = _get(index);
+        if(current->compare(pivot) <= 0) {
+            _set(index, _get(store));
+            _set(store, current);
+            store++;
+        }
+    }
+    tmp = _get(right);
+    _set(right, _get(store));
+    _set(store, tmp);
+    return store;
+}
+
+void List::_quickSort(int left, int right) {
+    int pivotIndex;
+    if(right <= left) return;
+    pivotIndex = qrand() % (right - left + 1) + left;
+    pivotIndex = _partition(left, right, pivotIndex);
+    _quickSort(left, pivotIndex - 1);
+    _quickSort(pivotIndex + 1, right);
+}
+
+LIU_DEFINE_NATIVE_METHOD(List, sort) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0);
+    sort();
+    return this;
 }
 
 // === List::Iterator ===

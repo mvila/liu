@@ -51,7 +51,11 @@ public:
 
     virtual Node *last(bool *wasFoundPtr = NULL) const;
     LIU_DECLARE_NATIVE_METHOD(last);
-    public:
+
+
+    const QString join(const QString &separator = "", const QString &prefix = "",
+                       const QString &suffix = "", bool debug = false, short level = 0) const;
+
     // === Iterator ===
 
     class Iterator : public Object {

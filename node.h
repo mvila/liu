@@ -288,6 +288,7 @@ public:
     virtual void hasChanged() {}
 
     void inspect() const { P(toString(true).toUtf8()); } // TODO: use Console print
+    virtual void inspectInternal() const;
     LIU_DECLARE_NATIVE_METHOD(inspect);
 
     void dump() const { P(Node::toString(true).toUtf8()); } // TODO: use Console print

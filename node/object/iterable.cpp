@@ -25,15 +25,7 @@ void Iterable::initRoot() {
 QString Iterable::toString(bool debug, short level) const {
     QString str;
     if(debug) str += "[";
-    QScopedPointer<Iterator> i(iterator());
-    bool first = true;
-    while(i->hasNext()) {
-        if(!first) {
-            if(debug) str += ", ";
-        } else
-            first = false;
-        str += i->next()->toString(debug, level);
-    }
+    str += join(debug ? ", " : "", "", "", debug, level);
     if(debug) str += "]";
     return str;
 }
@@ -168,6 +160,18 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, last) {
     Node *result = last(message->isQuestioned() ? &wasFound : NULL);
     if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
     return result;
+}
+
+const QString Iterable::join(const QString &separator, const QString &prefix,
+                   const QString &suffix, bool debug, short level) const {
+    QString str;
+    QScopedPointer<Iterator> i(iterator());
+    bool isFirst = true;
+    while(i->hasNext()) {
+        if(!isFirst) str += separator; else isFirst = false;
+        str += prefix + i->next()->toString(debug, level) + suffix;
+    }
+    return str;
 }
 
 // === Iterator ===

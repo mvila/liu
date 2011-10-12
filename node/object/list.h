@@ -27,6 +27,7 @@ public:
     LIU_DECLARE_NATIVE_METHOD(make);
 
     virtual QString toString(bool debug = false, short level = 0) const;
+    virtual void inspectInternal() const;
 
     // --- Iterable ---
 
@@ -64,6 +65,12 @@ public:
 private:
     void _insert(int index, Node *item);
 public:
+private:
+    int _partition(int left, int right, int pivotIndex);
+    void _quickSort(int left, int right);
+public:
+    void sort() { _quickSort(0, size() - 1); }
+    LIU_DECLARE_NATIVE_METHOD(sort);
 private:
     struct Operation {
         enum Type { Null, Set, Insert, Remove };

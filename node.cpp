@@ -581,10 +581,12 @@ Node *Node::assert(bool isAssertTrue) {
     Primitive::skip(result);
 }
 
+void Node::inspectInternal() const { LIU_ABSTRACT_CALL; }
+
 LIU_DEFINE_NATIVE_METHOD(Node, inspect) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
-    inspect();
+    if(message->isExclaimed()) inspectInternal(); else inspect();
     return this;
 }
 

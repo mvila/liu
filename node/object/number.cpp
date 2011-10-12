@@ -23,6 +23,8 @@ void Number::initRoot() {
     LIU_ADD_NATIVE_METHOD(Number, nan);
     LIU_ADD_NATIVE_METHOD(Number, inf);
 
+    LIU_ADD_NATIVE_METHOD(Number, random);
+
     LIU_ADD_NATIVE_METHOD(Number, equal_to, ==);
     LIU_ADD_NATIVE_METHOD(Number, compare, <=>);
 }
