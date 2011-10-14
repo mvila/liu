@@ -18,6 +18,23 @@ Object Text {
         ?: Y a == "B"
     }
 
+    \copy {
+    test:
+        txt := "Hello"
+        txt2 := txt copy
+        ?: txt2 == "Hello"
+        txt2 value = "Bye"
+        ?: txt2 == "Bye"
+        ?: txt == "Hello"
+        txt3 := txt fork
+        txt4 := txt3 copy
+        ?: txt4 == "Hello"
+        txt4 uppercase!
+        ?: txt4 == "HELLO"
+        ?: txt3 == "Hello"
+        ?: txt == "Hello"
+    }
+
     \`==` {
     inputs:
         (\what)

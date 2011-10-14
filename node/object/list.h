@@ -11,18 +11,18 @@ LIU_BEGIN
 class List : public Insertable {
     LIU_DECLARE(List, Object, Object);
 public:
-    explicit List(Node *origin = context()->child("Object", "List")) : Insertable(origin) {}
-
-    //    List(const List &other);
+    explicit List(Node *origin = context()->child("Object", "List")) :
+        Insertable(origin), _operations(NULL) {}
 
     static List *make() { return (new List())->init(); }
 
     List *init();
+    List *initCopy(const List *other);
 
     virtual ~List();
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(List);
     LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(List);
+    LIU_DECLARE_AND_DEFINE_COPY_METHOD_2(List);
 
     LIU_DECLARE_NATIVE_METHOD(make);
 
@@ -89,17 +89,18 @@ public:
         LIU_DECLARE(Iterator, Object, List);
     public:
         explicit Iterator(Node *origin = context()->child("Object", "List", "Iterator")) :
-            Iterable::Iterator(origin) {};
+            Iterable::Iterator(origin), _list(NULL), _index(NULL) {};
 
         static Iterator *make() { return (new Iterator())->init(); }
         static Iterator *make(List *list) { return (new Iterator())->init(&list); }
 
         Iterator *init(List **list = NULL, int *index = NULL);
+        Iterator *initCopy(const Iterator *other);
 
         virtual ~Iterator();
 
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD(Iterator);
         LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Iterator);
+        LIU_DECLARE_AND_DEFINE_COPY_METHOD_2(Iterator);
 
         LIU_DECLARE_ACCESSOR(ListPtr, list, List);
         LIU_DECLARE_ACCESSOR(int, index, Index);
@@ -118,17 +119,18 @@ public:
         LIU_DECLARE(IndexIterator, Object, List);
     public:
         explicit IndexIterator(Node *origin = context()->child("Object", "List", "IndexIterator")) :
-            Iterable::Iterator(origin) {};
+            Iterable::Iterator(origin), _list(NULL), _index(NULL) {};
 
         static IndexIterator *make() { return (new IndexIterator())->init(); }
         static IndexIterator *make(List *list) { return (new IndexIterator())->init(&list); }
 
         IndexIterator *init(List **list = NULL, int *index = NULL);
+        IndexIterator *initCopy(const IndexIterator *other);
 
         virtual ~IndexIterator();
 
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD(IndexIterator);
         LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(IndexIterator);
+        LIU_DECLARE_AND_DEFINE_COPY_METHOD_2(IndexIterator);
 
         LIU_DECLARE_ACCESSOR(ListPtr, list, List);
         LIU_DECLARE_ACCESSOR(int, index, Index);

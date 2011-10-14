@@ -11,13 +11,18 @@ LIU_BEGIN
 LIU_DEFINE_2(Text, Object, Object);
 
 Text *Text::init(const QString *value, bool *isTranslatable, QList<IntPair> *interpolableSlices) {
-    Object::init();
-    _value = NULL;
-    _isTranslatable = NULL;
-    _interpolableSlices = NULL;
+    Insertable::init();
     setValue(value);
     setIsTranslatable(isTranslatable);
     setInterpolableSlices(interpolableSlices);
+    return this;
+}
+
+Text *Text::initCopy(const Text *other) {
+    Insertable::initCopy(other);
+    setValue(other->_value);
+    setIsTranslatable(other->_isTranslatable);
+    setInterpolableSlices(other->_interpolableSlices);
     return this;
 }
 
@@ -498,11 +503,16 @@ QChar Text::unescapeSequenceNumber(const QString &source, int &i) {
 LIU_DEFINE_2(Text::Iterator, Iterable::Iterator, Text);
 
 Text::Iterator *Text::Iterator::init(Text **text, int *index) {
-    Object::init();
-    _text = NULL;
-    _index = NULL;
+    Iterable::Iterator::init();
     setText(text);
     setIndex(index);
+    return this;
+}
+
+Text::Iterator *Text::Iterator::initCopy(const Text::Iterator *other) {
+    Iterable::Iterator::initCopy(other);
+    setText(other->_text);
+    setIndex(other->_index);
     return this;
 }
 
@@ -537,11 +547,16 @@ void Text::Iterator::skipNext() {
 LIU_DEFINE_2(Text::IndexIterator, Iterable::Iterator, Text);
 
 Text::IndexIterator *Text::IndexIterator::init(Text **text, int *index) {
-    Object::init();
-    _text = NULL;
-    _index = NULL;
+    Iterable::Iterator::init();
     setText(text);
     setIndex(index);
+    return this;
+}
+
+Text::IndexIterator *Text::IndexIterator::initCopy(const Text::IndexIterator *other) {
+    Iterable::Iterator::initCopy(other);
+    setText(other->_text);
+    setIndex(other->_index);
     return this;
 }
 
@@ -570,70 +585,5 @@ void Text::IndexIterator::skipNext() {
     if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "IndexIterator is out of bounds");
     setIndex(index() + 1);
 }
-
-/*
-// === Text::Iterator ===
-
-LIU_DEFINE(Text::Iterator, Object, Text);
-
-void Text::Iterator::initRoot() {
-    LIU_ADD_NATIVE_METHOD(Text::Iterator, init);
-
-    LIU_ADD_NATIVE_METHOD(Text::Iterator, value);
-
-    LIU_ADD_NATIVE_METHOD(Text::Iterator, first);
-    LIU_ADD_NATIVE_METHOD(Text::Iterator, last);
-
-    LIU_ADD_NATIVE_METHOD(Text::Iterator, prefix_increment, prefix++);
-    LIU_ADD_NATIVE_METHOD(Text::Iterator, prefix_decrement, prefix--);
-}
-
-LIU_DEFINE_NATIVE_METHOD(Text::Iterator, init) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(0);
-    _text = Text::dynamicCast(origin()->parent());
-    return this;
-}
-
-LIU_DEFINE_NATIVE_METHOD(Text::Iterator, value) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(0);
-    if(!message->isQuestioned())
-        return Text::make(value());
-    else
-        return LIU_BOOLEAN(hasValue());
-}
-
-LIU_DEFINE_NATIVE_METHOD(Text::Iterator, first) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_EXCLAMATION_MARK;
-    LIU_CHECK_INPUT_SIZE(0);
-    first();
-    return this;
-}
-
-LIU_DEFINE_NATIVE_METHOD(Text::Iterator, last) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_EXCLAMATION_MARK;
-    LIU_CHECK_INPUT_SIZE(0);
-    last();
-    return this;
-}
-
-LIU_DEFINE_NATIVE_METHOD(Text::Iterator, prefix_increment) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(0);
-    next();
-    return this;
-}
-
-
-LIU_DEFINE_NATIVE_METHOD(Text::Iterator, prefix_decrement) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(0);
-    previous();
-    return this;
-}
-*/
 
 LIU_END

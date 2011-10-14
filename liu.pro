@@ -30,7 +30,6 @@ SOURCES += main.cpp \
     node/object/text.cpp \
     node/object/pair.cpp \
     node/object/bunch.cpp \
-    node/object/dictionary.cpp \
     node/object/application.cpp \
     node/object/language.cpp \
     node/object/language/token.cpp \
@@ -61,7 +60,9 @@ SOURCES += main.cpp \
     node/object/insertable.cpp \
     node/object/oldlist.cpp \
     node/object/list.cpp \
-    node/object/comparable.cpp
+    node/object/comparable.cpp \
+    node/object/olddictionary.cpp \
+    node/object/dictionary.cpp
 
 HEADERS += \
     liu.h \
@@ -80,7 +81,6 @@ HEADERS += \
     node/object/text.h \
     node/object/pair.h \
     node/object/bunch.h \
-    node/object/dictionary.h \
     node/object/application.h \
     node/object/language.h \
     node/object/language/token.h \
@@ -111,7 +111,9 @@ HEADERS += \
     node/object/insertable.h \
     node/object/oldlist.h \
     node/object/list.h \
-    node/object/comparable.h
+    node/object/comparable.h \
+    node/object/olddictionary.h \
+    node/object/dictionary.h
 
 OTHER_FILES += \
     README.txt \

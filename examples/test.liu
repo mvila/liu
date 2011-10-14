@@ -1,8 +1,9 @@
-list := []
-loop(5000) { list << Number random % 10000 }
-list2 := list fork
-list2 sort inspect
-""
+//list := []
+//loop(10) { list << Number random % 10000 }
+//list2 := list fork
+//list2 sort! inspect
+//list2 inspect
+//""
 
 //X := Node()
 //X a := "a"

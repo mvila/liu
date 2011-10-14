@@ -8,8 +8,13 @@ LIU_BEGIN
 LIU_DEFINE_2(List, Object, Object);
 
 List *List::init() {
-    Object::init();
-    _operations = NULL;
+    Insertable::init();
+    return this;
+}
+
+List *List::initCopy(const List *other) {
+    Insertable::initCopy(other);
+    if(other->_operations) _operations = new QList<Operation>(*other->_operations);
     return this;
 }
 
@@ -377,8 +382,14 @@ void List::_quickSort(int left, int right) {
 LIU_DEFINE_NATIVE_METHOD(List, sort) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
-    sort();
-    return this;
+    if(message->isExclaimed()) {
+        sort();
+        return this;
+    } else {
+        List *sortedList = copy();
+        sortedList->sort();
+        return sortedList;
+    }
 }
 
 // === List::Iterator ===
@@ -387,10 +398,15 @@ LIU_DEFINE_2(List::Iterator, Iterable::Iterator, List);
 
 List::Iterator *List::Iterator::init(List **list, int *index) {
     Object::init();
-    _list = NULL;
-    _index = NULL;
     setList(list);
     setIndex(index);
+    return this;
+}
+
+List::Iterator *List::Iterator::initCopy(const List::Iterator *other) {
+    Iterable::Iterator::initCopy(other);
+    setList(other->_list);
+    setIndex(other->_index);
     return this;
 }
 
@@ -425,11 +441,16 @@ void List::Iterator::skipNext() {
 LIU_DEFINE_2(List::IndexIterator, Iterable::Iterator, List);
 
 List::IndexIterator *List::IndexIterator::init(List **list, int *index) {
-    Object::init();
-    _list = NULL;
-    _index = NULL;
+    Iterable::Iterator::init();
     setList(list);
     setIndex(index);
+    return this;
+}
+
+List::IndexIterator *List::IndexIterator::initCopy(const List::IndexIterator *other) {
+    Iterable::Iterator::initCopy(other);
+    setList(other->_list);
+    setIndex(other->_index);
     return this;
 }
 

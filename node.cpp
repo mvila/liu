@@ -29,6 +29,18 @@ void Node::initFork() {
     if(hasOrigin()) setIsAutoRunnable(origin()->isAutoRunnable());
 }
 
+Node *Node::init() { return this; }
+
+Node *Node::initCopy(const Node *other) {
+    setIsAutoRunnable(other->isAutoRunnable());
+    if(other->_extensions) _extensions = new QList<Node *>(*other->_extensions);
+    if(other->_children) {
+        QHashIterator<QString, Node *> i(*other->_children);
+        while(i.hasNext()) { i.next(); addOrSetChild(i.key(), i.value()); }
+    }
+    return this;
+}
+
 Node::~Node() {
     if(_extensions) delete _extensions;
     if(_children) {

@@ -3,7 +3,7 @@
 LIU_BEGIN
 
 namespace Language {
-    LIU_DEFINE(SourceCodeDictionary, Dictionary, Language);
+    LIU_DEFINE(SourceCodeDictionary, OldDictionary, Language);
 
     void SourceCodeDictionary::initRoot() {
     }

@@ -1,4 +1,36 @@
 Object List {
+    \fork {
+    test:
+        list := List()
+        list << "a"
+        list << "b"
+        list << "c"
+        list2 := list fork
+        ?: Text(list2) == "abc"
+        list[1] = "B"
+        ?: Text(list) == "aBc"
+        ?: Text(list2) == "aBc"
+        list2[2] = "C"
+        ?: Text(list2) == "aBC"
+        ?: Text(list) == "aBc"
+    }
+
+    \copy {
+    test:
+        list := List()
+        list << "a"
+        list << "b"
+        list << "c"
+        list2 := list copy
+        ?: Text(list2) == "abc"
+        list[1] = "B"
+        ?: Text(list) == "aBc"
+        ?: Text(list2) == "abc"
+        list2[2] = "C"
+        ?: Text(list2) == "abC"
+        ?: Text(list) == "aBc"
+    }
+
     // --- Iterable ---
 
     \iterator {
@@ -348,6 +380,17 @@ Object List {
         list5[1] >>
         list5[1] << "*" // R[1..2] + I[1] -> S[1] + R[2]
         ?: Text(list5) == "a*de"
+    }
+
+    // --- List ---
+
+    \sort {
+    test:
+        list := ["z", "a", "m", "g", "s"]
+        ?: Text(list sort) == "agmsz"
+        ?: Text(list) == "zamgs"
+        ?: Text(list sort!) == "agmsz"
+        ?: Text(list) == "agmsz"
     }
 test:
     ?: origin == Object

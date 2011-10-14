@@ -1,7 +1,7 @@
 #ifndef LIU_LANGUAGE_SOURCE_CODE_DICTIONARY_H
 #define LIU_LANGUAGE_SOURCE_CODE_DICTIONARY_H
 
-#include "node/object/dictionary.h"
+#include "node/object/olddictionary.h"
 #include "node/object/language/sourcecode.h"
 
 LIU_BEGIN
@@ -11,7 +11,7 @@ namespace Language {
     new Language::SourceCodeDictionary(context()->child("Object", "Language", "SourceCodeDictionary"), ##ARGS)
 
     class SourceCodeDictionary : public GenericDictionary<Node::Reference, SourceCode *> {
-        LIU_DECLARE(SourceCodeDictionary, Dictionary, Language);
+        LIU_DECLARE(SourceCodeDictionary, OldDictionary, Language);
     public:
         SourceCodeDictionary(Node *origin) :
             GenericDictionary<Node::Reference, SourceCode *>(origin) {}

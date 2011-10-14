@@ -66,11 +66,12 @@ public:
         static Iterator *make() { return (new Iterator())->init(); }
 
         Iterator *init() { Object::init(); return this; }
+        Iterator *initCopy(const Iterator *other) { Object::initCopy(other); return this; }
 
         virtual ~Iterator() {}
 
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD(Iterator);
         LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Iterator);
+        LIU_DECLARE_AND_DEFINE_COPY_METHOD_2(Iterator);
 
         virtual bool hasNext() const { LIU_ABSTRACT_CALL; }
         virtual Node *peekNext() const { LIU_ABSTRACT_CALL; }

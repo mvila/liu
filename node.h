@@ -9,9 +9,6 @@ LIU_BEGIN
 
 #define LIU_NODE(ARGS...) new Node(context()->child("Node"), ##ARGS)
 
-#define LIU_DECLARE_AND_DEFINE_COPY_METHOD(NAME) \
-virtual NAME *copy() const { return new NAME(*this); }
-
 #define LIU_DECLARE_AND_DEFINE_FORK_METHOD(NAME, ARGS...) \
 virtual NAME *fork() const { \
     NAME *node = new NAME(constCast(this), ##ARGS); \
@@ -19,11 +16,7 @@ virtual NAME *fork() const { \
 }
 
 #define LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(NAME, ARGS...) \
-virtual NAME *fork() const { \
-    NAME *node = new NAME(constCast(this)); \
-    node->init(ARGS); \
-    return node; \
-}
+virtual NAME *fork() const { return (new NAME(constCast(this)))->init(ARGS); }
 
 #define LIU_DECLARE_FORK_METHOD(NAME) \
 virtual NAME *fork() const;
@@ -33,6 +26,12 @@ NAME *NAME::fork() const { \
     NAME *node = new NAME(constCast(this), ##ARGS); \
     return node; \
 }
+
+#define LIU_DECLARE_AND_DEFINE_COPY_METHOD(NAME) \
+virtual NAME *copy() const { return new NAME(*this); }
+
+#define LIU_DECLARE_AND_DEFINE_COPY_METHOD_2(NAME) \
+virtual NAME *copy() const { return (new NAME(this->origin()))->initCopy(this); }
 
 #define LIU_FORK_IF_NOT_NULL(NODE) \
 ((NODE) ? (NODE)->fork() : NULL)
@@ -99,7 +98,8 @@ public:
 
     Node(const Node &other); // copy constructor
 
-    Node *init() { return this; }
+    Node *init();
+    Node *initCopy(const Node *other);
 
     void initFork();
 
