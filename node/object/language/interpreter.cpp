@@ -57,6 +57,8 @@ namespace Language {
 
         ops->append("<=>", Operator::Binary, 441);
 
+        ops->append("===", Operator::Binary, 431, Operator::NonAssociative);
+
         ops->append("==", Operator::Binary, 431, Operator::NonAssociative);
         ops->append("!=", Operator::Binary, 431, Operator::NonAssociative);
         ops->append("<", Operator::Binary, 431, Operator::NonAssociative);

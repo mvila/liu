@@ -1,0 +1,24 @@
+Object Pair {
+    \init {
+    test:
+        p := Pair("a", "b")
+        ?: p first == "a"
+        ?: p second == "b"
+        p2 := p fork
+        ?: p2 first == "a"
+        ?: p2 second == "b"
+        p first uppercase!
+        ?: p2 first == "A"
+        p2 first lowercase!
+        ?: p2 first == "a"
+        ?: p first == "A"
+        p2 first = "*"
+        ?: p2 first == "*"
+        ?: p2 second == "b"
+    }
+test:
+    ?: origin == Object
+    ?: parent == Object
+
+    ?: Text(Pair("a", "b")) == "a: b"
+}

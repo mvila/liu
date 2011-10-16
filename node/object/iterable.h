@@ -9,18 +9,11 @@ LIU_BEGIN
 // === Iterable ===
 
 class Iterable : public Object {
-    LIU_DECLARE(Iterable, Object, Object);
+    LIU_DECLARE_2(Iterable, Object, Object);
 public:
     explicit Iterable(Node *origin = context()->child("Object", "Iterable")) : Object(origin) {}
 
-    static Iterable *make() { return (new Iterable())->init(); }
-
-    Iterable *init() { Object::init(); return this; }
-
-    virtual ~Iterable() {}
-
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(Iterable);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Iterable);
+    Iterable *init();
 
     virtual QString toString(bool debug = false, short level = 0) const;
 
@@ -59,19 +52,11 @@ public:
     // === Iterator ===
 
     class Iterator : public Object {
-        LIU_DECLARE(Iterator, Object, Iterable);
+        LIU_DECLARE_2(Iterator, Object, Iterable);
     public:
         explicit Iterator(Node *origin = context()->child("Object", "Iterable", "Iterator")) : Object(origin) {}
 
-        static Iterator *make() { return (new Iterator())->init(); }
-
-        Iterator *init() { Object::init(); return this; }
-        Iterator *initCopy(const Iterator *other) { Object::initCopy(other); return this; }
-
-        virtual ~Iterator() {}
-
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Iterator);
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD_2(Iterator);
+        Iterator *init();
 
         virtual bool hasNext() const { LIU_ABSTRACT_CALL; }
         virtual Node *peekNext() const { LIU_ABSTRACT_CALL; }

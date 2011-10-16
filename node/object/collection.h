@@ -6,18 +6,11 @@
 LIU_BEGIN
 
 class Collection : public Iterable {
-    LIU_DECLARE(Collection, Iterable, Object);
+    LIU_DECLARE_2(Collection, Iterable, Object);
 public:
     explicit Collection(Node *origin = context()->child("Object", "Collection")) : Iterable(origin) {}
 
-    static Collection *make() { return (new Collection())->init(); }
-
-    Collection *init() { Iterable::init(); return this; }
-
-    virtual ~Collection() {}
-
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(Collection);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Collection);
+    Collection *init();
 
     virtual void append(Node *item) { Q_UNUSED(item); LIU_ABSTRACT_CALL; }
     LIU_DECLARE_NATIVE_METHOD(append);

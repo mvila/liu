@@ -5,6 +5,18 @@ LIU_BEGIN
 
 LIU_DEFINE_2(Indexable, Collection, Object);
 
+Indexable *Indexable::init() {
+    Collection::init();
+    return this;
+}
+
+Indexable *Indexable::initCopy(const Indexable *other) {
+    Collection::initCopy(other);
+    return this;
+}
+
+Indexable::~Indexable() {}
+
 void Indexable::initRoot() {
     LIU_ADD_NATIVE_METHOD(Indexable, get, []);
     LIU_ADD_NATIVE_METHOD(Indexable, set, []=);
@@ -22,7 +34,7 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, get) {
     Node *index = message->runFirstInput();
     bool wasFound = true;
     Node *result = get(index, message->isQuestioned() ? &wasFound : NULL);
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    if(!wasFound) Primitive::skip(Boolean::make(false));
     return result;
 }
 
@@ -33,7 +45,7 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, set) {
     Node *item = message->runSecondInput();
     bool wasFound = true;
     set(index, item, message->isQuestioned() ? &wasFound : NULL);
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    if(!wasFound) Primitive::skip(Boolean::make(false));
     return this;
 }
 
@@ -55,7 +67,7 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, append_or_set) {
     Node *item = message->runLastInput();
     bool wasFound = true;
     appendOrSet(index, item, message->isQuestioned() ? &wasFound : NULL);
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    if(!wasFound) Primitive::skip(Boolean::make(false));
     return this;
 }
 
@@ -75,7 +87,7 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, unset) {
         result = remove(value, message->isQuestioned() ? &wasFound : NULL);
     else
         result = unset(index, message->isQuestioned() ? &wasFound : NULL);
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    if(!wasFound) Primitive::skip(Boolean::make(false));
     return result;
 }
 
@@ -110,7 +122,7 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, index) {
     Node *item = message->runFirstInput();
     bool wasFound = true;
     Node *result = index(item, message->isQuestioned() ? &wasFound : NULL);
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN());
+    if(!wasFound) Primitive::skip(Boolean::make(false));
     return result;
 }
 

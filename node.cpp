@@ -66,14 +66,8 @@ void Node::initRoot() {
 
     LIU_ADD_NATIVE_METHOD(Node, self);
 
-    Property *originProperty = LIU_PROPERTY();
-    originProperty->LIU_ADD_NATIVE_METHOD(Node, origin_get, get);
-    originProperty->LIU_ADD_NATIVE_METHOD(Node, origin_set, set);
-    addChild("origin", originProperty);
-
-    Property *extensionsProperty = LIU_PROPERTY();
-    extensionsProperty->LIU_ADD_NATIVE_METHOD(Node, extensions_get, get);
-    addChild("extensions", extensionsProperty);
+    LIU_ADD_PROPERTY(Node, origin);
+    LIU_ADD_READ_ONLY_PROPERTY(Node, extensions)
 
     LIU_ADD_NATIVE_METHOD(Node, is);
 
@@ -99,6 +93,8 @@ void Node::initRoot() {
 
     LIU_ADD_NATIVE_METHOD(Node, or_assign, ||=);
     LIU_ADD_NATIVE_METHOD(Node, and_assign, &&=);
+
+    LIU_ADD_NATIVE_METHOD(Node, same_as, ===);
 
     LIU_ADD_NATIVE_METHOD(Node, equal_to, ==);
     LIU_ADD_NATIVE_METHOD(Node, different_from, !=);
@@ -192,12 +188,12 @@ bool Node::isOriginatingFrom(Node *orig) const {
     orig = orig->real();
     const Node *node = real();
     while(node != orig) {
-        if(node->origin() == node) // Node::root reached?
-            return false;
-        if(_extensions) {
-            foreach(Node *extension, *_extensions)
+        if(node->_extensions) {
+            foreach(Node *extension, *node->_extensions)
                 if(extension->isOriginatingFrom(orig)) return true;
         }
+        if(node->origin() == node) // Node::root reached?
+            return false;
         node = node->origin();
     }
     return true;
@@ -207,14 +203,14 @@ LIU_DEFINE_NATIVE_METHOD(Node, is) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_QUESTION_MARK;
     LIU_CHECK_INPUT_SIZE(1);
-    return LIU_BOOLEAN(isOriginatingFrom(message->runFirstInput()));
+    return Boolean::make(isOriginatingFrom(message->runFirstInput()));
 }
 
 Node *Node::virtualOrReal(bool virtualMode) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_QUESTION_MARK;
     LIU_CHECK_INPUT_SIZE(0);
-    return LIU_BOOLEAN(isVirtual() == virtualMode);
+    return Boolean::make(isVirtual() == virtualMode);
 }
 
 Node *Node::real() {
@@ -385,7 +381,7 @@ LIU_DEFINE_NATIVE_METHOD(Node, remove) {
 //    }
     bool wasFound = true;
     removeChild(msg->name(), msg->isQuestioned() ? &wasFound : NULL);
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    if(!wasFound) Primitive::skip(Boolean::make(false));
     return this;
 }
 
@@ -433,9 +429,7 @@ LIU_DEFINE_NATIVE_METHOD(Node, has) {
     LIU_CHECK_INPUT_SIZE(1);
     Message *msg = Message::dynamicCast(message->firstInput()->value()->value());
     if(!msg) LIU_THROW(ArgumentException, "argument is not message");
-    Node *node = findChild(msg->name());
-    if(!node) Primitive::skip(LIU_BOOLEAN(false));
-    return node;
+    return Boolean::make(findChild(msg->name()) != NULL);
 }
 
 void Node::_addParent(Node *parent) const {
@@ -485,7 +479,7 @@ bool Node::hasOneParent() const {
 LIU_DEFINE_NATIVE_METHOD(Node, parent) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
-    return message->isQuestioned() ? LIU_BOOLEAN(hasOneParent()) : parent();
+    return message->isQuestioned() ? Boolean::make(hasOneParent()) : parent();
 }
 
 Node *Node::findParentOriginatingFrom(Node *orig) const {
@@ -509,19 +503,19 @@ Node *Node::receive(Primitive *primitive) {
 LIU_DEFINE_NATIVE_METHOD(Node, or) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
-    return LIU_BOOLEAN(toBool() || message->runFirstInput()->toBool());
+    return Boolean::make(toBool() || message->runFirstInput()->toBool());
 }
 
 LIU_DEFINE_NATIVE_METHOD(Node, and) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
-    return LIU_BOOLEAN(toBool() && message->runFirstInput()->toBool());
+    return Boolean::make(toBool() && message->runFirstInput()->toBool());
 }
 
 LIU_DEFINE_NATIVE_METHOD(Node, not) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
-    return LIU_BOOLEAN(!toBool());
+    return Boolean::make(!toBool());
 }
 
 LIU_DEFINE_NATIVE_METHOD(Node, or_assign) {
@@ -544,15 +538,21 @@ LIU_DEFINE_NATIVE_METHOD(Node, and_assign) {
         return lhs;
 }
 
+LIU_DEFINE_NATIVE_METHOD(Node, same_as) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(1);
+    return Boolean::make(isSameAs(message->runFirstInput()));
+}
+
 LIU_DEFINE_NATIVE_METHOD(Node, equal_to) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
-    return LIU_BOOLEAN(isEqualTo(message->runFirstInput()));
+    return Boolean::make(isEqualTo(message->runFirstInput()));
 }
 
 LIU_DEFINE_NATIVE_METHOD(Node, different_from) {
     LIU_FIND_LAST_MESSAGE;
-    return LIU_BOOLEAN(!Boolean::cast(LIU_MESSAGE("==", message->inputs(false))->run(this))->value());
+    return Boolean::make(!Boolean::cast(LIU_MESSAGE("==", message->inputs(false))->run(this))->value());
 }
 
 short Node::compare(const Node *other) const {
@@ -577,7 +577,7 @@ LIU_DEFINE_NATIVE_METHOD(Node, throw) {
         else
             throw;
     }
-    Primitive::skip(LIU_BOOLEAN(result));
+    Primitive::skip(Boolean::make(result));
 }
 
 Node *Node::assert(bool isAssertTrue) {
@@ -612,7 +612,7 @@ LIU_DEFINE_NATIVE_METHOD(Node, dump) {
 LIU_DEFINE_NATIVE_METHOD(Node, memory_address) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
-    return LIU_NUMBER(memoryAddress());
+    return Number::make(memoryAddress());
 }
 
 QString Node::toString(bool debug, short level) const {

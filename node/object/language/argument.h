@@ -1,7 +1,7 @@
 #ifndef LIU_LANGUAGE_ARGUMENT_H
 #define LIU_LANGUAGE_ARGUMENT_H
 
-#include "node/object/pair.h"
+#include "node/object/oldpair.h"
 #include "node/object/language/primitive.h"
 
 LIU_BEGIN
@@ -11,7 +11,7 @@ namespace Language {
     new Language::Argument(context()->child("Object", "Language", "Argument"), ##ARGS)
 
     class Argument : public GenericPair<Primitive *, Primitive *> {
-        LIU_DECLARE(Argument, Pair, Language);
+        LIU_DECLARE(Argument, OldPair, Language);
     public:
         explicit Argument(Node *origin) :
             GenericPair<Primitive *, Primitive *>(origin, NULL, NULL) {}

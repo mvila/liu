@@ -1,34 +1,29 @@
 #ifndef LIU_BOOLEAN_H
 #define LIU_BOOLEAN_H
 
-#include "node/object/element.h"
+#include "node/object/property.h"
 #include "node/object/language/message.h"
 
 LIU_BEGIN
 
-#define LIU_BOOLEAN(ARGS...) new Boolean(context()->child("Object", "Boolean"), ##ARGS)
-
-class Boolean : public GenericElement<bool> {
-    LIU_DECLARE(Boolean, Element, Object);
+class Boolean : public Object {
+    LIU_DECLARE_2(Boolean, Object, Object);
 public:
-    explicit Boolean(Node *origin, bool value = false) : GenericElement<bool>(origin, false) { setValue(value); }
+    explicit Boolean(Node *origin = context()->child("Object", "Boolean")) :
+        Object(origin), _value(NULL) {}
 
-    Boolean(const Boolean &other) : GenericElement<bool>(other) { setValue(other.value()); }
+    static Boolean *make(const bool &value) { return (new Boolean())->init(&value); }
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(Boolean);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Boolean, value());
+    Boolean *init(const bool *value = NULL);
 
-    virtual bool isEqualTo(const Node *other) const {
-        return value() == Boolean::cast(other)->value();
-    }
+    LIU_DECLARE_NATIVE_METHOD(init);
 
-    LIU_DECLARE_NATIVE_METHOD(equal_to) {
-        LIU_FIND_LAST_MESSAGE;
-        LIU_CHECK_INPUT_SIZE(1);
-        return LIU_BOOLEAN(value() == message->runFirstInput()->toBool());
-    }
+    LIU_DECLARE_ACCESSOR(bool, value, Value);
+    LIU_DECLARE_PROPERTY(value);
 
-    virtual bool toBool() const { return value(); };
+    virtual bool isEqualTo(const Node *other) const;
+
+    virtual bool toBool() const { bool *value = hasValue(); return value && *value; };
 
     virtual double toDouble(bool *okPtr = NULL) const {
         Q_UNUSED(okPtr);
@@ -40,6 +35,8 @@ public:
         Q_UNUSED(level);
         return value() ? "yes" : "no";
     }
+private:
+    bool *_value;
 };
 
 LIU_END

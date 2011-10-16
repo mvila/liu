@@ -8,6 +8,43 @@ LIU_BEGIN
 #define LIU_PROPERTY(ARGS...) \
 new Property(context()->child("Object", "Property"), ##ARGS)
 
+#define LIU_DECLARE_PROPERTY(NAME) \
+LIU_DECLARE_NATIVE_METHOD(NAME##_get); \
+LIU_DECLARE_NATIVE_METHOD(NAME##_set);
+
+#define LIU_DECLARE_READ_ONLY_PROPERTY(NAME) \
+LIU_DECLARE_NATIVE_METHOD(NAME##_get);
+
+#define LIU_DEFINE_NODE_PROPERTY(CLASS, NAME, NAME_CAP) \
+LIU_DEFINE_READ_ONLY_NODE_PROPERTY(CLASS, NAME); \
+LIU_DEFINE_NATIVE_METHOD(CLASS, NAME##_set) { \
+    LIU_FIND_LAST_MESSAGE; \
+    LIU_CHECK_INPUT_SIZE(1); \
+    CLASS::cast(parent())->set##NAME_CAP(message->runFirstInput()); \
+    return this; \
+}
+
+#define LIU_DEFINE_READ_ONLY_NODE_PROPERTY(CLASS, NAME) \
+LIU_DEFINE_NATIVE_METHOD(CLASS, NAME##_get) { \
+    LIU_FIND_LAST_MESSAGE; \
+    LIU_CHECK_INPUT_SIZE(0); \
+    if(message->isQuestioned()) \
+        LIU_TODO; \
+    else \
+        return CLASS::cast(parent())->NAME(); \
+}
+
+#define LIU_ADD_PROPERTY(CLASS, NAME) \
+Property *NAME##Property = LIU_PROPERTY(); \
+NAME##Property->LIU_ADD_NATIVE_METHOD(CLASS, NAME##_get, get); \
+NAME##Property->LIU_ADD_NATIVE_METHOD(CLASS, NAME##_set, set); \
+addChild(#NAME, NAME##Property);
+
+#define LIU_ADD_READ_ONLY_PROPERTY(CLASS, NAME) \
+Property *NAME##Property = LIU_PROPERTY(); \
+NAME##Property->LIU_ADD_NATIVE_METHOD(CLASS, NAME##_get, get); \
+addChild(#NAME, NAME##Property);
+
 class Property : public Object {
     LIU_DECLARE(Property, Object, Object);
 public:

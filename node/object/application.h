@@ -5,15 +5,12 @@
 
 LIU_BEGIN
 
-#define LIU_APPLICATION(ARGS...) new Application(context()->child("Object", "Application"), ##ARGS)
-
 class Application : public Object {
-    LIU_DECLARE(Application, Object, Object);
+    LIU_DECLARE_2(Application, Object, Object);
 public:
-    explicit Application(Node *origin) : Object(origin) {}
+    explicit Application(Node *origin = context()->child("Object", "Application")) : Object(origin) {}
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(Application);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Application);
+    Application *init();
 };
 
 LIU_END

@@ -8,6 +8,18 @@ LIU_BEGIN
 
 LIU_DEFINE_2(Iterable, Object, Object);
 
+Iterable *Iterable::init() {
+    Object::init();
+    return this;
+}
+
+Iterable *Iterable::initCopy(const Iterable *other) {
+    Object::initCopy(other);
+    return this;
+}
+
+Iterable::~Iterable() {}
+
 void Iterable::initRoot() {
     LIU_ADD_NATIVE_METHOD(Iterable, iterator);
 
@@ -25,7 +37,7 @@ void Iterable::initRoot() {
 QString Iterable::toString(bool debug, short level) const {
     QString str;
     if(debug) str += "[";
-    str += join(debug ? ", " : "", "", "", debug, level);
+    str += join(debug ? ", " : " ", "", "", debug, level);
     if(debug) str += "]";
     return str;
 }
@@ -47,7 +59,7 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, contains) {
     LIU_CHECK_QUESTION_MARK;
     LIU_CHECK_INPUT_SIZE(1);
     Node *value = message->runFirstInput();
-    return LIU_BOOLEAN(contains(value));
+    return Boolean::make(contains(value));
 }
 
 int Iterable::count(Node *value) const {
@@ -61,7 +73,7 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, count) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
     Node *value = message->runFirstInput();
-    return LIU_NUMBER(count(value));
+    return Number::make(count(value));
 }
 
 int Iterable::size() const {
@@ -77,7 +89,7 @@ int Iterable::size() const {
 LIU_DEFINE_NATIVE_METHOD(Iterable, size) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
-    return LIU_NUMBER(size());
+    return Number::make(size());
 }
 
 bool Iterable::empty() const {
@@ -89,7 +101,7 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, empty) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_QUESTION_MARK;
     LIU_CHECK_INPUT_SIZE(0);
-    return LIU_BOOLEAN(empty());
+    return Boolean::make(empty());
 }
 
 Node *Iterable::first(bool *wasFoundPtr) const {
@@ -102,7 +114,7 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, first) {
     LIU_CHECK_INPUT_SIZE(0);
     bool wasFound = true;
     Node *result = first(message->isQuestioned() ? &wasFound : NULL);
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    if(!wasFound) Primitive::skip(Boolean::make(false));
     return result;
 }
 
@@ -117,7 +129,7 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, second) {
     LIU_CHECK_INPUT_SIZE(0);
     bool wasFound = true;
     Node *result = second(message->isQuestioned() ? &wasFound : NULL);
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    if(!wasFound) Primitive::skip(Boolean::make(false));
     return result;
 }
 
@@ -134,7 +146,7 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, third) {
     LIU_CHECK_INPUT_SIZE(0);
     bool wasFound = true;
     Node *result = third(message->isQuestioned() ? &wasFound : NULL);
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    if(!wasFound) Primitive::skip(Boolean::make(false));
     return result;
 }
 
@@ -158,7 +170,7 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, last) {
     LIU_CHECK_INPUT_SIZE(0);
     bool wasFound = true;
     Node *result = last(message->isQuestioned() ? &wasFound : NULL);
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    if(!wasFound) Primitive::skip(Boolean::make(false));
     return result;
 }
 
@@ -178,6 +190,18 @@ const QString Iterable::join(const QString &separator, const QString &prefix,
 
 LIU_DEFINE_2(Iterable::Iterator, Object, Iterable);
 
+Iterable::Iterator *Iterable::Iterator::init() {
+    Object::init();
+    return this;
+}
+
+Iterable::Iterator *Iterable::Iterator::initCopy(const Iterable::Iterator *other) {
+    Object::initCopy(other);
+    return this;
+}
+
+Iterable::Iterator::~Iterator() {}
+
 void Iterable::Iterator::initRoot() {
     LIU_ADD_NATIVE_METHOD(Iterable::Iterator, read);
     LIU_ADD_NATIVE_METHOD(Iterable::Iterator, skip);
@@ -196,7 +220,7 @@ Node *Iterable::Iterator::next(bool *wasFoundPtr) {
 LIU_DEFINE_NATIVE_METHOD(Iterable::Iterator, read) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
-    if(message->isQuestioned()) return LIU_BOOLEAN(hasNext());
+    if(message->isQuestioned()) return Boolean::make(hasNext());
     if(message->isExclaimed()) return next();
     return peekNext();
 }

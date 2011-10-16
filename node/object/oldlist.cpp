@@ -33,13 +33,13 @@ LIU_DEFINE_NATIVE_METHOD(AbstractList, get) { // TODO: use multiple return value
     bool wasFound = true;
     if(value) {
         int index = get(&value, message->isQuestioned() ? &wasFound : NULL);
-        if(wasFound) return LIU_NUMBER(index);
+        if(wasFound) return Number::make(index);
     } else {
         int index = message->runFirstInput()->toDouble();
         value = get(index, message->isQuestioned() ? &wasFound : NULL);
         if(wasFound) return value;
     }
-    Primitive::skip(LIU_BOOLEAN(false));
+    Primitive::skip(Boolean::make(false));
 }
 
 LIU_DEFINE_NATIVE_METHOD(AbstractList, set) {
@@ -92,7 +92,7 @@ LIU_DEFINE_NATIVE_METHOD(AbstractList, remove) {
         index = message->runFirstInput()->toDouble();
         value = get(index, message->isQuestioned() ? &wasFound : NULL);
     }
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    if(!wasFound) Primitive::skip(Boolean::make(false));
     remove(index);
     return value;
 }
@@ -100,14 +100,14 @@ LIU_DEFINE_NATIVE_METHOD(AbstractList, remove) {
 LIU_DEFINE_NATIVE_METHOD(AbstractList, size) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
-    return LIU_NUMBER(size());
+    return Number::make(size());
 }
 
 LIU_DEFINE_NATIVE_METHOD(AbstractList, empty) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_QUESTION_MARK;
     LIU_CHECK_INPUT_SIZE(0);
-    return LIU_BOOLEAN(isEmpty());
+    return Boolean::make(isEmpty());
 }
 
 // === OldList ===

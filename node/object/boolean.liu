@@ -12,4 +12,16 @@ Object Boolean {
         ?: true != false
         ?: Boolean() == false
     }
+test:
+    ?: origin == Object
+    ?: parent == Object
+
+    !: Boolean
+    !: Boolean()
+    ?: Boolean(true)
+    !: Boolean(false)
+    ?: true
+    !: false
+    ?: yes
+    !: no
 }

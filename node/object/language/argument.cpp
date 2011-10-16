@@ -4,7 +4,7 @@
 LIU_BEGIN
 
 namespace Language {
-    LIU_DEFINE(Argument, Pair, Language);
+    LIU_DEFINE(Argument, OldPair, Language);
 
     void Argument::initRoot() {
     }

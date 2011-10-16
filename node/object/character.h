@@ -8,54 +8,44 @@
 
 LIU_BEGIN
 
-#define LIU_CHARACTER(ARGS...) new Character(context()->child("Object", "Character"), ##ARGS)
-
-class Character : public GenericElement<QChar> {
-    LIU_DECLARE(Character, Element, Object);
+class Character : public Object {
+    LIU_DECLARE_2(Character, Object, Object);
 public:
-    explicit Character(Node *origin, const QChar &value = QChar::Null) :
-        GenericElement<QChar>(origin, QChar::Null) { setValue(value); }
+    explicit Character(Node *origin = context()->child("Object", "Character")) :
+        Object(origin), _value(NULL) {}
 
-    Character(const Character &other) : GenericElement<QChar>(other) { setValue(other.value()); }
+    static Character *make(const QChar &value) { return (new Character())->init(&value); }
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(Character);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Character, value());
+    Character *init(const QChar *value = NULL);
+
+    LIU_DECLARE_NATIVE_METHOD(init);
+
+    LIU_DECLARE_ACCESSOR(QChar, value, Value);
+    LIU_DECLARE_PROPERTY(value);
 
     virtual bool isEqualTo(const Node *other) const;
 
-    LIU_DECLARE_NATIVE_METHOD(equal_to) {
-        LIU_FIND_LAST_MESSAGE;
-        LIU_CHECK_INPUT_SIZE(1);
-        return LIU_BOOLEAN(value() == message->runFirstInput()->toChar());
-    }
+    virtual short compare(const Node *other) const;
+    short compare(const QChar &other) const;
 
-    virtual short compare(const Node *other) const {
-        return compare(cast(other)->value());
-    }
-
-    short compare(const QChar &other) const {
-        if(value() > other) return 1;
-        else if(value() < other) return -1;
-        else return 0;
-    }
-
-    LIU_DECLARE_NATIVE_METHOD(compare) {
-        LIU_FIND_LAST_MESSAGE;
-        LIU_CHECK_INPUT_SIZE(1);
-        return LIU_NUMBER(compare(message->runFirstInput()->toChar()));
-    }
+    virtual bool toBool() const { return hasValue(); };
 
     virtual double toDouble(bool *okPtr = NULL) const {
-        Q_UNUSED(okPtr);
+        if(okPtr) *okPtr = true;
         return value().unicode();
     };
 
-    virtual QChar toChar() const { return value(); };
+    virtual QChar toChar(bool *okPtr = NULL) const {
+        if(okPtr) *okPtr = true;
+        return value();
+    };
 
     virtual QString toString(bool debug = false, short level = 0) const {
         Q_UNUSED(level);
         return debug ? ("'" + QString(value()) + "'") : value();
     }
+private:
+    QChar *_value;
 };
 
 LIU_END

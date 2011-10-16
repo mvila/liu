@@ -69,7 +69,7 @@ LIU_DEFINE_NATIVE_METHOD(OldDictionary, get) {
     LIU_CHECK_INPUT_SIZE(1);
     Node *key = message->runFirstInput();
     if(message->isQuestioned() && !hasKey(key))
-        return LIU_BOOLEAN(false);
+        return Boolean::make(false);
     else
         return get(key);
 }
@@ -92,13 +92,13 @@ LIU_DEFINE_NATIVE_METHOD(OldDictionary, append_or_set) {
 LIU_DEFINE_NATIVE_METHOD(OldDictionary, size) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
-    return LIU_NUMBER(size());
+    return Number::make(size());
 }
 
 LIU_DEFINE_NATIVE_METHOD(OldDictionary, empty) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
-    return LIU_BOOLEAN(isEmpty());
+    return Boolean::make(isEmpty());
 }
 
 LIU_DEFINE_NATIVE_METHOD(OldDictionary, each) {

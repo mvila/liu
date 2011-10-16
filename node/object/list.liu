@@ -6,13 +6,13 @@ Object List {
         list << "b"
         list << "c"
         list2 := list fork
-        ?: Text(list2) == "abc"
+        ?: Text(list2) == "a b c"
         list[1] = "B"
-        ?: Text(list) == "aBc"
-        ?: Text(list2) == "aBc"
+        ?: Text(list) == "a B c"
+        ?: Text(list2) == "a B c"
         list2[2] = "C"
-        ?: Text(list2) == "aBC"
-        ?: Text(list) == "aBc"
+        ?: Text(list2) == "a B C"
+        ?: Text(list) == "a B c"
     }
 
     \copy {
@@ -22,13 +22,13 @@ Object List {
         list << "b"
         list << "c"
         list2 := list copy
-        ?: Text(list2) == "abc"
+        ?: Text(list2) == "a b c"
         list[1] = "B"
-        ?: Text(list) == "aBc"
-        ?: Text(list2) == "abc"
+        ?: Text(list) == "a B c"
+        ?: Text(list2) == "a b c"
         list2[2] = "C"
-        ?: Text(list2) == "abC"
-        ?: Text(list) == "aBc"
+        ?: Text(list2) == "a b C"
+        ?: Text(list) == "a B c"
     }
 
     // --- Iterable ---
@@ -40,6 +40,7 @@ Object List {
         list << "b"
         list << "c"
         iter := list iterator
+        ?: iter source === list
         ?: iter read?
         ?: iter read == 'a'
         ?: iter read! == 'a'
@@ -157,12 +158,12 @@ Object List {
         list << "a"
         ?: Text(list) == "a"
         list << "b"
-        ?: Text(list) == "ab"
+        ?: Text(list) == "a b"
         list2 := list fork
-        ?: Text(list2) == "ab"
+        ?: Text(list2) == "a b"
         list2 << "c"
-        ?: Text(list2) == "abc"
-        ?: Text(list) == "ab"
+        ?: Text(list2) == "a b c"
+        ?: Text(list) == "a b"
     }
 
     \`[]>>` {
@@ -178,7 +179,7 @@ Object List {
         list << "a"
         list << "a"
         list << "a"
-        ?: Text(list) == "aaa"
+        ?: Text(list) == "a a a"
         list[:"a"] >>
         ?: list size == 2
         list[:"a"] >>
@@ -187,17 +188,17 @@ Object List {
         ?: list size == 0
         list << "a"
         list << "b"
-        ?: Text(list) == "ab"
+        ?: Text(list) == "a b"
         list2 := list fork
         list2 << "c"
-        ?: Text(list2) == "abc"
+        ?: Text(list2) == "a b c"
         ?: list2[:"a"] >> == "a"
-        ?: Text(list2) == "bc"
+        ?: Text(list2) == "b c"
         ?: list2[:"c"]? >>
         ?: Text(list2) == "b"
         list2[:"b"] >>
         ?: list2 empty?
-        ?: Text(list) == "ab"
+        ?: Text(list) == "a b"
     }
 
     \clear! {
@@ -215,7 +216,7 @@ Object List {
         list << "a" << "b" << "c"
         ?: list size == 3
         list2 := list fork
-        ?: Text(list2) == "abc"
+        ?: Text(list2) == "a b c"
         list2 clear!
         ?: list2 empty?
         ?: list size == 3
@@ -246,29 +247,29 @@ Object List {
     test:
         list := ["a", "b", "c", "x", "e", "f"]
         list[3] = 'd'
-        ?: Text(list) == "abcdef"
+        ?: Text(list) == "a b c d e f"
         list[-1] = "!"
-        ?: Text(list) == "abcde!"
+        ?: Text(list) == "a b c d e !"
         ?: IndexOutOfBoundsException throw? { list[6] = 'x' }
         !: list[6]? = 'x'
         list2 := list fork
-        ?: Text(list2) == "abcde!"
+        ?: Text(list2) == "a b c d e !"
         list[-1] = "F"
-        ?: Text(list2) == "abcdeF"
+        ?: Text(list2) == "a b c d e F"
         list2[-1] = "f"
-        ?: Text(list2) == "abcdef"
-        ?: Text(list) == "abcdeF"
+        ?: Text(list2) == "a b c d e f"
+        ?: Text(list) == "a b c d e F"
         list2[2] = "C"
         list2[1] = "B" // S[1..2] + S[0] -> S[0..2]
         list2[3] = "D" // S[1..2] + S[3] -> S[1..3]
-        ?: Text(list2) == "aBCDef"
+        ?: Text(list2) == "a B C D e f"
         list2[2] = "c" // S[1..2] + S[1] -> S[1..2]
-        ?: Text(list2) == "aBcDef"
+        ?: Text(list2) == "a B c D e f"
         list2[2] << "x"
         list2[3] << "y"
-        ?: Text(list2) == "aBxycDef"
+        ?: Text(list2) == "a B x y c D e f"
         list2[2] = "X" // I[1..2] + S[1] -> I[1..2]
-        ?: Text(list2) == "aBXycDef"
+        ?: Text(list2) == "a B X y c D e f"
     }
 
     \`[]:=` {
@@ -280,13 +281,13 @@ Object List {
         !: list[2]? := 'x'
         list[1] := "B"
         list[1] := "b"
-        ?: Text(list) == "ab"
+        ?: Text(list) == "a b"
         list2 := list fork
         list2[2] := "c"
-        ?: Text(list2) == "abc"
+        ?: Text(list2) == "a b c"
         list2[0] := "A"
-        ?: Text(list2) == "Abc"
-        ?: Text(list) == "ab"
+        ?: Text(list2) == "A b c"
+        ?: Text(list) == "a b"
         ?: IndexOutOfBoundsException throw? { list2[4] := 'x' }
     }
 
@@ -298,14 +299,14 @@ Object List {
         ?: IndexOutOfBoundsException throw? { list[6] >> }
         !: list[6]? >>
         ?: list[-1] >> == "f"
-        ?: Text(list) == "abcde"
+        ?: Text(list) == "a b c d e"
         ?: list[0] >> == "a"
-        ?: Text(list) == "bcde"
+        ?: Text(list) == "b c d e"
         list2 := list fork
         ?: list2[2] >> == "d"
         ?: list2[-1] >> == "e"
-        ?: Text(list2) == "bc"
-        ?: Text(list) == "bcde"
+        ?: Text(list2) == "b c"
+        ?: Text(list) == "b c d e"
         list3 := list fork
         list3[-1] >>
         list3[-1] >>
@@ -322,13 +323,14 @@ Object List {
         list6[2] = "C"
         list6[3] = "D"
         ?: list6[2] >> == "C" // S[1..3] + R[2] -> S[1..1] + R[2..2] + S[3..3]
-        ?: Text(list6) == "aBDef"
+        ?: Text(list6) == "a B D e f"
     }
 
     \index_iterator {
     test:
         list := ["a", "b", "c"]
         iter := list index_iterator
+        ?: iter source === list
         ?: iter read?
         ?: iter read == 0
         ?: iter read! == 0
@@ -363,23 +365,23 @@ Object List {
         list2[2] = "C"
         list2[3] = "D"
         list2[1] << "*"
-        ?: Text(list2) == "a*BCDe"
+        ?: Text(list2) == "a * B C D e"
         list3 := list fork
         list3[1] = "B"
         list3[2] = "C"
         list3[3] = "D"
         list3[2] << "*" // S[1..3] + I[2] -> S[1] + I[2] + S[2..3]
-        ?: Text(list3) == "aB*CDe"
+        ?: Text(list3) == "a B * C D e"
         list4 := list fork
         list4[1] << "x"
         list4[2] << "y"
         list4[1] << "*" // I[1..2] + I[1] -> I[1..3]
-        ?: Text(list4) == "a*xybcde"
+        ?: Text(list4) == "a * x y b c d e"
         list5 := list fork
         list5[1] >>
         list5[1] >>
         list5[1] << "*" // R[1..2] + I[1] -> S[1] + R[2]
-        ?: Text(list5) == "a*de"
+        ?: Text(list5) == "a * d e"
     }
 
     // --- List ---
@@ -387,10 +389,10 @@ Object List {
     \sort {
     test:
         list := ["z", "a", "m", "g", "s"]
-        ?: Text(list sort) == "agmsz"
-        ?: Text(list) == "zamgs"
-        ?: Text(list sort!) == "agmsz"
-        ?: Text(list) == "agmsz"
+        ?: Text(list sort) == "a g m s z"
+        ?: Text(list) == "z a m g s"
+        ?: Text(list sort!) == "a g m s z"
+        ?: Text(list) == "a g m s z"
     }
 test:
     ?: origin == Object

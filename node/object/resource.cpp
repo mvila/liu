@@ -52,7 +52,7 @@ bool Resource::isEqualTo(const Node *other) const {
 LIU_DEFINE_NATIVE_METHOD(Resource, equal_to) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
-    return LIU_BOOLEAN(url() == message->runFirstInput()->toString());
+    return Boolean::make(url() == message->runFirstInput()->toString());
 }
 
 QString Resource::toString(bool debug, short level) const {

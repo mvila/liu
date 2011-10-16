@@ -144,14 +144,20 @@ Object Number {
         ?: 3.14 <=> 3.13 == 1
     }
 test:
-    ?: origin == Object Element
+    ?: origin == Object
     ?: parent == Object
 
-    pi := 3.14
-    ?: pi == 3.14
+    !: Number
+    !: Number()
+    ?: Number(0)
+    ?: 0
+
+    ?: Number(false) == 0
+    ?: Number(true) == 1
+    ?: Number('A') == 65
     ?: Number(456) == 456
     ?: Number("789") == 789
     ?: Number?("12.345") == 12.345
-    ?: Number?("1z") == false
+    !: Number?("1z")
     ?: ConversionException throw? { Number("1z") }
 }

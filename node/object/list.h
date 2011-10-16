@@ -4,25 +4,18 @@
 #include "node/object/insertable.h"
 #include "node/object/boolean.h"
 #include "node/object/number.h"
+#include "node/object/property.h"
 #include "node/object/language/message.h"
 
 LIU_BEGIN
 
 class List : public Insertable {
-    LIU_DECLARE(List, Object, Object);
+    LIU_DECLARE_2(List, Object, Object);
 public:
     explicit List(Node *origin = context()->child("Object", "List")) :
         Insertable(origin), _operations(NULL) {}
 
-    static List *make() { return (new List())->init(); }
-
     List *init();
-    List *initCopy(const List *other);
-
-    virtual ~List();
-
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(List);
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD_2(List);
 
     LIU_DECLARE_NATIVE_METHOD(make);
 
@@ -61,7 +54,7 @@ public:
 
     // --- Insertable ---
 
-    virtual void insert(Node *index, Node *item, bool *okPtr = NULL);
+    virtual void insert(Node *index, Node *item, Node *before = NULL, bool *okPtr = NULL);
 private:
     void _insert(int index, Node *item);
 public:
@@ -86,60 +79,50 @@ public:
     // === Iterator ===
 
     class Iterator : public Iterable::Iterator {
-        LIU_DECLARE(Iterator, Object, List);
+        LIU_DECLARE_2(Iterator, Object, List);
     public:
         explicit Iterator(Node *origin = context()->child("Object", "List", "Iterator")) :
-            Iterable::Iterator(origin), _list(NULL), _index(NULL) {};
+            Iterable::Iterator(origin), _source(NULL), _index(NULL) {};
 
-        static Iterator *make() { return (new Iterator())->init(); }
-        static Iterator *make(List *list) { return (new Iterator())->init(&list); }
+        static Iterator *make(List *source) { return (new Iterator())->init(source); }
 
-        Iterator *init(List **list = NULL, int *index = NULL);
-        Iterator *initCopy(const Iterator *other);
+        Iterator *init(List *source = NULL, int *index = NULL);
 
-        virtual ~Iterator();
+        LIU_DECLARE_NODE_ACCESSOR(List, source, Source);
+        LIU_DECLARE_READ_ONLY_PROPERTY(source);
 
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Iterator);
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD_2(Iterator);
-
-        LIU_DECLARE_ACCESSOR(ListPtr, list, List);
         LIU_DECLARE_ACCESSOR(int, index, Index);
 
         virtual bool hasNext() const;
         virtual Node *peekNext() const;
         virtual void skipNext();
     private:
-        List **_list;
+        List *_source;
         int *_index;
     };
 
     // === IndexIterator ===
 
     class IndexIterator : public Iterable::Iterator {
-        LIU_DECLARE(IndexIterator, Object, List);
+        LIU_DECLARE_2(IndexIterator, Object, List);
     public:
         explicit IndexIterator(Node *origin = context()->child("Object", "List", "IndexIterator")) :
-            Iterable::Iterator(origin), _list(NULL), _index(NULL) {};
+            Iterable::Iterator(origin), _source(NULL), _index(NULL) {};
 
-        static IndexIterator *make() { return (new IndexIterator())->init(); }
-        static IndexIterator *make(List *list) { return (new IndexIterator())->init(&list); }
+        static IndexIterator *make(List *source) { return (new IndexIterator())->init(source); }
 
-        IndexIterator *init(List **list = NULL, int *index = NULL);
-        IndexIterator *initCopy(const IndexIterator *other);
+        IndexIterator *init(List *source = NULL, int *index = NULL);
 
-        virtual ~IndexIterator();
+        LIU_DECLARE_NODE_ACCESSOR(List, source, Source);
+        LIU_DECLARE_READ_ONLY_PROPERTY(source);
 
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(IndexIterator);
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD_2(IndexIterator);
-
-        LIU_DECLARE_ACCESSOR(ListPtr, list, List);
         LIU_DECLARE_ACCESSOR(int, index, Index);
 
         virtual bool hasNext() const;
         virtual Number *peekNext() const;
         virtual void skipNext();
     private:
-        List **_list;
+        List *_source;
         int *_index;
     };
 };

@@ -286,7 +286,8 @@ List::IndexIterator *List::indexIterator() const {
 
 // --- Insertable ---
 
-void List::insert(Node *index, Node *item, bool *okPtr) {
+void List::insert(Node *index, Node *item, Node *before, bool *okPtr) {
+    Q_UNUSED(before);
     int max = size();
     int i = index ? index->toDouble() : max;
     if(i < 0) i = max + i;
@@ -396,39 +397,41 @@ LIU_DEFINE_NATIVE_METHOD(List, sort) {
 
 LIU_DEFINE_2(List::Iterator, Iterable::Iterator, List);
 
-List::Iterator *List::Iterator::init(List **list, int *index) {
+List::Iterator *List::Iterator::init(List *source, int *index) {
     Object::init();
-    setList(list);
+    setSource(source);
     setIndex(index);
     return this;
 }
 
 List::Iterator *List::Iterator::initCopy(const List::Iterator *other) {
     Iterable::Iterator::initCopy(other);
-    setList(other->_list);
+    setSource(other->_source);
     setIndex(other->_index);
     return this;
 }
 
 List::Iterator::~Iterator() {
-    setList();
+    setSource();
     setIndex();
 }
 
 void List::Iterator::initRoot() {
+    LIU_ADD_READ_ONLY_PROPERTY(List::Iterator, source)
 }
 
-LIU_DEFINE_ACCESSOR(List::Iterator, List::ListPtr, list, List, NULL);
+LIU_DEFINE_NODE_ACCESSOR(List::Iterator, List, source, Source);
+LIU_DEFINE_READ_ONLY_NODE_PROPERTY(List::Iterator, source);
+
 LIU_DEFINE_ACCESSOR(List::Iterator, int, index, Index, 0);
 
 bool List::Iterator::hasNext() const {
-    if(!list()) return false;
-    return index() < list()->size();
+    return index() < source()->size();
 }
 
 Node *List::Iterator::peekNext() const {
     if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
-    return list()->_get(index());
+    return source()->_get(index());
 }
 
 void List::Iterator::skipNext() {
@@ -440,39 +443,41 @@ void List::Iterator::skipNext() {
 
 LIU_DEFINE_2(List::IndexIterator, Iterable::Iterator, List);
 
-List::IndexIterator *List::IndexIterator::init(List **list, int *index) {
+List::IndexIterator *List::IndexIterator::init(List *source, int *index) {
     Iterable::Iterator::init();
-    setList(list);
+    setSource(source);
     setIndex(index);
     return this;
 }
 
 List::IndexIterator *List::IndexIterator::initCopy(const List::IndexIterator *other) {
     Iterable::Iterator::initCopy(other);
-    setList(other->_list);
+    setSource(other->_source);
     setIndex(other->_index);
     return this;
 }
 
 List::IndexIterator::~IndexIterator() {
-    setList();
+    setSource();
     setIndex();
 }
 
 void List::IndexIterator::initRoot() {
+    LIU_ADD_READ_ONLY_PROPERTY(List::IndexIterator, source)
 }
 
-LIU_DEFINE_ACCESSOR(List::IndexIterator, List::ListPtr, list, List, NULL);
+LIU_DEFINE_NODE_ACCESSOR(List::IndexIterator, List, source, Source);
+LIU_DEFINE_READ_ONLY_NODE_PROPERTY(List::IndexIterator, source);
+
 LIU_DEFINE_ACCESSOR(List::IndexIterator, int, index, Index, 0);
 
 bool List::IndexIterator::hasNext() const {
-    if(!list()) return false;
-    return index() < list()->size();
+    return index() < source()->size();
 }
 
 Number *List::IndexIterator::peekNext() const {
     if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "IndexIterator is out of bounds");
-    return LIU_NUMBER(index());
+    return Number::make(index());
 }
 
 void List::IndexIterator::skipNext() {

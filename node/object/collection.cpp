@@ -5,6 +5,18 @@ LIU_BEGIN
 
 LIU_DEFINE_2(Collection, Iterable, Object);
 
+Collection *Collection::init() {
+    Iterable::init();
+    return this;
+}
+
+Collection *Collection::initCopy(const Collection *other) {
+    Iterable::initCopy(other);
+    return this;
+}
+
+Collection::~Collection() {}
+
 void Collection::initRoot() {
     LIU_ADD_NATIVE_METHOD(Collection, append, <<);
     LIU_ADD_NATIVE_METHOD(Collection, remove, []>>);
@@ -32,7 +44,7 @@ LIU_DEFINE_NATIVE_METHOD(Collection, remove) {
     if(!value) LIU_THROW(ArgumentException, "a value is exepected (ex.: collection[:123] >>)");
     bool wasFound = true;
     Node *result = remove(value, message->isQuestioned() ? &wasFound : NULL);
-    if(!wasFound) Primitive::skip(LIU_BOOLEAN(false));
+    if(!wasFound) Primitive::skip(Boolean::make(false));
     return result;
 }
 

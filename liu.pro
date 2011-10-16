@@ -28,7 +28,6 @@ SOURCES += main.cpp \
     node/object/number.cpp \
     node/object/character.cpp \
     node/object/text.cpp \
-    node/object/pair.cpp \
     node/object/bunch.cpp \
     node/object/application.cpp \
     node/object/language.cpp \
@@ -62,7 +61,9 @@ SOURCES += main.cpp \
     node/object/list.cpp \
     node/object/comparable.cpp \
     node/object/olddictionary.cpp \
-    node/object/dictionary.cpp
+    node/object/dictionary.cpp \
+    node/object/oldpair.cpp \
+    node/object/pair.cpp
 
 HEADERS += \
     liu.h \
@@ -79,7 +80,6 @@ HEADERS += \
     node/object/number.h \
     node/object/character.h \
     node/object/text.h \
-    node/object/pair.h \
     node/object/bunch.h \
     node/object/application.h \
     node/object/language.h \
@@ -113,7 +113,9 @@ HEADERS += \
     node/object/list.h \
     node/object/comparable.h \
     node/object/olddictionary.h \
-    node/object/dictionary.h
+    node/object/dictionary.h \
+    node/object/oldpair.h \
+    node/object/pair.h
 
 OTHER_FILES += \
     README.txt \
@@ -140,4 +142,6 @@ OTHER_FILES += \
     node/object/character.liu \
     node/object/iterable.liu \
     node/object/list.liu \
-    node/object/comparable.liu
+    node/object/comparable.liu \
+    node/object/dictionary.liu \
+    node/object/pair.liu

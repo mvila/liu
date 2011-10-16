@@ -5,6 +5,9 @@ Object Character {
     test:
         ?: 'a' == 'a'
         !: 'a' == 'A'
+        ?: 'a' == "a"
+        ?: "a" == 'a'
+        ?: ConversionException throw? { 'a' == "ab" }
     }
 
     \`<=>` {
@@ -13,6 +16,28 @@ Object Character {
     test:
         ?: 'a' <=> 'a' == 0
         ?: 'a' <=> 'b' == -1
+        ?: 'a' < 'b'
         ?: 'b' <=> 'a' == 1
+        ?: 'b' > 'a'
+        ?: 'a' <=> "a" == 0
+        ?: "a" <=> 'a' == 0
+        ?: ConversionException throw? { 'a' <=> "ab" }
     }
+test:
+    ?: origin == Object
+    ?: parent == Object
+
+    !: Character
+    !: Character()
+    ?: Character(0)
+    ?: ' '
+
+    ?: ConversionException throw? { Character(true) }
+    !: Character?(true)
+    ?: Character(65) == 'A'
+    ?: Character?(65) == 'A'
+    ?: Character("A") == 'A'
+    ?: Character?("A") == 'A'
+    ?: ConversionException throw? { Character("AA") }
+    !: Character?("AA")
 }

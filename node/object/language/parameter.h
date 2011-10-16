@@ -1,7 +1,7 @@
 #ifndef LIU_LANGUAGE_PARAMETER_H
 #define LIU_LANGUAGE_PARAMETER_H
 
-#include "node/object/pair.h"
+#include "node/object/oldpair.h"
 #include "node/object/language/primitive.h"
 
 LIU_BEGIN
@@ -11,7 +11,7 @@ namespace Language {
     new Language::Parameter(context()->child("Object", "Language", "Parameter"), ##ARGS)
 
     class Parameter : public GenericPair<QString, Primitive *> {
-        LIU_DECLARE(Parameter, Pair, Language);
+        LIU_DECLARE(Parameter, OldPair, Language);
     public:
         explicit Parameter(Node *origin, const QString &label = "", Primitive *defaultValue = NULL,
                            bool isEscaped = false, bool isParented = false) :

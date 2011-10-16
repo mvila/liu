@@ -6,18 +6,11 @@
 LIU_BEGIN
 
 class Indexable : public Collection {
-    LIU_DECLARE(Indexable, Collection, Object);
+    LIU_DECLARE_2(Indexable, Collection, Object);
 public:
     explicit Indexable(Node *origin = context()->child("Object", "Indexable")) : Collection(origin) {}
 
-    static Indexable *make() { return (new Indexable())->init(); }
-
-    Indexable *init() { Collection::init(); return this; }
-
-    virtual ~Indexable() {}
-
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(Indexable);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Indexable);
+    Indexable *init();
 
     virtual Node *get(Node *index, bool *wasFoundPtr = NULL) {
         Q_UNUSED(index); Q_UNUSED(wasFoundPtr); LIU_ABSTRACT_CALL; }

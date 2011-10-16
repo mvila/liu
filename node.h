@@ -86,11 +86,35 @@ void CLASS::set##NAME_CAP(const TYPE *NAME) { \
     CLASS::hasChanged(); \
 }
 
+#define LIU_DECLARE_NODE_ACCESSOR(TYPE, NAME, NAME_CAP) \
+TYPE *NAME() const; \
+void set##NAME_CAP(TYPE *NAME = NULL);
+
+#define LIU_DEFINE_NODE_ACCESSOR(CLASS, TYPE, NAME, NAME_CAP) \
+TYPE *CLASS::NAME() const { \
+    if(_##NAME) return _##NAME; \
+    CLASS *orig = CLASS::dynamicCast(origin()); \
+    if(!orig) LIU_THROW_NULL_POINTER_EXCEPTION(QString("'%1' is undefined").arg(#NAME)); \
+    TYPE *result = orig->NAME()->fork(); \
+    result->setIsVirtual(true); \
+    constCast(this)->_##NAME = result; \
+    constCast(this)->addAnonymousChild(result); \
+    return result; \
+} \
+void CLASS::set##NAME_CAP(TYPE *NAME) { \
+    if(_##NAME) removeAnonymousChild(_##NAME); \
+    _##NAME = NAME; \
+    if(NAME) addAnonymousChild(NAME); \
+    CLASS::hasChanged(); \
+}
+
 #define LIU_CHECK_POINTER(POINTER) \
 if(!(POINTER)) LIU_THROW_NULL_POINTER_EXCEPTION("Node pointer is NULL")
 
 class Node {
 public:
+    typedef Node *NodePtr;
+
     static const bool isInitialized;
 
     explicit Node(Node *origin) : _origin(origin), _extensions(NULL), // default constructor
@@ -268,7 +292,10 @@ public:
     LIU_DECLARE_NATIVE_METHOD(or_assign);
     LIU_DECLARE_NATIVE_METHOD(and_assign);
 
-    virtual bool isEqualTo(const Node *other) const { return real() == other->real(); }
+    bool isSameAs(const Node *other) const { return real() == other->real(); }
+    LIU_DECLARE_NATIVE_METHOD(same_as);
+
+    virtual bool isEqualTo(const Node *other) const { return isSameAs(other); }
     LIU_DECLARE_NATIVE_METHOD(equal_to);
     LIU_DECLARE_NATIVE_METHOD(different_from);
 
@@ -302,13 +329,18 @@ public:
     virtual bool toBool() const { return true; };
 
     virtual double toDouble(bool *okPtr = NULL) const {
-        Q_UNUSED(okPtr);
-        LIU_THROW_CONVERSION_EXCEPTION(QString("cannot convert from %1 to Number").arg(nodeName()));
+        if(okPtr)
+            *okPtr = false;
+        else
+            LIU_THROW_CONVERSION_EXCEPTION(QString("cannot convert from %1 to Number").arg(nodeName()));
         return 0;
     };
 
-    virtual QChar toChar() const {
-        LIU_THROW_CONVERSION_EXCEPTION(QString("cannot convert from %1 to Character").arg(nodeName()));
+    virtual QChar toChar(bool *okPtr = NULL) const {
+        if(okPtr)
+            *okPtr = false;
+        else
+            LIU_THROW_CONVERSION_EXCEPTION(QString("cannot convert from %1 to Character").arg(nodeName()));
         return 0;
     };
 
@@ -358,6 +390,24 @@ public: \
     virtual void initRoot(); \
     static const bool isInitialized; \
     typedef NAME *NAME##Ptr; \
+private:
+
+#define LIU_DECLARE_2(NAME, ORIGIN, PARENT) \
+public: \
+    inline static NAME *cast(Node *node) { return static_cast<NAME *>(node); } \
+    inline static const NAME *cast(const Node *node) { return static_cast<const NAME *>(node); } \
+    inline static NAME *dynamicCast(Node *node) { return dynamic_cast<NAME *>(node); } \
+    inline static const NAME *dynamicCast(const Node *node) { return dynamic_cast<const NAME *>(node); } \
+    inline static NAME *constCast(const NAME *node) { return const_cast<NAME *>(node); } \
+    static NAME *root(); \
+    virtual void initRoot(); \
+    static const bool isInitialized; \
+    typedef NAME *NAME##Ptr; \
+    static NAME *make() { return (new NAME())->init(); } \
+    NAME *initCopy(const NAME *other); \
+    virtual ~NAME(); \
+    virtual NAME *fork() const { return (new NAME(constCast(this)))->init(); } \
+    virtual NAME *copy() const { return (new NAME(this->origin()))->initCopy(this); } \
 private:
 
 #define LIU_DEFINE(NAME, ORIGIN, PARENT) \

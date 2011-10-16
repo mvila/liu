@@ -1,6 +1,5 @@
 #include "node/object/text.h"
 #include "node/object/comparable.h"
-#include "node/object/property.h"
 #include "node/object/language/interpreter.h"
 #include "node/object/language/nativemethod.h"
 
@@ -38,10 +37,7 @@ void Text::initRoot() {
 
     LIU_ADD_NATIVE_METHOD(Text, init);
 
-    Property *valueProperty = LIU_PROPERTY();
-    valueProperty->LIU_ADD_NATIVE_METHOD(Text, value_get, get);
-    valueProperty->LIU_ADD_NATIVE_METHOD(Text, value_set, set);
-    addChild("value", valueProperty);
+    LIU_ADD_PROPERTY(Text, value);
 
     LIU_ADD_NATIVE_METHOD(Text, concatenate, +);
     LIU_ADD_NATIVE_METHOD(Text, multiply, *);
@@ -53,9 +49,6 @@ void Text::initRoot() {
     LIU_ADD_NATIVE_METHOD(Text, extract_between);
     LIU_ADD_NATIVE_METHOD(Text, remove_after);
     LIU_ADD_NATIVE_METHOD(Text, replace);
-
-    LIU_ADD_NATIVE_METHOD(Text, equal_to, ==);
-    LIU_ADD_NATIVE_METHOD(Text, compare, <=>);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Text, init) {
@@ -80,7 +73,7 @@ LIU_DEFINE_NATIVE_METHOD(Text, value_get) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     if(message->isQuestioned())
-        return LIU_BOOLEAN(Text::cast(parent())->hasValue());
+        return Boolean::make(Text::cast(parent())->hasValue());
     else
         return parent();
 }
@@ -117,17 +110,18 @@ Node *Text::run(Node *receiver) {
 
 bool Text::isEqualTo(const Node *other) const {
     const Text *otherText = Text::dynamicCast(other);
-    return otherText && value() == otherText->value();
-}
-
-LIU_DEFINE_NATIVE_METHOD(Text, equal_to) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1);
-    return LIU_BOOLEAN(value() == message->runFirstInput()->toString());
+    if(otherText) return value() == otherText->value();
+    const Character *otherCharacter = Character::dynamicCast(other);
+    if(otherCharacter) return value() == otherCharacter->toString();
+    LIU_THROW(ArgumentException, "a Text or a Character is expected");
 }
 
 short Text::compare(const Node *other) const {
-    return compare(Text::cast(other)->value());
+    const Text *otherText = Text::dynamicCast(other);
+    if(otherText) return compare(otherText->value());
+    const Character *otherCharacter = Character::dynamicCast(other);
+    if(otherCharacter) return compare(otherCharacter->toString());
+    LIU_THROW(ArgumentException, "a Text or a Character is expected");
 }
 
 short Text::compare(const QString &other) const {
@@ -135,12 +129,6 @@ short Text::compare(const QString &other) const {
     if(result > 0) return 1;
     else if(result < 0) return -1;
     else return 0;
-}
-
-LIU_DEFINE_NATIVE_METHOD(Text, compare) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1);
-    return LIU_NUMBER(compare(message->runFirstInput()->toString()));
 }
 
 double Text::toDouble(bool *okPtr) const {
@@ -153,9 +141,13 @@ double Text::toDouble(bool *okPtr) const {
     return ok ? number : 0;
 };
 
-QChar Text::toChar() const {
-    if(value().size() != 1) LIU_THROW_CONVERSION_EXCEPTION("conversion from Text to Character failed (size should be equal to 1)");
-    return value().at(0);
+QChar Text::toChar(bool *okPtr) const {
+    bool ok = value().size() == 1;
+    if(okPtr)
+        *okPtr = ok;
+    else if(!ok)
+        LIU_THROW_CONVERSION_EXCEPTION("conversion from Text to Character failed (size should be equal to 1)");
+    return ok ? value().at(0) : QChar();
 };
 
 QString Text::toString(bool debug, short level) const {
@@ -220,7 +212,7 @@ Character *Text::get(Node *index, bool *wasFoundPtr) {
     int max = value().size();
     if(i < 0) i = max + i;
     bool wasFound = i >= 0 && i < max;
-    Character *result = wasFound ? LIU_CHARACTER(value().at(i)) : NULL;
+    Character *result = wasFound ? Character::make(value().at(i)) : NULL;
     if(wasFoundPtr)
         *wasFoundPtr = wasFound;
     else if(!wasFound)
@@ -283,7 +275,7 @@ Character *Text::unset(Node *index, bool *wasFoundPtr) {
     bool wasFound = i >= 0 && i < max;
     Character *result = NULL;
     if(wasFound) {
-        result = LIU_CHARACTER(str.at(i));
+        result = Character::make(str.at(i));
         str.remove(i, 1);
         setValue(str);
     }
@@ -300,7 +292,8 @@ Text::IndexIterator *Text::indexIterator() const {
 
 // --- Insertable ---
 
-void Text::insert(Node *index, Node *item, bool *wasFoundPtr) {
+void Text::insert(Node *index, Node *item, Node *before, bool *wasFoundPtr) {
+    Q_UNUSED(before);
     QString str = value();
     int max = str.size();
     int i = index ? index->toDouble() : max;
@@ -377,12 +370,12 @@ LIU_DEFINE_NATIVE_METHOD(Text, extract_between) {
     int from = 0;
     if(!after.isEmpty()) {
         from = text.indexOf(after);
-        if(from == -1) return LIU_BOOLEAN(false);
+        if(from == -1) return Boolean::make(false);
     }
     int to;
     if(!before.isEmpty()) {
         to = text.indexOf(before, from);
-        if(to == -1) return LIU_BOOLEAN(false);
+        if(to == -1) return Boolean::make(false);
         to += before.size() - 1;
     } else {
         to = text.size() - 1;
@@ -502,39 +495,41 @@ QChar Text::unescapeSequenceNumber(const QString &source, int &i) {
 
 LIU_DEFINE_2(Text::Iterator, Iterable::Iterator, Text);
 
-Text::Iterator *Text::Iterator::init(Text **text, int *index) {
+Text::Iterator *Text::Iterator::init(Text *source, int *index) {
     Iterable::Iterator::init();
-    setText(text);
+    setSource(source);
     setIndex(index);
     return this;
 }
 
 Text::Iterator *Text::Iterator::initCopy(const Text::Iterator *other) {
     Iterable::Iterator::initCopy(other);
-    setText(other->_text);
+    setSource(other->_source);
     setIndex(other->_index);
     return this;
 }
 
 Text::Iterator::~Iterator() {
-    setText();
+    setSource();
     setIndex();
 }
 
 void Text::Iterator::initRoot() {
+    LIU_ADD_READ_ONLY_PROPERTY(Text::Iterator, source)
 }
 
-LIU_DEFINE_ACCESSOR(Text::Iterator, Text::TextPtr, text, Text, NULL);
+LIU_DEFINE_NODE_ACCESSOR(Text::Iterator, Text, source, Source);
+LIU_DEFINE_READ_ONLY_NODE_PROPERTY(Text::Iterator, source);
+
 LIU_DEFINE_ACCESSOR(Text::Iterator, int, index, Index, 0);
 
 bool Text::Iterator::hasNext() const {
-    if(!text()) return false;
-    return index() < text()->value().size() ;
+    return index() < source()->value().size() ;
 }
 
 Text *Text::Iterator::peekNext() const {
     if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
-    return Text::make(text()->value().at(index()));
+    return Text::make(source()->value().at(index()));
 }
 
 void Text::Iterator::skipNext() {
@@ -546,39 +541,41 @@ void Text::Iterator::skipNext() {
 
 LIU_DEFINE_2(Text::IndexIterator, Iterable::Iterator, Text);
 
-Text::IndexIterator *Text::IndexIterator::init(Text **text, int *index) {
+Text::IndexIterator *Text::IndexIterator::init(Text *source, int *index) {
     Iterable::Iterator::init();
-    setText(text);
+    setSource(source);
     setIndex(index);
     return this;
 }
 
 Text::IndexIterator *Text::IndexIterator::initCopy(const Text::IndexIterator *other) {
     Iterable::Iterator::initCopy(other);
-    setText(other->_text);
+    setSource(other->_source);
     setIndex(other->_index);
     return this;
 }
 
 Text::IndexIterator::~IndexIterator() {
-    setText();
+    setSource();
     setIndex();
 }
 
 void Text::IndexIterator::initRoot() {
+    LIU_ADD_READ_ONLY_PROPERTY(Text::IndexIterator, source)
 }
 
-LIU_DEFINE_ACCESSOR(Text::IndexIterator, Text::TextPtr, text, Text, NULL);
+LIU_DEFINE_NODE_ACCESSOR(Text::IndexIterator, Text, source, Source);
+LIU_DEFINE_READ_ONLY_NODE_PROPERTY(Text::IndexIterator, source);
+
 LIU_DEFINE_ACCESSOR(Text::IndexIterator, int, index, Index, 0);
 
 bool Text::IndexIterator::hasNext() const {
-    if(!text()) return false;
-    return index() < text()->value().size() ;
+    return index() < source()->value().size() ;
 }
 
 Number *Text::IndexIterator::peekNext() const {
     if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "IndexIterator is out of bounds");
-    return LIU_NUMBER(index());
+    return Number::make(index());
 }
 
 void Text::IndexIterator::skipNext() {

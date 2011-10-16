@@ -60,7 +60,7 @@ namespace Language {
         while(!is(terminator)) {
             Primitive *expression = scanExpression();
             if(expression)
-                if(Pair *pair = Pair::dynamicCast(expression->value())) {
+                if(OldPair *pair = OldPair::dynamicCast(expression->value())) {
                     section = LIU_SECTION();
                     section->setLabel(Primitive::cast(pair->first()));
                     expression = Primitive::cast(pair->second());
@@ -171,14 +171,14 @@ namespace Language {
         QString s;
         switch(tokenType()) {
         case Token::Boolean:
-            value = LIU_BOOLEAN(tokenText() == "yes" || tokenText() == "true");
+            value = Boolean::make(tokenText() == "yes" || tokenText() == "true");
             break;
         case Token::Number:
-            value = LIU_NUMBER(tokenText().toDouble());
+            value = Number::make(tokenText().toDouble());
             break;
         case Token::Character:
             c = Text::unescapeSequence(tokenText().mid(1, tokenText().size() - 2)).at(0);
-            value = LIU_CHARACTER(c);
+            value = Character::make(c);
             break;
         case Token::Text: {
             QList<IntPair> interpolableSlices;
@@ -298,7 +298,7 @@ namespace Language {
                 msg->setIsEscaped(true);
             } else if(currentOp->name == "value:") {
                 Primitive *key = LIU_PRIMITIVE(LIU_MESSAGE("value"), sourceCodeRef);
-                chain = LIU_PRIMITIVE(LIU_PAIR(key, scanExpression()), sourceCodeRef);
+                chain = LIU_PRIMITIVE(LIU_OLD_PAIR(key, scanExpression()), sourceCodeRef);
             } else if(currentOp->name == "?:" || currentOp->name == "!:") {
                 chain = LIU_PRIMITIVE(LIU_MESSAGE(currentOp->name), sourceCodeRef);
                 LIU_PRIMITIVE_ADD(chain, scanExpression());
@@ -378,7 +378,7 @@ namespace Language {
                                      const QStringRef &sourceCodeRef) {
         if(op->isSpecial) {
             if(op->name == ":")
-                lhs = LIU_PRIMITIVE(LIU_PAIR(lhs, rhs), sourceCodeRef);
+                lhs = LIU_PRIMITIVE(LIU_OLD_PAIR(lhs, rhs), sourceCodeRef);
             else if(op->name == ",") {
                 checkRightHandSide(rhs);
                 Bunch *bunch = Bunch::dynamicCast(lhs->value());

@@ -9,7 +9,7 @@ namespace Language {
     }
 
     void ArgumentBunch::append(Primitive *value) {
-        if(Pair *pair = Pair::dynamicCast(value->value()))
+        if(OldPair *pair = OldPair::dynamicCast(value->value()))
             append(Primitive::cast(pair->first()), Primitive::cast(pair->second()));
         else if(Bunch *bunch = Bunch::dynamicCast(value->value()))
             append(bunch);

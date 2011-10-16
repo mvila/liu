@@ -9,20 +9,22 @@
 LIU_BEGIN
 
 class Dictionary : public List {
-    LIU_DECLARE(Dictionary, List, Object);
+    LIU_DECLARE_2(Dictionary, List, Object);
 public:
     explicit Dictionary(Node *origin = context()->child("Object", "Dictionary")) :
-        List(origin) {}
-
-    static Dictionary *make() { return (new Dictionary())->init(); }
+        List(origin), _indexes(NULL) {}
 
     Dictionary *init();
-    Dictionary *initCopy(const Dictionary *other);
 
-    virtual ~Dictionary();
+    // --- Indexable ---
 
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD_2(Dictionary);
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD_2(Dictionary);
+    virtual void append(Node *index, Node *item, bool *okPtr = NULL);
+
+    // --- Insertable ---
+
+    virtual void insert(Node *index, Node *item, Node *before = NULL, bool *okPtr = NULL);
+private:
+    QHash<Node::Reference, Node *> *_indexes;
 };
 
 LIU_END
