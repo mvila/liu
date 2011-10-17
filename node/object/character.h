@@ -1,7 +1,6 @@
 #ifndef LIU_CHARACTER_H
 #define LIU_CHARACTER_H
 
-#include "node/object/element.h"
 #include "node/object/boolean.h"
 #include "node/object/number.h"
 #include "node/object/language/message.h"
