@@ -33,10 +33,10 @@ namespace Language {
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(Argument);
         LIU_DECLARE_AND_DEFINE_FORK_METHOD(Argument, LIU_FORK_IF_NOT_NULL(label()), LIU_FORK_IF_NOT_NULL(value()));
 
-        virtual void firstValueWillChange() { if(first()) removeAnonymousChild(first()); }
-        virtual void firstValueHasChanged() { if(first()) addAnonymousChild(first()); }
-        virtual void secondValueWillChange() { if(second()) removeAnonymousChild(second()); }
-        virtual void secondValueHasChanged() { if(second()) addAnonymousChild(second()); }
+        virtual void firstValueWillChange() { if(first()) removeUnnamedChild(first()); }
+        virtual void firstValueHasChanged() { if(first()) addUnnamedChild(first()); }
+        virtual void secondValueWillChange() { if(second()) removeUnnamedChild(second()); }
+        virtual void secondValueHasChanged() { if(second()) addUnnamedChild(second()); }
 
         // aliases...
         Primitive *label() const { return key(); }

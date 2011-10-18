@@ -1,3 +1,9 @@
+NamedChildDictionary
+UnnamedChildCollection
+ChildCollection
+
+---
+
 Number est indéfini
 num := Number() est indéfini
 num value = 123 est défini

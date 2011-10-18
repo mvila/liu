@@ -31,7 +31,7 @@ public:
 
     virtual ~GenericDictionary() {
         if(_hash) {
-            foreach(V value, *_hash) removeAnonymousChild(value);
+            foreach(V value, *_hash) removeUnnamedChild(value);
             delete _hash;
         }
     }
@@ -55,9 +55,9 @@ public:
         LIU_CHECK_KEY(key);
         LIU_CHECK_VALUE(value);
         if(!_hash) { _hash = new QHash<K, V>; }
-        if(V oldValue = _hash->value(key)) removeAnonymousChild(oldValue);
+        if(V oldValue = _hash->value(key)) removeUnnamedChild(oldValue);
         _hash->insert(key, value);
-        addAnonymousChild(value);
+        addUnnamedChild(value);
         return value;
     }
 
@@ -80,7 +80,7 @@ public:
         LIU_CHECK_KEY(key);
         V oldValue;
         if(!(_hash && (oldValue = _hash->value(key)))) LIU_THROW(NotFoundException, "key not found");
-        removeAnonymousChild(oldValue);
+        removeUnnamedChild(oldValue);
         _hash->remove(key);
     }
 

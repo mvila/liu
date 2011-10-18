@@ -63,10 +63,10 @@ public:
     LIU_DECLARE_AND_DEFINE_COPY_METHOD(OldPair);
     LIU_DECLARE_AND_DEFINE_FORK_METHOD(OldPair, LIU_FORK_IF_NOT_NULL(first()), LIU_FORK_IF_NOT_NULL(second()));
 
-    virtual void firstValueWillChange() { if(first()) removeAnonymousChild(first()); }
-    virtual void firstValueHasChanged() { if(first()) addAnonymousChild(first()); }
-    virtual void secondValueWillChange() { if(second()) removeAnonymousChild(second()); }
-    virtual void secondValueHasChanged() { if(second()) addAnonymousChild(second()); }
+    virtual void firstValueWillChange() { if(first()) removeUnnamedChild(first()); }
+    virtual void firstValueHasChanged() { if(first()) addUnnamedChild(first()); }
+    virtual void secondValueWillChange() { if(second()) removeUnnamedChild(second()); }
+    virtual void secondValueHasChanged() { if(second()) addUnnamedChild(second()); }
 
     virtual QString toString(bool debug = false, short level = 0) const {
         return QString("%1: %2").arg(first()->toString(debug, level), second()->toString(debug, level));

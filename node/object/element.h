@@ -39,9 +39,9 @@ public:
 
     virtual void setValue(T *newValue) {
         if(newValue != value()) {
-            if(value()) removeAnonymousChild(value());
+            if(value()) removeUnnamedChild(value());
             GenericElement<T *>::setValue(newValue);
-            if(newValue) addAnonymousChild(newValue);
+            if(newValue) addUnnamedChild(newValue);
         }
     }
 

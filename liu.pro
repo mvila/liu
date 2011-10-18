@@ -63,7 +63,8 @@ SOURCES += main.cpp \
     node/object/olddictionary.cpp \
     node/object/dictionary.cpp \
     node/object/oldpair.cpp \
-    node/object/pair.cpp
+    node/object/pair.cpp \
+    node/object/namedchilddictionary.cpp
 
 HEADERS += \
     liu.h \
@@ -115,7 +116,8 @@ HEADERS += \
     node/object/olddictionary.h \
     node/object/dictionary.h \
     node/object/oldpair.h \
-    node/object/pair.h
+    node/object/pair.h \
+    node/object/namedchilddictionary.h
 
 OTHER_FILES += \
     README.txt \

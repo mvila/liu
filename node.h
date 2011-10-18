@@ -38,13 +38,13 @@ virtual NAME *copy() const { return (new NAME(this->origin()))->initCopy(this); 
 
 #define LIU_SET_FIELD(FIELD, VALUE) \
 if((VALUE) != FIELD) { \
-    if(FIELD) removeAnonymousChild(FIELD); \
+    if(FIELD) removeUnnamedChild(FIELD); \
     FIELD = (VALUE); \
-    if(VALUE) addAnonymousChild(VALUE); \
+    if(VALUE) addUnnamedChild(VALUE); \
 }
 
 #define LIU_UNSET_FIELD(FIELD) \
-if(FIELD) removeAnonymousChild(FIELD);
+if(FIELD) removeUnnamedChild(FIELD);
 
 namespace Language { class Primitive; class Message; }
 using namespace Language;
@@ -98,13 +98,13 @@ TYPE *CLASS::NAME() const { \
     TYPE *result = orig->NAME()->fork(); \
     result->setIsVirtual(true); \
     constCast(this)->_##NAME = result; \
-    constCast(this)->addAnonymousChild(result); \
+    constCast(this)->addUnnamedChild(result); \
     return result; \
 } \
 void CLASS::set##NAME_CAP(TYPE *NAME) { \
-    if(_##NAME) removeAnonymousChild(_##NAME); \
+    if(_##NAME) removeUnnamedChild(_##NAME); \
     _##NAME = NAME; \
-    if(NAME) addAnonymousChild(NAME); \
+    if(NAME) addUnnamedChild(NAME); \
     CLASS::hasChanged(); \
 }
 
@@ -230,12 +230,12 @@ public:
 
     LIU_DECLARE_NATIVE_METHOD(remove);
 
-    void addAnonymousChild(Node *value) {
+    void addUnnamedChild(Node *value) {
         LIU_CHECK_POINTER(value);
         value->_addParent(this);
     }
 
-    void removeAnonymousChild(Node *value) {
+    void removeUnnamedChild(Node *value) {
         LIU_CHECK_POINTER(value);
         value->_removeParent(this);
     }
@@ -350,6 +350,16 @@ public:
     virtual QString toString(bool debug = false, short level = 0) const;
 
     virtual uint hash() const { return ::qHash(this); }
+private:
+    Node *_origin;
+    QList<Node *> *_extensions;
+    QHash<QString, Node *> *_children;
+    mutable QHash<Node *, HugeUnsignedInteger> *_parents;
+    bool _isDefined      : 1;
+    bool _isVirtual      : 1;
+    bool _isAutoRunnable : 1;
+public:
+    // === Reference ===
 
     class Reference {
     public:
@@ -364,14 +374,6 @@ public:
     private:
         Node *_node;
     };
-private:
-    Node *_origin;
-    QList<Node *> *_extensions;
-    QHash<QString, Node *> *_children;
-    mutable QHash<Node *, HugeUnsignedInteger> *_parents;
-    bool _isDefined      : 1;
-    bool _isVirtual      : 1;
-    bool _isAutoRunnable : 1;
 };
 
 inline bool operator==(const Node &a, const Node &b) { return a.isEqualTo(&b); }

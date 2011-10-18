@@ -26,8 +26,8 @@ namespace Language {
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(Parameter);
         LIU_DECLARE_AND_DEFINE_FORK_METHOD(Parameter, label(), LIU_FORK_IF_NOT_NULL(defaultValue()), isEscaped(), isParented());
 
-        virtual void secondValueWillChange() { if(second()) removeAnonymousChild(second()); }
-        virtual void secondValueHasChanged() { if(second()) addAnonymousChild(second()); }
+        virtual void secondValueWillChange() { if(second()) removeUnnamedChild(second()); }
+        virtual void secondValueHasChanged() { if(second()) addUnnamedChild(second()); }
 
         // aliases...
         QString label() const { return key(); }

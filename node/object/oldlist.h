@@ -212,7 +212,7 @@ template<class T>
 class GenericList : public GenericAbstractList<T> {
 public:
     using GenericAbstractList<T>::origin;
-    using GenericAbstractList<T>::removeAnonymousChild;
+    using GenericAbstractList<T>::removeUnnamedChild;
     using GenericAbstractList<T>::checkIndex;
     using GenericAbstractList<T>::hasChanged;
 
@@ -246,7 +246,7 @@ public:
 
     virtual ~GenericList() {
         if(_list) {
-            foreach(T node, *_list) removeAnonymousChild(node);
+            foreach(T node, *_list) removeUnnamedChild(node);
             delete _list;
         }
     }
@@ -264,25 +264,25 @@ public:
     }
 
     virtual void doSet(int i, const T &value) {
-        removeAnonymousChild(_list->at(i));
+        removeUnnamedChild(_list->at(i));
         _list->replace(i, value);
-        addAnonymousChild(value);
+        addUnnamedChild(value);
     }
 
     virtual void doInsert(int i, const T &value) {
         if(!_list) { _list = new QList<T>; }
         _list->insert(i, value);
-        addAnonymousChild(value);
+        addUnnamedChild(value);
     }
 
     virtual void doRemove(int i) {
-        removeAnonymousChild(_list->at(i));
+        removeUnnamedChild(_list->at(i));
         _list->removeAt(i);
     }
 
     virtual void doClear() {
         if(_list) {
-            foreach(Node *node, *_list) removeAnonymousChild(node);
+            foreach(Node *node, *_list) removeUnnamedChild(node);
             _list->clear();
         }
     }

@@ -27,9 +27,9 @@ namespace Language {
 
         void setCode(Primitive *newCode) {
             if(newCode != _code) {
-                if(_code) removeAnonymousChild(_code);
+                if(_code) removeUnnamedChild(_code);
                 _code = newCode;
-                if(newCode) addAnonymousChild(_code);
+                if(newCode) addUnnamedChild(_code);
                 hasChanged();
             }
         }

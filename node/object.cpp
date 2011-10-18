@@ -1,4 +1,5 @@
 #include "node/object.h"
+#include "node/controlflow.h"
 #include "node/object/boolean.h"
 #include "node/object/number.h"
 #include "node/object/language/message.h"

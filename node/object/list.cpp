@@ -398,7 +398,7 @@ LIU_DEFINE_NATIVE_METHOD(List, sort) {
 LIU_DEFINE_2(List::Iterator, Iterable::Iterator, List);
 
 List::Iterator *List::Iterator::init(List *source, int *index) {
-    Object::init();
+    Iterable::Iterator::init();
     setSource(source);
     setIndex(index);
     return this;

@@ -12,12 +12,12 @@ namespace Language {
         if(next != _next) {
             if(_next) {
                 _next->_previous = NULL;
-                removeAnonymousChild(_next);
+                removeUnnamedChild(_next);
             }
             _next = next;
             if(next) {
                 next->_previous = this;
-                addAnonymousChild(next);
+                addUnnamedChild(next);
             }
         }
         return next;
