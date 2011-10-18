@@ -16,7 +16,7 @@ LIU_BEGIN
 const bool Node::isInitialized = Node::root();
 
 Node::Node(const Node &other) : _origin(other._origin), _extensions(NULL), // copy constructor
-    _children(NULL), _parents(NULL), _isAbstract(other._isAbstract),
+    _children(NULL), _parents(NULL), _isDefined(other._isDefined),
     _isVirtual(other._isVirtual), _isAutoRunnable(other._isAutoRunnable) {
     if(other._extensions) _extensions = new QList<Node *>(*other._extensions);
     if(other._children) {
@@ -71,6 +71,11 @@ void Node::initRoot() {
 
     LIU_ADD_NATIVE_METHOD(Node, is);
 
+    LIU_ADD_NATIVE_METHOD(Node, defined);
+    LIU_ADD_NATIVE_METHOD(Node, undefined);
+    LIU_ADD_NATIVE_METHOD(Node, define);
+    LIU_ADD_NATIVE_METHOD(Node, undefine);
+
     LIU_ADD_NATIVE_METHOD(Node, virtual);
     LIU_ADD_NATIVE_METHOD(Node, real);
 
@@ -79,7 +84,7 @@ void Node::initRoot() {
     LIU_ADD_NATIVE_METHOD(Node, fork);
     LIU_ADD_NATIVE_METHOD(Node, init);
 
-    LIU_ADD_NATIVE_METHOD(Node, define, :=);
+    LIU_ADD_NATIVE_METHOD(Node, define_or_assign, :=);
     LIU_ADD_NATIVE_METHOD(Node, assign, =);
     LIU_ADD_NATIVE_METHOD(Node, remove, >>);
 
@@ -204,6 +209,36 @@ LIU_DEFINE_NATIVE_METHOD(Node, is) {
     LIU_CHECK_QUESTION_MARK;
     LIU_CHECK_INPUT_SIZE(1);
     return Boolean::make(isOriginatingFrom(message->runFirstInput()));
+}
+
+LIU_DEFINE_NATIVE_METHOD(Node, defined) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_QUESTION_MARK;
+    LIU_CHECK_INPUT_SIZE(0);
+    return Boolean::make(isDefined());
+}
+
+LIU_DEFINE_NATIVE_METHOD(Node, undefined) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_QUESTION_MARK;
+    LIU_CHECK_INPUT_SIZE(0);
+    return Boolean::make(!isDefined());
+}
+
+LIU_DEFINE_NATIVE_METHOD(Node, define) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_EXCLAMATION_MARK;
+    LIU_CHECK_INPUT_SIZE(0);
+    setIsDefined(true);
+    return this;
+}
+
+LIU_DEFINE_NATIVE_METHOD(Node, undefine) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_EXCLAMATION_MARK;
+    LIU_CHECK_INPUT_SIZE(0);
+    setIsDefined(false);
+    return this;
 }
 
 Node *Node::virtualOrReal(bool virtualMode) {

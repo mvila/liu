@@ -16,6 +16,55 @@ Object Pair {
         ?: p2 first == "*"
         ?: p2 second == "b"
     }
+
+    \first {
+    test:
+        // !: Pair first
+    }
+
+    \`==` {
+    inputs:
+        (other)
+    test:
+        ?: Pair == Pair
+        ?: Pair() == Pair()
+        p := Pair()
+        p first = "a"
+        ?: p == p
+        p2 := Pair()
+        p2 first = "A"
+        ?: p2 != p
+        p2 first = "a"
+        ?: p2 == p
+        p2 second = "b"
+        ?: p2 != p
+        p second = "B"
+        ?: p2 != p
+        p second = "b"
+        ?: p2 == p
+        p3 := p fork
+        ?: p3 == p
+        p first value = "*"
+        ?: p3 == p
+        p first = "!"
+        ?: p3 != p
+        p3 first = "!"
+        ?: p3 == p
+    }
+
+    \`<=>` {
+    inputs:
+        (other)
+    test:
+        ?: RuntimeException throw? { Pair <=> Pair }
+        ?: RuntimeException throw? { Pair() <=> Pair() }
+        ?: ArgumentException throw? { Pair("a", "b") <=> Pair(1, 2) }
+        ?: Pair("a", "b") <=> Pair("a", "b") == 0
+        ?: Pair("a", "b") <=> Pair("b", "b") == -1
+        ?: Pair("b", "b") <=> Pair("a", "b") == 1
+        ?: Pair("a", "b") <=> Pair("a", "c") == -1
+        ?: Pair("a", "b") <=> Pair("a", "a") == 1
+    }
 test:
     ?: origin == Object
     ?: parent == Object

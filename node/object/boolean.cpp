@@ -54,8 +54,7 @@ LIU_DEFINE_NATIVE_METHOD(Boolean, value_set) {
 
 bool Boolean::isEqualTo(const Node *other) const {
     const Boolean *otherBoolean = Boolean::dynamicCast(other);
-    if(otherBoolean) return value() == otherBoolean->value();
-    LIU_THROW(ArgumentException, "a Boolean is expected");
+    return otherBoolean && value() == otherBoolean->value();
 }
 
 LIU_END

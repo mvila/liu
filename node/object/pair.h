@@ -24,6 +24,10 @@ public:
     LIU_DECLARE_NODE_ACCESSOR(Node, second, Second);
     LIU_DECLARE_PROPERTY(second);
 
+    virtual bool isEqualTo(const Node *other) const;
+
+    virtual short compare(const Node *other) const;
+
     virtual QString toString(bool debug = false, short level = 0) const {
         return QString("%1: %2").arg(first()->toString(debug, level), second()->toString(debug, level));
     }

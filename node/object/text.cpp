@@ -113,7 +113,7 @@ bool Text::isEqualTo(const Node *other) const {
     if(otherText) return value() == otherText->value();
     const Character *otherCharacter = Character::dynamicCast(other);
     if(otherCharacter) return value() == otherCharacter->toString();
-    LIU_THROW(ArgumentException, "a Text or a Character is expected");
+    return false;
 }
 
 short Text::compare(const Node *other) const {

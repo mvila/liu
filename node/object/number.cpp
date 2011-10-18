@@ -162,8 +162,7 @@ LIU_DEFINE_NATIVE_METHOD(Number, random) {
 
 bool Number::isEqualTo(const Node *other) const {
     const Number *otherNumber = Number::dynamicCast(other);
-    if(otherNumber) return value() == otherNumber->value();
-    LIU_THROW(ArgumentException, "a Number is expected");
+    return otherNumber && value() == otherNumber->value();
 }
 
 short Number::compare(const Node *other) const {

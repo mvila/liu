@@ -1,3 +1,24 @@
+Number est indéfini
+num := Number() est indéfini
+num value = 123 est défini
+num2 := num fork est défini
+
+Person := Object() {
+    name := Text(default: "Sans nom")
+}
+
+?: Person undefined?
+?: Person name undefined?
+
+p1 := Person()
+?: p1 undefined?
+?: p1 name undefined?
+p1 name = "Manu"
+?: p1 name defined?
+?: p1 defined?
+
+---
+
 X := Node()
 X a := "Hello"
 Y := X()

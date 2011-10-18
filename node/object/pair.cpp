@@ -1,4 +1,5 @@
 #include "node/object/pair.h"
+#include "node/object/comparable.h"
 #include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
@@ -25,6 +26,11 @@ Pair::~Pair() {
 }
 
 void Pair::initRoot() {
+    addExtension(Comparable::root());
+
+    setFirst(Node::root()->fork());
+    setSecond(Node::root()->fork());
+
     LIU_ADD_NATIVE_METHOD(Pair, init);
 
     LIU_ADD_PROPERTY(Pair, first)
@@ -46,5 +52,18 @@ LIU_DEFINE_NODE_PROPERTY(Pair, first, First);
 
 LIU_DEFINE_NODE_ACCESSOR(Pair, Node, second, Second);
 LIU_DEFINE_NODE_PROPERTY(Pair, second, Second);
+
+bool Pair::isEqualTo(const Node *other) const {
+    const Pair *otherPair = Pair::dynamicCast(other);
+    return otherPair && first()->isEqualTo(otherPair->first()) && second()->isEqualTo(otherPair->second());
+}
+
+short Pair::compare(const Node *other) const {
+    const Pair *otherPair = Pair::dynamicCast(other);
+    if(!otherPair) LIU_THROW(ArgumentException, "a Pair is expected");
+    short result = first()->compare(otherPair->first());
+    if(result == 0) result = second()->compare(otherPair->second());
+    return result;
+}
 
 LIU_END
