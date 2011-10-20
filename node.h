@@ -273,6 +273,9 @@ private:
 public:
 
     QHash<QString, Node *> children() const;
+
+    LIU_DECLARE_NATIVE_METHOD(children);
+
     QList<Node *> parents() const;
 
     Node *parent() const;

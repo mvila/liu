@@ -15,13 +15,15 @@ public:
 
     NamedChildDictionary *init(Node *source = NULL);
 
+    LIU_DECLARE_NATIVE_METHOD(init);
+
     LIU_DECLARE_NODE_ACCESSOR(Node, source, Source);
     LIU_DECLARE_READ_ONLY_PROPERTY(source);
 
     // --- Iterable ---
 
-//    class Iterator;
-//    virtual Iterator *iterator() const;
+    class Iterator;
+    virtual Iterator *iterator() const;
 
     // --- Indexable ---
 

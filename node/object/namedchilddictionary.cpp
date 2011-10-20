@@ -22,11 +22,26 @@ NamedChildDictionary::~NamedChildDictionary() {
 }
 
 void NamedChildDictionary::initRoot() {
+    LIU_ADD_NATIVE_METHOD(NamedChildDictionary, init);
+
     LIU_ADD_READ_ONLY_PROPERTY(NamedChildDictionary, source)
+}
+
+LIU_DEFINE_NATIVE_METHOD(NamedChildDictionary, init) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(1);
+    setSource(message->runFirstInput());
+    return this;
 }
 
 LIU_DEFINE_NODE_ACCESSOR(NamedChildDictionary, Node, source, Source);
 LIU_DEFINE_READ_ONLY_NODE_PROPERTY(NamedChildDictionary, source);
+
+// --- Iterable ---
+
+NamedChildDictionary::Iterator *NamedChildDictionary::iterator() const {
+    return NamedChildDictionary::Iterator::make(constCast(this));
+}
 
 // --- Indexable ---
 
@@ -49,7 +64,7 @@ LIU_DEFINE_2(NamedChildDictionary::Iterator, Iterable::Iterator, NamedChildDicti
 NamedChildDictionary::Iterator *NamedChildDictionary::Iterator::init(NamedChildDictionary *theSource) {
     Iterable::Iterator::init();
     setSource(theSource);
-    if(theSource) _sourceIterator = new SourceIterator(theSource->children()); // TODO: should use _children!
+    if(theSource) _sourceIterator = new SourceIterator(theSource->source()->children()); // TODO: should use _children!
     return this;
 }
 
