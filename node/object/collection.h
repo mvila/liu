@@ -2,6 +2,7 @@
 #define LIU_COLLECTION_H
 
 #include "node/object/iterable.h"
+#include "node/object/iterator.h"
 
 LIU_BEGIN
 

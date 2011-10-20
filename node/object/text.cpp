@@ -519,6 +519,7 @@ void Text::Iterator::initRoot() {
 }
 
 LIU_DEFINE_NODE_ACCESSOR(Text::Iterator, Text, source, Source);
+LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(Text::Iterator, source);
 LIU_DEFINE_READ_ONLY_NODE_PROPERTY(Text::Iterator, source);
 
 LIU_DEFINE_ACCESSOR(Text::Iterator, int, index, Index, 0);
@@ -565,6 +566,7 @@ void Text::IndexIterator::initRoot() {
 }
 
 LIU_DEFINE_NODE_ACCESSOR(Text::IndexIterator, Text, source, Source);
+LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(Text::IndexIterator, source);
 LIU_DEFINE_READ_ONLY_NODE_PROPERTY(Text::IndexIterator, source);
 
 LIU_DEFINE_ACCESSOR(Text::IndexIterator, int, index, Index, 0);

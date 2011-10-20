@@ -88,7 +88,9 @@ void CLASS::set##NAME_CAP(const TYPE *NAME) { \
 
 #define LIU_DECLARE_NODE_ACCESSOR(TYPE, NAME, NAME_CAP) \
 TYPE *NAME() const; \
-void set##NAME_CAP(TYPE *NAME = NULL);
+void set##NAME_CAP(TYPE *NAME = NULL); \
+virtual void NAME##WillChange(); \
+virtual void NAME##HasChanged();
 
 #define LIU_DEFINE_NODE_ACCESSOR(CLASS, TYPE, NAME, NAME_CAP) \
 TYPE *CLASS::NAME() const { \
@@ -102,17 +104,25 @@ TYPE *CLASS::NAME() const { \
     return result; \
 } \
 void CLASS::set##NAME_CAP(TYPE *NAME) { \
+    NAME##WillChange(); \
     if(_##NAME) removeUnnamedChild(_##NAME); \
     _##NAME = NAME; \
     if(NAME) addUnnamedChild(NAME); \
+    NAME##HasChanged(); \
     CLASS::hasChanged(); \
 }
+
+#define LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(CLASS, NAME) \
+void CLASS::NAME##WillChange() {} \
+void CLASS::NAME##HasChanged() {}
 
 #define LIU_CHECK_POINTER(POINTER) \
 if(!(POINTER)) LIU_THROW_NULL_POINTER_EXCEPTION("Node pointer is NULL")
 
 class Node {
 public:
+    friend class NamedChildDictionary;
+
     typedef Node *NodePtr;
 
     static const bool isInitialized;

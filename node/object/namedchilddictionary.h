@@ -48,6 +48,9 @@ public:
         LIU_DECLARE_NODE_ACCESSOR(NamedChildDictionary, source, Source);
         LIU_DECLARE_READ_ONLY_PROPERTY(source);
 
+        SourceIterator *sourceIterator() const;
+        void unsetSourceIterator();
+
         virtual bool hasNext() const;
         virtual Node *peekNext() const;
         virtual void skipNext();

@@ -35,6 +35,7 @@ LIU_DEFINE_NATIVE_METHOD(NamedChildDictionary, init) {
 }
 
 LIU_DEFINE_NODE_ACCESSOR(NamedChildDictionary, Node, source, Source);
+LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(NamedChildDictionary, source);
 LIU_DEFINE_READ_ONLY_NODE_PROPERTY(NamedChildDictionary, source);
 
 // --- Iterable ---
@@ -64,20 +65,18 @@ LIU_DEFINE_2(NamedChildDictionary::Iterator, Iterable::Iterator, NamedChildDicti
 NamedChildDictionary::Iterator *NamedChildDictionary::Iterator::init(NamedChildDictionary *theSource) {
     Iterable::Iterator::init();
     setSource(theSource);
-    if(theSource) _sourceIterator = new SourceIterator(theSource->source()->children()); // TODO: should use _children!
     return this;
 }
 
 NamedChildDictionary::Iterator *NamedChildDictionary::Iterator::initCopy(const NamedChildDictionary::Iterator *other) {
     Iterable::Iterator::initCopy(other);
     setSource(other->_source);
-    _sourceIterator = other->_sourceIterator;
     return this;
 }
 
 NamedChildDictionary::Iterator::~Iterator() {
     setSource();
-    delete _sourceIterator;
+    unsetSourceIterator();
 }
 
 void NamedChildDictionary::Iterator::initRoot() {
@@ -87,26 +86,42 @@ void NamedChildDictionary::Iterator::initRoot() {
 }
 
 LIU_DEFINE_NODE_ACCESSOR(NamedChildDictionary::Iterator, NamedChildDictionary, source, Source);
+LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(NamedChildDictionary::Iterator, source);
 LIU_DEFINE_READ_ONLY_NODE_PROPERTY(NamedChildDictionary::Iterator, source);
+
+NamedChildDictionary::Iterator::SourceIterator *NamedChildDictionary::Iterator::sourceIterator() const {
+    if(!_sourceIterator) {
+        if(!source()) LIU_THROW_NULL_POINTER_EXCEPTION("source is NULL");
+        constCast(this)->_sourceIterator = new SourceIterator(*source()->source()->_children);
+    }
+    return _sourceIterator;
+}
+
+void NamedChildDictionary::Iterator::unsetSourceIterator() {
+    if(_sourceIterator) {
+        delete _sourceIterator;
+        _sourceIterator = NULL;
+    }
+}
 
 bool NamedChildDictionary::Iterator::hasNext() const {
     while(true) {
-        if(!_sourceIterator->hasNext()) break;
-        Node *node = _sourceIterator->peekNext().value();
+        if(!sourceIterator()->hasNext()) break;
+        Node *node = sourceIterator()->peekNext().value();
         if(node && node->isReal()) break;
-        _sourceIterator->next();
+        sourceIterator()->next();
     }
-    return _sourceIterator->hasNext();
+    return sourceIterator()->hasNext();
 }
 
 Node *NamedChildDictionary::Iterator::peekNext() const {
     if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
-    return _sourceIterator->peekNext().value();
+    return sourceIterator()->peekNext().value();
 }
 
 void NamedChildDictionary::Iterator::skipNext() {
     if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
-    _sourceIterator->next();
+    sourceIterator()->next();
 }
 
 LIU_END

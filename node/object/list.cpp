@@ -421,6 +421,7 @@ void List::Iterator::initRoot() {
 }
 
 LIU_DEFINE_NODE_ACCESSOR(List::Iterator, List, source, Source);
+LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(List::Iterator, source);
 LIU_DEFINE_READ_ONLY_NODE_PROPERTY(List::Iterator, source);
 
 LIU_DEFINE_ACCESSOR(List::Iterator, int, index, Index, 0);
@@ -467,6 +468,7 @@ void List::IndexIterator::initRoot() {
 }
 
 LIU_DEFINE_NODE_ACCESSOR(List::IndexIterator, List, source, Source);
+LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(List::IndexIterator, source);
 LIU_DEFINE_READ_ONLY_NODE_PROPERTY(List::IndexIterator, source);
 
 LIU_DEFINE_ACCESSOR(List::IndexIterator, int, index, Index, 0);
