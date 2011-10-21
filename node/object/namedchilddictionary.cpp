@@ -86,7 +86,10 @@ void NamedChildDictionary::Iterator::initRoot() {
 }
 
 LIU_DEFINE_NODE_ACCESSOR(NamedChildDictionary::Iterator, NamedChildDictionary, source, Source);
-LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(NamedChildDictionary::Iterator, source);
+
+void NamedChildDictionary::Iterator::sourceWillChange() {}
+void NamedChildDictionary::Iterator::sourceHasChanged() { unsetSourceIterator(); }
+
 LIU_DEFINE_READ_ONLY_NODE_PROPERTY(NamedChildDictionary::Iterator, source);
 
 NamedChildDictionary::Iterator::SourceIterator *NamedChildDictionary::Iterator::sourceIterator() const {
