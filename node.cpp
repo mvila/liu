@@ -661,7 +661,7 @@ LIU_DEFINE_NATIVE_METHOD(Node, memory_address) {
 QString Node::toString(bool debug, short level) const {
     Q_UNUSED(debug);
     Q_UNUSED(level);
-    return QString("%1:%2: [%3]").arg(nodeName()).arg(hexMemoryAddress(), QStringList(children().keys()).join(", "));
+    return QString("%1:%2: [%3]").arg(nodeName()).arg(hexMemoryAddress()).arg(QStringList(children().keys()).join(", "));
 }
 
 LIU_END

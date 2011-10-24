@@ -1,10 +1,7 @@
-o := Object()
-o a := 1
-o b := 2
-d := o children
-d inspect
-o a >>
-d inspect
+a := Text("Hello")
+b := 1
+b >>
+dump
 
 //list := []
 //loop(10) { list << Number random % 10000 }
