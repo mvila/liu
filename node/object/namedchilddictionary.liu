@@ -1,0 +1,28 @@
+Object NamedChildDictionary {
+    // --- Iterable ---
+
+    \iterator {
+    test:
+        obj := Object()
+        obj a := 1
+        obj b := 2
+        dict := NamedChildDictionary(obj)
+        iter := dict iterator
+        ?: iter source === obj
+        ?: iter read?
+        list := []
+        list << iter read!
+        list << iter read!
+        ?: list contains?(1)
+        ?: list contains?(2)
+        ?: IndexOutOfBoundsException throw? { iter read }
+        ?: IndexOutOfBoundsException throw? { iter read! }
+        !: iter read?
+    }
+test:
+    ?: origin == Object
+    ?: parent == Object
+    ?: is?(Iterable)
+    ?: is?(Collection)
+    ?: is?(Indexable)
+}

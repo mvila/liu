@@ -23,8 +23,6 @@ void Indexable::initRoot() {
     LIU_ADD_NATIVE_METHOD(Indexable, append_or_set, []:=);
     LIU_ADD_NATIVE_METHOD(Indexable, unset, []>>);
 
-    LIU_ADD_NATIVE_METHOD(Indexable, index_iterator);
-
     LIU_ADD_NATIVE_METHOD(Indexable, index);
 }
 
@@ -91,20 +89,14 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, unset) {
     return result;
 }
 
-LIU_DEFINE_NATIVE_METHOD(Indexable, index_iterator) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(0);
-    return indexIterator();
-}
-
 Node *Indexable::index(Node *item, bool *wasFoundPtr) {
     Node *result = NULL;
     bool wasFound = false;
-    QScopedPointer<Iterator> i(indexIterator());
+    QScopedPointer<Iterator> i(iterator());
     while(i->hasNext()) {
-        Node *index = i->next();
-        if(get(index)->isEqualTo(item)) {
-            result = index;
+        NodeQPair current = i->next();
+        if(current.second->isEqualTo(item)) {
+            result = current.first;
             wasFound = true;
             break;
         }

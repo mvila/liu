@@ -64,7 +64,8 @@ SOURCES += main.cpp \
     node/object/dictionary.cpp \
     node/object/oldpair.cpp \
     node/object/pair.cpp \
-    node/object/namedchilddictionary.cpp
+    node/object/namedchilddictionary.cpp \
+    node/object/unnamedchildcollection.cpp
 
 HEADERS += \
     liu.h \
@@ -117,7 +118,8 @@ HEADERS += \
     node/object/dictionary.h \
     node/object/oldpair.h \
     node/object/pair.h \
-    node/object/namedchilddictionary.h
+    node/object/namedchilddictionary.h \
+    node/object/unnamedchildcollection.h
 
 OTHER_FILES += \
     README.txt \
@@ -146,4 +148,5 @@ OTHER_FILES += \
     node/object/list.liu \
     node/object/comparable.liu \
     node/object/dictionary.liu \
-    node/object/pair.liu
+    node/object/pair.liu \
+    node/object/namedchilddictionary.liu

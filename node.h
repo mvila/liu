@@ -276,17 +276,11 @@ public:
         LIU_CHECK_POINTER(parent);
         return _parents && _parents->contains(parent);
     }
-
 private:
     void _addParent(Node *parent) const;
     void _removeParent(Node *parent) const;
 public:
-
-    QHash<QString, Node *> children() const;
-
     LIU_DECLARE_NATIVE_METHOD(children);
-
-    QList<Node *> parents() const;
 
     Node *parent() const;
     bool hasOneParent() const;
@@ -388,6 +382,8 @@ public:
         Node *_node;
     };
 };
+
+typedef QPair<Node *, Node *> NodeQPair;
 
 inline bool operator==(const Node &a, const Node &b) { return a.isEqualTo(&b); }
 inline bool operator!=(const Node &a, const Node &b) { return !a.isEqualTo(&b); }

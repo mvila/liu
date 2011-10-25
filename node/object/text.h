@@ -64,8 +64,6 @@ public:
     virtual void set(Node *index, Node *item, bool *wasFoundPtr = NULL);
     virtual void append(Node *index, Node *item, bool *okPtr = NULL);
     virtual Character *unset(Node *index, bool *wasFoundPtr = NULL);
-    class IndexIterator;
-    virtual IndexIterator *indexIterator() const;
 
     // --- Insertable ---
 
@@ -111,32 +109,7 @@ public:
         LIU_DECLARE_ACCESSOR(int, index, Index);
 
         virtual bool hasNext() const;
-        virtual Text *peekNext() const;
-        virtual void skipNext();
-    private:
-        Text *_source;
-        int *_index;
-    };
-
-    // === IndexIterator ===
-
-    class IndexIterator : public Iterable::Iterator {
-        LIU_DECLARE_2(IndexIterator, Object, Text);
-    public:
-        explicit IndexIterator(Node *origin = context()->child("Object", "Text", "IndexIterator")) :
-            Iterable::Iterator(origin), _source(NULL), _index(NULL) {};
-
-        static IndexIterator *make(Text *source) { return (new IndexIterator())->init(source); }
-
-        IndexIterator *init(Text *source = NULL, int *index = NULL);
-
-        LIU_DECLARE_NODE_ACCESSOR(Text, source, Source);
-        LIU_DECLARE_READ_ONLY_PROPERTY(source);
-
-        LIU_DECLARE_ACCESSOR(int, index, Index);
-
-        virtual bool hasNext() const;
-        virtual Number *peekNext() const;
+        virtual NodeQPair peekNext() const;
         virtual void skipNext();
     private:
         Text *_source;

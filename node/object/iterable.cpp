@@ -50,7 +50,7 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, iterator) {
 
 bool Iterable::contains(Node *value) const {
     QScopedPointer<Iterator> i(iterator());
-    while(i->hasNext()) if(i->next()->isEqualTo(value)) return true;
+    while(i->hasNext()) if(i->next().second->isEqualTo(value)) return true;
     return false;
 }
 
@@ -65,7 +65,7 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, contains) {
 int Iterable::count(Node *value) const {
     QScopedPointer<Iterator> i(iterator());
     int counter = 0;
-    while(i->hasNext()) if(i->next()->isEqualTo(value)) counter++;
+    while(i->hasNext()) if(i->next().second->isEqualTo(value)) counter++;
     return counter;
 }
 
@@ -104,21 +104,21 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, empty) {
     return Boolean::make(empty());
 }
 
-Node *Iterable::first(bool *wasFoundPtr) const {
+NodeQPair Iterable::first(bool *wasFoundPtr) const {
     QScopedPointer<Iterator> i(iterator());
     return i->next(wasFoundPtr);
 }
 
-LIU_DEFINE_NATIVE_METHOD(Iterable, first) {
+LIU_DEFINE_NATIVE_METHOD(Iterable, first) { // *** YO ***
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     bool wasFound = true;
-    Node *result = first(message->isQuestioned() ? &wasFound : NULL);
+    Node *result = first(message->isQuestioned() ? &wasFound : NULL).second;
     if(!wasFound) Primitive::skip(Boolean::make(false));
-    return result;
+    return result;  // TODO: return two results, value and index
 }
 
-Node *Iterable::second(bool *wasFoundPtr) const {
+NodeQPair Iterable::second(bool *wasFoundPtr) const {
     QScopedPointer<Iterator> i(iterator());
     i->next(wasFoundPtr);
     return i->next(wasFoundPtr);
@@ -128,13 +128,13 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, second) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     bool wasFound = true;
-    Node *result = second(message->isQuestioned() ? &wasFound : NULL);
+    Node *result = second(message->isQuestioned() ? &wasFound : NULL).second;
     if(!wasFound) Primitive::skip(Boolean::make(false));
-    return result;
+    return result; // TODO: return two results, value and index
 }
 
 
-Node *Iterable::third(bool *wasFoundPtr) const {
+NodeQPair Iterable::third(bool *wasFoundPtr) const {
     QScopedPointer<Iterator> i(iterator());
     i->next(wasFoundPtr);
     i->next(wasFoundPtr);
@@ -145,14 +145,14 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, third) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     bool wasFound = true;
-    Node *result = third(message->isQuestioned() ? &wasFound : NULL);
+    Node *result = third(message->isQuestioned() ? &wasFound : NULL).second;
     if(!wasFound) Primitive::skip(Boolean::make(false));
-    return result;
+    return result; // TODO: return two results, value and index
 }
 
-Node *Iterable::last(bool *wasFoundPtr) const {
+NodeQPair Iterable::last(bool *wasFoundPtr) const {
     QScopedPointer<Iterator> i(iterator());
-    Node *result = NULL;
+    NodeQPair result = NodeQPair(NULL, NULL);
     bool wasFound = false;
     while(i->hasNext()) {
         wasFound = true;
@@ -169,9 +169,9 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, last) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     bool wasFound = true;
-    Node *result = last(message->isQuestioned() ? &wasFound : NULL);
+    Node *result = last(message->isQuestioned() ? &wasFound : NULL).second;
     if(!wasFound) Primitive::skip(Boolean::make(false));
-    return result;
+    return result; // TODO: return two results, value and index
 }
 
 const QString Iterable::join(const QString &separator, const QString &prefix,
@@ -181,7 +181,7 @@ const QString Iterable::join(const QString &separator, const QString &prefix,
     bool isFirst = true;
     while(i->hasNext()) {
         if(!isFirst) str += separator; else isFirst = false;
-        str += prefix + i->next()->toString(debug, level) + suffix;
+        str += prefix + i->next().second->toString(debug, level) + suffix;
     }
     return str;
 }
@@ -207,12 +207,12 @@ void Iterable::Iterator::initRoot() {
     LIU_ADD_NATIVE_METHOD(Iterable::Iterator, skip);
 }
 
-Node *Iterable::Iterator::next(bool *wasFoundPtr) {
+NodeQPair Iterable::Iterator::next(bool *wasFoundPtr) {
     if(wasFoundPtr) {
         *wasFoundPtr = hasNext();
-        if(!*wasFoundPtr) return NULL;
+        if(!*wasFoundPtr) return NodeQPair(NULL, NULL);
     }
-    Node *result = peekNext();
+    NodeQPair result = peekNext();
     skipNext();
     return result;
 }
@@ -221,8 +221,9 @@ LIU_DEFINE_NATIVE_METHOD(Iterable::Iterator, read) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     if(message->isQuestioned()) return Boolean::make(hasNext());
-    if(message->isExclaimed()) return next();
-    return peekNext();
+    NodeQPair result = peekNext();
+    if(message->isExclaimed()) skipNext();
+    return result.second; // TODO: return two results, value and index
 }
 
 LIU_DEFINE_NATIVE_METHOD(Iterable::Iterator, skip) {

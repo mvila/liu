@@ -30,9 +30,6 @@ public:
         Q_UNUSED(index); Q_UNUSED(wasFoundPtr); LIU_ABSTRACT_CALL; }
     LIU_DECLARE_NATIVE_METHOD(unset);
 
-    virtual Iterator *indexIterator() const { LIU_ABSTRACT_CALL; }
-    LIU_DECLARE_NATIVE_METHOD(index_iterator);
-
     virtual Node *index(Node *item, bool *wasFoundPtr = NULL);
     LIU_DECLARE_NATIVE_METHOD(index);
 };

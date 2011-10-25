@@ -51,7 +51,7 @@ LIU_DEFINE_NATIVE_METHOD(Collection, remove) {
 void Collection::clear() {
     bool wasFound;
     while(true) {
-        Node *item = first(&wasFound);
+        Node *item = first(&wasFound).second;
         if(wasFound)
             remove(item);
         else

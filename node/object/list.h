@@ -49,8 +49,6 @@ public:
 private:
     void _unset(int index);
 public:
-    class IndexIterator;
-    virtual IndexIterator *indexIterator() const;
 
     // --- Insertable ---
 
@@ -94,32 +92,7 @@ public:
         LIU_DECLARE_ACCESSOR(int, index, Index);
 
         virtual bool hasNext() const;
-        virtual Node *peekNext() const;
-        virtual void skipNext();
-    private:
-        List *_source;
-        int *_index;
-    };
-
-    // === IndexIterator ===
-
-    class IndexIterator : public Iterable::Iterator {
-        LIU_DECLARE_2(IndexIterator, Object, List);
-    public:
-        explicit IndexIterator(Node *origin = context()->child("Object", "List", "IndexIterator")) :
-            Iterable::Iterator(origin), _source(NULL), _index(NULL) {};
-
-        static IndexIterator *make(List *source) { return (new IndexIterator())->init(source); }
-
-        IndexIterator *init(List *source = NULL, int *index = NULL);
-
-        LIU_DECLARE_NODE_ACCESSOR(List, source, Source);
-        LIU_DECLARE_READ_ONLY_PROPERTY(source);
-
-        LIU_DECLARE_ACCESSOR(int, index, Index);
-
-        virtual bool hasNext() const;
-        virtual Number *peekNext() const;
+        virtual NodeQPair peekNext() const;
         virtual void skipNext();
     private:
         List *_source;

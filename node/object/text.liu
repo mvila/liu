@@ -260,21 +260,6 @@ Object Text {
         !: txt[0]? >>
     }
 
-    \index_iterator {
-    test:
-        txt := "abc"
-        iter := txt index_iterator
-        ?: iter source === txt
-        ?: iter read?
-        ?: iter read == 0
-        ?: iter read! == 0
-        ?: iter read! == 1
-        ?: iter read! == 2
-        ?: IndexOutOfBoundsException throw? { iter read }
-        ?: IndexOutOfBoundsException throw? { iter read! }
-        !: iter read?
-    }
-
     \index {
     test:
         ?: NotFoundException throw? { "" index("x") }

@@ -33,16 +33,16 @@ public:
     virtual bool empty() const;
     LIU_DECLARE_NATIVE_METHOD(empty);
 
-    virtual Node *first(bool *wasFoundPtr = NULL) const;
+    virtual NodeQPair first(bool *wasFoundPtr = NULL) const;
     LIU_DECLARE_NATIVE_METHOD(first);
 
-    virtual Node *second(bool *wasFoundPtr = NULL) const;
+    virtual NodeQPair second(bool *wasFoundPtr = NULL) const;
     LIU_DECLARE_NATIVE_METHOD(second);
 
-    virtual Node *third(bool *wasFoundPtr = NULL) const;
+    virtual NodeQPair third(bool *wasFoundPtr = NULL) const;
     LIU_DECLARE_NATIVE_METHOD(third);
 
-    virtual Node *last(bool *wasFoundPtr = NULL) const;
+    virtual NodeQPair last(bool *wasFoundPtr = NULL) const;
     LIU_DECLARE_NATIVE_METHOD(last);
 
 
@@ -59,9 +59,9 @@ public:
         Iterator *init();
 
         virtual bool hasNext() const { LIU_ABSTRACT_CALL; }
-        virtual Node *peekNext() const { LIU_ABSTRACT_CALL; }
+        virtual NodeQPair peekNext() const { LIU_ABSTRACT_CALL; }
         virtual void skipNext() { LIU_ABSTRACT_CALL; }
-        Node *next(bool *wasFoundPtr = NULL);
+        NodeQPair next(bool *wasFoundPtr = NULL);
 
         LIU_DECLARE_NATIVE_METHOD(read);
         LIU_DECLARE_NATIVE_METHOD(skip);

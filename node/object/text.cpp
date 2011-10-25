@@ -286,10 +286,6 @@ Character *Text::unset(Node *index, bool *wasFoundPtr) {
     return result;
 }
 
-Text::IndexIterator *Text::indexIterator() const {
-    return Text::IndexIterator::make(constCast(this));
-}
-
 // --- Insertable ---
 
 void Text::insert(Node *index, Node *item, Node *before, bool *wasFoundPtr) {
@@ -528,60 +524,13 @@ bool Text::Iterator::hasNext() const {
     return index() < source()->value().size() ;
 }
 
-Text *Text::Iterator::peekNext() const {
+NodeQPair Text::Iterator::peekNext() const {
     if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
-    return Text::make(source()->value().at(index()));
+    return NodeQPair(Number::make(index()), Text::make(source()->value().at(index())));
 }
 
 void Text::Iterator::skipNext() {
     if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
-    setIndex(index() + 1);
-}
-
-// === Text::IndexIterator ===
-
-LIU_DEFINE_2(Text::IndexIterator, Iterable::Iterator, Text);
-
-Text::IndexIterator *Text::IndexIterator::init(Text *source, int *index) {
-    Iterable::Iterator::init();
-    setSource(source);
-    setIndex(index);
-    return this;
-}
-
-Text::IndexIterator *Text::IndexIterator::initCopy(const Text::IndexIterator *other) {
-    Iterable::Iterator::initCopy(other);
-    setSource(other->_source);
-    setIndex(other->_index);
-    return this;
-}
-
-Text::IndexIterator::~IndexIterator() {
-    setSource();
-    setIndex();
-}
-
-void Text::IndexIterator::initRoot() {
-    LIU_ADD_READ_ONLY_PROPERTY(Text::IndexIterator, source)
-}
-
-LIU_DEFINE_NODE_ACCESSOR(Text::IndexIterator, Text, source, Source);
-LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(Text::IndexIterator, source);
-LIU_DEFINE_READ_ONLY_NODE_PROPERTY(Text::IndexIterator, source);
-
-LIU_DEFINE_ACCESSOR(Text::IndexIterator, int, index, Index, 0);
-
-bool Text::IndexIterator::hasNext() const {
-    return index() < source()->value().size() ;
-}
-
-Number *Text::IndexIterator::peekNext() const {
-    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "IndexIterator is out of bounds");
-    return Number::make(index());
-}
-
-void Text::IndexIterator::skipNext() {
-    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "IndexIterator is out of bounds");
     setIndex(index() + 1);
 }
 

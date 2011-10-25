@@ -1,3 +1,12 @@
+---
+
+i := children iterator
+while(i read?) {
+    value, index := i read!
+}
+
+---
+
 NamedChildDictionary
 UnnamedChildCollection
 ChildCollection

@@ -21,8 +21,11 @@ Node::Node(const Node &other) : _origin(other._origin), _extensions(NULL), // co
     _isVirtual(other._isVirtual), _isAutoRunnable(other._isAutoRunnable) {
     if(other._extensions) _extensions = new QList<Node *>(*other._extensions);
     if(other._children) {
-        QHashIterator<QString, Node *> i(other.children());
-        while(i.hasNext()) { i.next(); addOrSetChild(i.key(), i.value()); }
+        QScopedPointer<NamedChildDictionary::Iterator> i(NamedChildDictionary::Iterator::make(&other));
+        while(i->hasNext()) {
+            NodeQPair child = i->next();
+            addOrSetChild(child.first->toString(), child.second);
+        }
     }
 }
 
@@ -489,25 +492,10 @@ void Node::_removeParent(Node *parent) const {
         LIU_THROW(NotFoundException, "parent not found");
 }
 
-QHash<QString, Node *> Node::children() const {
-    QHash<QString, Node *> children;
-    if(_children) {
-        QHashIterator<QString, Node *> i(*_children);
-        while(i.hasNext()) if(i.next().value()) children.insert(i.key(), i.value());
-    }
-    return children;
-}
-
 LIU_DEFINE_NATIVE_METHOD(Node, children) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     return NamedChildDictionary::make(this);
-}
-
-QList<Node *> Node::parents() const {
-    QList<Node *> parents;
-    if(_parents) foreach(Node *parent, _parents->keys()) parents.append(parent);
-    return parents;
 }
 
 Node *Node::parent() const {
@@ -661,7 +649,13 @@ LIU_DEFINE_NATIVE_METHOD(Node, memory_address) {
 QString Node::toString(bool debug, short level) const {
     Q_UNUSED(debug);
     Q_UNUSED(level);
-    return QString("%1:%2: [%3]").arg(nodeName()).arg(hexMemoryAddress()).arg(QStringList(children().keys()).join(", "));
+    QScopedPointer<NamedChildDictionary::Iterator> i(NamedChildDictionary::Iterator::make(constCast(this)));
+    QString str;
+    while(i->hasNext()) {
+        if(!str.isEmpty()) str += ", ";
+        str += i->next().first->toString();
+    }
+    return QString("%1:%2: [%3]").arg(nodeName()).arg(hexMemoryAddress()).arg(str);
 }
 
 LIU_END
