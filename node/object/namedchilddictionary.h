@@ -34,7 +34,7 @@ public:
     // === Iterator ===
 
     class Iterator : public Iterable::Iterator {
-        LIU_DECLARE_2(Iterator, Object, NamedChildDictionary);
+        LIU_DECLARE_2(Iterator, Iterable::Iterator, NamedChildDictionary);
     public:
         typedef QHashIterator<QString, Node *> SourceIterator;
 

@@ -55,6 +55,18 @@ LIU_DEFINE_NODE_ACCESSOR(Pair, Node, second, Second);
 LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(Pair, second);
 LIU_DEFINE_NODE_PROPERTY(Pair, second, Second);
 
+Node *Pair::unnamedChild(int index) const {
+    if(_first) {
+        if(index == 0) return _first;
+        index--;
+    }
+    if(_second) {
+        if(index == 0) return _second;
+        index--;
+    }
+    return NULL;
+}
+
 bool Pair::isEqualTo(const Node *other) const {
     const Pair *otherPair = Pair::dynamicCast(other);
     return otherPair && first()->isEqualTo(otherPair->first()) && second()->isEqualTo(otherPair->second());

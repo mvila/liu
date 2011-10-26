@@ -1,0 +1,31 @@
+Object UnnamedChildCollection {
+    // --- Iterable ---
+
+    \iterator {
+    test:
+        obj := Object()
+        col := UnnamedChildCollection(obj)
+        iter := col iterator
+        ?: IndexOutOfBoundsException throw? { iter read }
+        ?: IndexOutOfBoundsException throw? { iter read! }
+        !: iter read?
+
+        pair := Pair(1, 2)
+        col := UnnamedChildCollection(pair)
+        iter := col iterator
+        ?: iter read! == 1
+        ?: iter read! == 2
+        ?: IndexOutOfBoundsException throw? { iter read! }
+    }
+
+    \size {
+    test:
+        obj := Object()
+        col := UnnamedChildCollection(obj)
+        ?: col size == 0
+    }
+test:
+    ?: origin == Object
+    ?: parent == Object
+    ?: is?(Iterable)
+}

@@ -1,4 +1,4 @@
-#include "unnamedchildcollection.h"
+#include "node/object/unnamedchildcollection.h"
 #include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
@@ -40,79 +40,60 @@ LIU_DEFINE_NODE_ACCESSOR(UnnamedChildCollection, Node, source, Source);
 LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(UnnamedChildCollection, source);
 LIU_DEFINE_READ_ONLY_NODE_PROPERTY(UnnamedChildCollection, source);
 
-// --- Iterable ---
+ // --- Iterable ---
 
-//UnnamedChildCollection::Iterator *UnnamedChildCollection::iterator() const {
-//    return UnnamedChildCollection::Iterator::make(source());
-//}
+UnnamedChildCollection::Iterator *UnnamedChildCollection::iterator() const {
+    return UnnamedChildCollection::Iterator::make(source());
+}
 
 // === UnnamedChildCollection::Iterator ===
 
-//LIU_DEFINE_2(UnnamedChildCollection::Iterator, Iterable::Iterator, UnnamedChildCollection);
+LIU_DEFINE_2(UnnamedChildCollection::Iterator, Iterable::Iterator, UnnamedChildCollection);
 
-//UnnamedChildCollection::Iterator *UnnamedChildCollection::Iterator::init(Node *source) {
-//    Iterable::Iterator::init();
-//    setSource(source);
-//    return this;
-//}
+UnnamedChildCollection::Iterator *UnnamedChildCollection::Iterator::init(Node *source, int *index) {
+    Iterable::Iterator::init();
+    setSource(source);
+    setIndex(index);
+    return this;
+}
 
-//UnnamedChildCollection::Iterator *UnnamedChildCollection::Iterator::initCopy(const UnnamedChildCollection::Iterator *other) {
-//    Iterable::Iterator::initCopy(other);
-//    setSource(other->_source);
-//    return this;
-//}
+UnnamedChildCollection::Iterator *UnnamedChildCollection::Iterator::initCopy(const UnnamedChildCollection::Iterator *other) {
+    Iterable::Iterator::initCopy(other);
+    setSource(other->_source);
+    setIndex(other->_index);
+    return this;
+}
 
-//UnnamedChildCollection::Iterator::~Iterator() {
-//    setSource();
-//    unsetSourceIterator();
-//}
+UnnamedChildCollection::Iterator::~Iterator() {
+    setSource();
+    setIndex();
+}
 
-//void UnnamedChildCollection::Iterator::initRoot() {
-//    setSource(Node::root()->fork());
+void UnnamedChildCollection::Iterator::initRoot() {
+    setSource(Node::root()->fork());
 
-//    LIU_ADD_READ_ONLY_PROPERTY(UnnamedChildCollection::Iterator, source)
-//}
+    LIU_ADD_READ_ONLY_PROPERTY(UnnamedChildCollection::Iterator, source)
+}
 
-//LIU_DEFINE_NODE_ACCESSOR(UnnamedChildCollection::Iterator, Node, source, Source);
+LIU_DEFINE_NODE_ACCESSOR(UnnamedChildCollection::Iterator, Node, source, Source);
+LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(UnnamedChildCollection::Iterator, source);
+LIU_DEFINE_READ_ONLY_NODE_PROPERTY(UnnamedChildCollection::Iterator, source);
 
-//void UnnamedChildCollection::Iterator::sourceWillChange() {}
-//void UnnamedChildCollection::Iterator::sourceHasChanged() { unsetSourceIterator(); }
+LIU_DEFINE_ACCESSOR(UnnamedChildCollection::Iterator, int, index, Index, 0);
 
-//LIU_DEFINE_READ_ONLY_NODE_PROPERTY(UnnamedChildCollection::Iterator, source);
+bool UnnamedChildCollection::Iterator::hasNext() const {
+    return source()->unnamedChild(index());
+}
 
-//UnnamedChildCollection::Iterator::SourceIterator *UnnamedChildCollection::Iterator::sourceIterator() const {
-//    if(!_sourceIterator) {
-//        if(!source()) LIU_THROW_NULL_POINTER_EXCEPTION("source is NULL");
-//        constCast(this)->_sourceIterator = new SourceIterator(*source()->_children);
-//    }
-//    return _sourceIterator;
-//}
+NodeQPair UnnamedChildCollection::Iterator::peekNext() const {
+    Node *result = source()->unnamedChild(index());
+    if(!result) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
+    return NodeQPair(NULL, result);
+}
 
-//void UnnamedChildCollection::Iterator::unsetSourceIterator() {
-//    if(_sourceIterator) {
-//        delete _sourceIterator;
-//        _sourceIterator = NULL;
-//    }
-//}
-
-//bool UnnamedChildCollection::Iterator::hasNext() const {
-//    while(true) {
-//        if(!sourceIterator()->hasNext()) break;
-//        Node *node = sourceIterator()->peekNext().value();
-//        if(node && node->isReal()) break;
-//        sourceIterator()->next();
-//    }
-//    return sourceIterator()->hasNext();
-//}
-
-//NodeQPair UnnamedChildCollection::Iterator::peekNext() const {
-//    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
-//    return NodeQPair(Text::make(sourceIterator()->peekNext().key()), sourceIterator()->peekNext().value());
-//}
-
-//void UnnamedChildCollection::Iterator::skipNext() {
-//    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
-//    sourceIterator()->next();
-//}
+void UnnamedChildCollection::Iterator::skipNext() {
+    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
+    setIndex(index() + 1);
+}
 
 LIU_END

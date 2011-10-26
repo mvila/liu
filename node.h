@@ -177,7 +177,7 @@ public:
     bool isOriginatingFrom(Node *node) const;
     LIU_DECLARE_NATIVE_METHOD(is);
 
-    bool isDefined() const { return _isDefined; }
+    bool isDefined(QSet<Node *> *alreadySeen = NULL) const;
     void setIsDefined(bool isDefined) { _isDefined = isDefined; }
 
     LIU_DECLARE_NATIVE_METHOD(defined);
@@ -281,6 +281,11 @@ private:
     void _removeParent(Node *parent) const;
 public:
     LIU_DECLARE_NATIVE_METHOD(children);
+
+    virtual Node *unnamedChild(int index) const {
+        Q_UNUSED(index);
+        return NULL;
+    }
 
     Node *parent() const;
     bool hasOneParent() const;

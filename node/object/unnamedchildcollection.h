@@ -22,36 +22,35 @@ public:
 
     // --- Iterable ---
 
-//    class Iterator;
-//    virtual Iterator *iterator() const;
+    class Iterator;
+    virtual Iterator *iterator() const;
 private:
     Node *_source;
 public:
-    // === Iterator ===
+     // === Iterator ===
 
-//    class Iterator : public Iterable::Iterator {
-//        LIU_DECLARE_2(Iterator, Object, UnnamedChildCollection);
-//    public:
-//        explicit Iterator(Node *origin = context()->child("Object", "UnnamedChildCollection", "Iterator")) :
-//            Iterable::Iterator(origin), _source(NULL), _sourceIterator(NULL) {};
+    class Iterator : public Iterable::Iterator {
+        LIU_DECLARE_2(Iterator, Iterable::Iterator, UnnamedChildCollection);
+    public:
+        explicit Iterator(Node *origin = context()->child("Object", "UnnamedChildCollection", "Iterator")) :
+            Iterable::Iterator(origin), _source(NULL), _index(NULL) {};
 
-//        static Iterator *make(const Node *source) { return (new Iterator())->init(Node::constCast(source)); }
+        static Iterator *make(const Node *source) { return (new Iterator())->init(Node::constCast(source)); }
 
-//        Iterator *init(Node *source = NULL);
+        Iterator *init(Node *source = NULL, int *index = NULL);
 
-//        LIU_DECLARE_NODE_ACCESSOR(Node, source, Source);
-//        LIU_DECLARE_READ_ONLY_PROPERTY(source);
+        LIU_DECLARE_NODE_ACCESSOR(Node, source, Source);
+        LIU_DECLARE_READ_ONLY_PROPERTY(source);
 
-//        SourceIterator *sourceIterator() const;
-//        void unsetSourceIterator();
+        LIU_DECLARE_ACCESSOR(int, index, Index);
 
-//        virtual bool hasNext() const;
-//        virtual NodeQPair peekNext() const;
-//        virtual void skipNext();
-//    private:
-//        Node *_source;
-//        SourceIterator *_sourceIterator;
-//    };
+        virtual bool hasNext() const;
+        virtual NodeQPair peekNext() const;
+        virtual void skipNext();
+    private:
+        Node *_source;
+        int *_index;
+    };
 };
 
 LIU_END

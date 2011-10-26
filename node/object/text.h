@@ -94,7 +94,7 @@ public:
     // === Iterator ===
 
     class Iterator : public Iterable::Iterator {
-        LIU_DECLARE_2(Iterator, Object, Text);
+        LIU_DECLARE_2(Iterator, Iterable::Iterator, Text);
     public:
         explicit Iterator(Node *origin = context()->child("Object", "Text", "Iterator")) :
             Iterable::Iterator(origin), _source(NULL), _index(NULL) {};

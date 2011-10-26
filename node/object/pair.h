@@ -24,6 +24,8 @@ public:
     LIU_DECLARE_NODE_ACCESSOR(Node, second, Second);
     LIU_DECLARE_PROPERTY(second);
 
+    virtual Node *unnamedChild(int index) const;
+
     virtual bool isEqualTo(const Node *other) const;
 
     virtual short compare(const Node *other) const;

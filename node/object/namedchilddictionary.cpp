@@ -1,4 +1,4 @@
-#include "namedchilddictionary.h"
+#include "node/object/namedchilddictionary.h"
 #include "node/object/text.h"
 #include "node/object/language/nativemethod.h"
 
@@ -98,7 +98,7 @@ LIU_DEFINE_READ_ONLY_NODE_PROPERTY(NamedChildDictionary::Iterator, source);
 NamedChildDictionary::Iterator::SourceIterator *NamedChildDictionary::Iterator::sourceIterator() const {
     if(!_sourceIterator) {
         if(!source()) LIU_THROW_NULL_POINTER_EXCEPTION("source is NULL");
-        constCast(this)->_sourceIterator = new SourceIterator(*source()->_children);
+        if(source()->_children) constCast(this)->_sourceIterator = new SourceIterator(*source()->_children);
     }
     return _sourceIterator;
 }
@@ -111,13 +111,21 @@ void NamedChildDictionary::Iterator::unsetSourceIterator() {
 }
 
 bool NamedChildDictionary::Iterator::hasNext() const {
+    if(!sourceIterator()) return false;
     while(true) {
-        if(!sourceIterator()->hasNext()) break;
+        if(!sourceIterator()->hasNext()) return false;
         Node *node = sourceIterator()->peekNext().value();
-        if(node && node->isReal()) break;
-        sourceIterator()->next();
+        if(!node || node->isVirtual()) {
+            sourceIterator()->next();
+            continue;
+        }
+        const QString &name = sourceIterator()->peekNext().key();
+        if(name == "__name__") {
+            sourceIterator()->next();
+            continue;
+        }
+        return true;
     }
-    return sourceIterator()->hasNext();
 }
 
 NodeQPair NamedChildDictionary::Iterator::peekNext() const {

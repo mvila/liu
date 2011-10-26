@@ -6,7 +6,7 @@
 #include "node/object/number.h"
 #include "node/object/text.h"
 #include "node/object/property.h"
-#include "node/object/namedchilddictionary.h"
+#include "node/object/childcollection.h"
 #include "node/object/language/message.h"
 #include "node/object/language/block.h"
 #include "node/object/language/nativemethod.h"
@@ -214,6 +214,15 @@ LIU_DEFINE_NATIVE_METHOD(Node, is) {
     LIU_CHECK_QUESTION_MARK;
     LIU_CHECK_INPUT_SIZE(1);
     return Boolean::make(isOriginatingFrom(message->runFirstInput()));
+}
+
+bool Node::isDefined(QSet<Node *> *alreadySeen) const {
+    dump();
+    if(_isDefined) return true;
+    QScopedPointer<ChildCollection::Iterator> i(ChildCollection::Iterator::make(this));
+    while(i->hasNext()) if(i->next().second->isDefined()) return true;
+    if(origin() != this && origin()->isDefined()) return true;
+    return false;
 }
 
 LIU_DEFINE_NATIVE_METHOD(Node, defined) {

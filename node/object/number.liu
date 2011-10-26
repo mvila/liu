@@ -8,6 +8,11 @@ Object Number {
         ?: new_num == 123
     }
 
+    \defined? {
+    test:
+        !: Number defined?
+    }
+
     \`+` {
     inputs:
         (value)

@@ -19,6 +19,21 @@ Object NamedChildDictionary {
         ?: IndexOutOfBoundsException throw? { iter read! }
         !: iter read?
     }
+
+    \size {
+    test:
+        obj := Object()
+        dict := NamedChildDictionary(obj)
+        ?: dict size == 0
+        obj a := 1
+        ?: dict size == 1
+        obj b := 2
+        ?: dict size == 2
+        obj a >>
+        ?: dict size == 1
+        obj b >>
+        ?: dict size == 0
+    }
 test:
     ?: origin == Object
     ?: parent == Object
