@@ -109,6 +109,18 @@ body:
         ?: n2 b has?(a)
     }
 
+    \defined? {
+    test:
+        !: Node defined?
+        !: Node() defined?
+        n := Node()
+        !: n defined?
+        n i := Number()
+        !: n defined?
+//        n i value := 1
+//        ?: n defined?
+    }
+
     \virtual? {
     }
 

@@ -12,8 +12,7 @@ namespace Language {
         Q_UNUSED(receiver);
         LIU_PUSH_RUN(this);
         Iterator i(this);
-        while(Test *test = i.next())
-            test->run();
+        while(Test *test = i.next()) test->run();
         return this;
     }
 }

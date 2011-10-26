@@ -67,8 +67,8 @@ ChildCollection::Iterator *ChildCollection::Iterator::initCopy(const ChildCollec
 
 ChildCollection::Iterator::~Iterator() {
     setSource();
-    setNamedChildIterator();
-    setUnnamedChildIterator();
+    deleteNamedChildIterator();
+    deleteUnnamedChildIterator();
     setPhase();
 }
 

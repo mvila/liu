@@ -76,6 +76,10 @@ LIU_DEFINE_NATIVE_METHOD(Number, value_set) {
     return this;
 }
 
+bool Number::isDefined(QSet<const Node *> *alreadySeen) const {
+    return hasValue() ? true : Object::isDefined(alreadySeen);
+}
+
 LIU_DEFINE_NATIVE_METHOD(Number, add) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);

@@ -1,4 +1,5 @@
 #include <QtCore/QStringList>
+#include <QtCore/QSet>
 
 #include "node.h"
 #include "node/exception.h"
@@ -216,13 +217,19 @@ LIU_DEFINE_NATIVE_METHOD(Node, is) {
     return Boolean::make(isOriginatingFrom(message->runFirstInput()));
 }
 
-bool Node::isDefined(QSet<Node *> *alreadySeen) const {
-    dump();
+bool Node::isDefined(QSet<const Node *> *alreadySeen) const {
     if(_isDefined) return true;
-    QScopedPointer<ChildCollection::Iterator> i(ChildCollection::Iterator::make(this));
-    while(i->hasNext()) if(i->next().second->isDefined()) return true;
-    if(origin() != this && origin()->isDefined()) return true;
-    return false;
+    bool firstRecursion = alreadySeen == NULL;
+    if(firstRecursion) alreadySeen = new QSet<const Node *>;
+    bool result = false;
+    if(!alreadySeen->contains(this)) {
+        alreadySeen->insert(this);
+        QScopedPointer<ChildCollection::Iterator> i(ChildCollection::Iterator::make(this));
+        while(!result && i->hasNext()) result = i->next().second->isDefined(alreadySeen);
+        if(!result && origin() != this) result = origin()->isDefined(alreadySeen);
+    }
+    if(firstRecursion) delete alreadySeen;
+    return result;
 }
 
 LIU_DEFINE_NATIVE_METHOD(Node, defined) {

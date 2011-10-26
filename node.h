@@ -89,6 +89,7 @@ void CLASS::set##NAME_CAP(const TYPE *NAME) { \
 #define LIU_DECLARE_NODE_ACCESSOR(TYPE, NAME, NAME_CAP) \
 TYPE *NAME() const; \
 void set##NAME_CAP(TYPE *NAME = NULL); \
+void delete##NAME_CAP(); \
 virtual void NAME##WillChange(); \
 virtual void NAME##HasChanged();
 
@@ -108,6 +109,16 @@ void CLASS::set##NAME_CAP(TYPE *NAME) { \
     if(_##NAME) removeUnnamedChild(_##NAME); \
     _##NAME = NAME; \
     if(NAME) addUnnamedChild(NAME); \
+    NAME##HasChanged(); \
+    CLASS::hasChanged(); \
+} \
+void CLASS::delete##NAME_CAP() { \
+    NAME##WillChange(); \
+    if(_##NAME) { \
+        removeUnnamedChild(_##NAME); \
+        delete _##NAME; \
+        _##NAME = NULL; \
+    } \
     NAME##HasChanged(); \
     CLASS::hasChanged(); \
 }
@@ -177,7 +188,7 @@ public:
     bool isOriginatingFrom(Node *node) const;
     LIU_DECLARE_NATIVE_METHOD(is);
 
-    bool isDefined(QSet<Node *> *alreadySeen = NULL) const;
+    virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const;
     void setIsDefined(bool isDefined) { _isDefined = isDefined; }
 
     LIU_DECLARE_NATIVE_METHOD(defined);

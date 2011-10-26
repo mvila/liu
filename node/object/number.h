@@ -24,6 +24,8 @@ public:
     LIU_DECLARE_ACCESSOR(double, value, Value);
     LIU_DECLARE_PROPERTY(value);
 
+    virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const;
+
     LIU_DECLARE_NATIVE_METHOD(add);
     LIU_DECLARE_NATIVE_METHOD(subtract);
     LIU_DECLARE_NATIVE_METHOD(multiply);
