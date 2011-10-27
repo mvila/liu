@@ -22,12 +22,12 @@ public:
     LIU_DECLARE_ACCESSOR(QChar, value, Value);
     LIU_DECLARE_PROPERTY(value);
 
+    virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const;
+
     virtual bool isEqualTo(const Node *other) const;
 
     virtual short compare(const Node *other) const;
     short compare(const QChar &other) const;
-
-    virtual bool toBool() const { return hasValue(); };
 
     virtual double toDouble(bool *okPtr = NULL) const {
         if(okPtr) *okPtr = true;

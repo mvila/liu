@@ -35,8 +35,8 @@ Object NamedChildDictionary {
         ?: dict size == 0
     }
 test:
-    ?: origin == Object
-    ?: parent == Object
+//    ?: origin == Object
+//    ?: parent == Object
     ?: is?(Iterable)
     ?: is?(Collection)
     ?: is?(Indexable)

@@ -1,7 +1,7 @@
 Object Text {
     \fork {
     test:
-        txt := "Hello"
+        txt := Text("Hello")
         ?: txt origin == Text
         new_txt := txt fork
         ?: new_txt origin == txt
@@ -33,6 +33,16 @@ Object Text {
         ?: txt4 == "HELLO"
         ?: txt3 == "Hello"
         ?: txt == "Hello"
+    }
+
+    \defined? {
+    test:
+        !: Text defined?
+        !: Text() defined?
+        txt := Text()
+        !: txt defined?
+        txt value = "a"
+        ?: txt defined?
     }
 
     \`==` {
@@ -399,8 +409,8 @@ Object Text {
         ?: txt == "This is a wonderful world!"
     }
 test:
-    ?: origin == Object
-    ?: parent == Object
+//    ?: origin == Object
+//    ?: parent == Object
     ?: is?(Comparable)
     ?: is?(Iterable)
     ?: is?(Collection)

@@ -139,7 +139,7 @@ public:
     static const bool isInitialized;
 
     explicit Node(Node *origin) : _origin(origin), _extensions(NULL), // default constructor
-        _children(NULL), _parents(NULL), _isDefined(false), _isVirtual(false), _isAutoRunnable(false) { initFork(); }
+        _children(NULL), _parents(NULL), _isDefined(false), _isUndefined(false), _isVirtual(false), _isAutoRunnable(false) { initFork(); }
 
     Node(const Node &other); // copy constructor
 
@@ -190,6 +190,7 @@ public:
 
     virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const;
     void setIsDefined(bool isDefined) { _isDefined = isDefined; }
+    void setIsUndefined(bool isUndefined) { _isUndefined = isUndefined; }
 
     LIU_DECLARE_NATIVE_METHOD(defined);
     LIU_DECLARE_NATIVE_METHOD(undefined);
@@ -352,7 +353,7 @@ public:
 
     QString hexMemoryAddress() const { return QString("0x%1").arg(memoryAddress(), 0, 16); }
 
-    virtual bool toBool() const { return true; };
+    virtual bool toBool() const { return isDefined(); };
 
     virtual double toDouble(bool *okPtr = NULL) const {
         if(okPtr)
@@ -379,6 +380,7 @@ private:
     QHash<QString, Node *> *_children;
     mutable QHash<Node *, HugeUnsignedInteger> *_parents;
     bool _isDefined      : 1;
+    bool _isUndefined    : 1;
     bool _isVirtual      : 1;
     bool _isAutoRunnable : 1;
 public:

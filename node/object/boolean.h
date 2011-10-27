@@ -21,9 +21,11 @@ public:
     LIU_DECLARE_ACCESSOR(bool, value, Value);
     LIU_DECLARE_PROPERTY(value);
 
+    virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const;
+
     virtual bool isEqualTo(const Node *other) const;
 
-    virtual bool toBool() const { bool *value = hasValue(); return value && *value; };
+    virtual bool toBool() const { return value(); };
 
     virtual double toDouble(bool *okPtr = NULL) const {
         Q_UNUSED(okPtr);

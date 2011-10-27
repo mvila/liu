@@ -29,6 +29,8 @@ public:
 
     LIU_DECLARE_ACCESSOR(QList<IntPair>, interpolableSlices, InterpolableSlices);
 
+    virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const;
+
     virtual Node *run(Node *receiver = context());
 
     virtual bool isEqualTo(const Node *other) const;
@@ -38,7 +40,6 @@ public:
 
     virtual uint hash() const { return qHash(_value); }
 
-    virtual bool toBool() const { return hasValue(); };
     virtual double toDouble(bool *okPtr = NULL) const;
     virtual QChar toChar(bool *okPtr = NULL) const;
     virtual QString toString(bool debug = false, short level = 0) const;

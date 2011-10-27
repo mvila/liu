@@ -1,7 +1,7 @@
 Object Number {
     \fork {
     test:
-        num := 123
+        num := Number(123)
         ?: num origin == Number
         new_num := num fork
         ?: new_num origin == num
@@ -116,16 +116,16 @@ Object Number {
     test:
         !: 1 nan?
         ?: (0 / 0) nan?
-        ?: nan nan?
+        ?: Number nan nan?
     }
 
     \inf {
     test:
         !: 1 inf?
         ?: (1 / 0) inf?
-        ?: inf inf?
-        ?: 1 / 0 == inf
-        ?: -1 / 0 == -inf
+        ?: Number inf inf?
+        ?: 1 / 0 == Number inf
+        ?: -1 / 0 == -(Number inf)
     }
 
     \`==` {
@@ -152,8 +152,8 @@ Object Number {
         ?: 3.14 <=> 3.13 == 1
     }
 test:
-    ?: origin == Object
-    ?: parent == Object
+//    ?: origin == Object
+//    ?: parent == Object
 
     !: Number
     !: Number()

@@ -60,6 +60,10 @@ LIU_DEFINE_NATIVE_METHOD(Character, value_set) {
     return this;
 }
 
+bool Character::isDefined(QSet<const Node *> *alreadySeen) const {
+    return hasValue() ? true : Object::isDefined(alreadySeen);
+}
+
 bool Character::isEqualTo(const Node *other) const {
     const Text *otherText = Text::dynamicCast(other);
     if(otherText) return value() == otherText->toChar();

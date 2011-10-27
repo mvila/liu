@@ -18,7 +18,7 @@ LIU_BEGIN
 const bool Node::isInitialized = Node::root();
 
 Node::Node(const Node &other) : _origin(other._origin), _extensions(NULL), // copy constructor
-    _children(NULL), _parents(NULL), _isDefined(other._isDefined),
+    _children(NULL), _parents(NULL), _isDefined(other._isDefined), _isUndefined(other._isUndefined),
     _isVirtual(other._isVirtual), _isAutoRunnable(other._isAutoRunnable) {
     if(other._extensions) _extensions = new QList<Node *>(*other._extensions);
     if(other._children) {
@@ -122,11 +122,11 @@ void Node::initRoot() {
 }
 
 const QString Node::nodeName() const {
-    return child("__name__")->toString();
+    return child(".name")->toString();
 }
 
 void Node::setNodeName(const QString &name) {
-    addOrSetChild("__name__", (new Text(Text::root()))->init(&name));
+    addOrSetChild(".name", (new Text(Text::root()))->init(&name));
 }
 
 const QString Node::nodePath() const {
@@ -219,6 +219,7 @@ LIU_DEFINE_NATIVE_METHOD(Node, is) {
 
 bool Node::isDefined(QSet<const Node *> *alreadySeen) const {
     if(_isDefined) return true;
+    if(_isUndefined) return false;
     bool firstRecursion = alreadySeen == NULL;
     if(firstRecursion) alreadySeen = new QSet<const Node *>;
     bool result = false;

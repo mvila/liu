@@ -117,8 +117,8 @@ body:
         !: n defined?
         n i := Number()
         !: n defined?
-//        n i value := 1
-//        ?: n defined?
+        n i value := 1
+        ?: n defined?
     }
 
     \virtual? {
@@ -138,7 +138,7 @@ body:
     test:
         n := Node()
         f := n fork
-        ?: f origin = n
+        ?: f origin == n
     }
 
     \`:=` {
@@ -221,8 +221,8 @@ body:
 
     read := Alias(Console read)
 test:
-    ?: origin == self
-    ?: parent == self
+//    ?: origin == self
+//    ?: parent == self
 
     // child creation
     world := Node()

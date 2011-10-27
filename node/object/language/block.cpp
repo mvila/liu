@@ -22,7 +22,7 @@ namespace Language {
 
     void Block::runMetaSections(Node *receiver) {
         if(!_metaSectionsHaveBeenRun) {
-            if(docSection()) receiver->addOrSetChild("doc", docSection()->run(receiver));
+            if(docSection()) receiver->addOrSetChild(".doc", docSection()->run(receiver));
             if(Section *inputsSection = section("inputs")) {
                 AbstractMethod *method = AbstractMethod::dynamicCast(receiver);
                 if(!method) LIU_THROW_RUNTIME_EXCEPTION("'inputs' section is reserved to Method objects");

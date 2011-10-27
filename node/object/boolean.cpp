@@ -52,6 +52,10 @@ LIU_DEFINE_NATIVE_METHOD(Boolean, value_set) {
     return this;
 }
 
+bool Boolean::isDefined(QSet<const Node *> *alreadySeen) const {
+    return hasValue() ? true : Object::isDefined(alreadySeen);
+}
+
 bool Boolean::isEqualTo(const Node *other) const {
     const Boolean *otherBoolean = Boolean::dynamicCast(other);
     return otherBoolean && value() == otherBoolean->value();

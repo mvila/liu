@@ -19,6 +19,6 @@ Object Comparable {
         (\value)
     }
 test:
-    ?: origin == Object
-    ?: parent == Object
+//    ?: origin == Object
+//    ?: parent == Object
 }

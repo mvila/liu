@@ -120,7 +120,7 @@ bool NamedChildDictionary::Iterator::hasNext() const {
             continue;
         }
         const QString &name = sourceIterator()->peekNext().key();
-        if(name == "__name__") {
+        if(name.startsWith(".")) {
             sourceIterator()->next();
             continue;
         }

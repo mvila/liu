@@ -17,6 +17,6 @@ Object AbstractList {
     inputs: (index: Node(), value: Node())
     }
 test:
-    ?: origin == Object
-    ?: parent == Object
+//    ?: origin == Object
+//    ?: parent == Object
 }

@@ -1,4 +1,14 @@
 Object Character {
+    \defined? {
+    test:
+        !: Character defined?
+        !: Character() defined?
+        char := Character()
+        !: char defined?
+        char value = 'a'
+        ?: char defined?
+    }
+
     \`==` {
     inputs:
         (value)
@@ -24,8 +34,8 @@ Object Character {
         ?: ConversionException throw? { 'a' <=> "ab" }
     }
 test:
-    ?: origin == Object
-    ?: parent == Object
+//    ?: origin == Object
+//    ?: parent == Object
 
     !: Character
     !: Character()

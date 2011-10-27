@@ -380,8 +380,8 @@ Object List {
         ?: Text(list) == "a g m s z"
     }
 test:
-    ?: origin == Object
-    ?: parent == Object
+//    ?: origin == Object
+//    ?: parent == Object
     ?: is?(Iterable)
     ?: is?(Collection)
     ?: is?(Indexable)

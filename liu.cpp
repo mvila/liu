@@ -1,5 +1,6 @@
 #define LIU_CATCH_EXCEPTIONS
 #define LIU_RUN_TEST_SUITE
+//#define LIU_IS_OPTIMIZED
 
 #include <QtCore/QFile>
 
@@ -17,6 +18,9 @@ void init() {
     foreach(Root root, roots()) {
         root.node->initRoot();
         root.node->setNodeName(root.name);
+        #ifdef LIU_IS_OPTIMIZED
+        root.node->setIsUndefined(true);
+        #endif
     }
     #ifdef LIU_CATCH_EXCEPTIONS
     try {
@@ -31,9 +35,10 @@ void init() {
             }
         }
         #ifdef LIU_RUN_TEST_SUITE
-        interpreter->testSuite()->run();
+        TestSuite *tests = interpreter->testSuite()->fork();
+        tests->run();
         P(QString("All tests passed (%1 sections, %2 assertions)").
-          arg(interpreter->testSuite()->size()).arg(Node::passedAssertionCount()));
+          arg(tests->size()).arg(Node::passedAssertionCount()));
         #endif
         // run Application
         pushContext(Application::root());

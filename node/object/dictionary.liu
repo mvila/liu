@@ -1,7 +1,7 @@
 Object Dictionary {
 test:
-    ?: origin == List
-    ?: parent == Object
+//    ?: origin == List
+//    ?: parent == Object
     ?: is?(Iterable)
     ?: is?(Collection)
     ?: is?(Indexable)

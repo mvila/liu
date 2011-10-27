@@ -53,8 +53,6 @@ public:
         return value();
     };
 
-    virtual bool toBool() const { return hasValue(); };
-
     virtual QChar toChar(bool *okPtr = NULL) const {
         if(okPtr) *okPtr = true;
         return QChar(int(value()));

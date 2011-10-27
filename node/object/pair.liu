@@ -17,6 +17,16 @@ Object Pair {
         ?: p2 second == "b"
     }
 
+    \defined? {
+    test:
+        !: Pair defined?
+        !: Pair() defined?
+        p := Pair()
+        !: p defined?
+        p first = "a"
+        ?: p defined?
+    }
+
     \first {
     test:
         // !: Pair first
@@ -66,8 +76,8 @@ Object Pair {
         ?: Pair("a", "b") <=> Pair("a", "a") == 1
     }
 test:
-    ?: origin == Object
-    ?: parent == Object
+//    ?: origin == Object
+//    ?: parent == Object
 
     ?: Text(Pair("a", "b")) == "a: b"
 }

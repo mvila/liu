@@ -1,4 +1,14 @@
 Object Boolean {
+    \defined? {
+    test:
+        !: Boolean defined?
+        !: Boolean() defined?
+        bool := Boolean()
+        !: bool defined?
+        bool value = false
+        ?: bool defined?
+    }
+
     \`==` {
     inputs:
         (value)
@@ -13,8 +23,8 @@ Object Boolean {
         ?: Boolean() == false
     }
 test:
-    ?: origin == Object
-    ?: parent == Object
+//    ?: origin == Object
+//    ?: parent == Object
 
     !: Boolean
     !: Boolean()

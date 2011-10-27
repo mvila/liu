@@ -30,6 +30,6 @@ Object {
         (\target, \value)
     }
 test:
-    ?: origin == Node
-    ?: parent == Node
+//    ?: origin == Node
+//    ?: parent == Node
 }
