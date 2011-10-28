@@ -1,12 +1,3 @@
-Person := Object() {
-    nom := Text()
-    age := Number()
-}
-
-mvila := Person()
-mvila age = 13
-Boolean(mvila)
-
 //list := []
 //loop(10) { list << Number random % 10000 }
 //list2 := list fork

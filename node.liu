@@ -112,13 +112,18 @@ body:
     \defined? {
     test:
         !: Node defined?
+        !: Node
         !: Node() defined?
+        !: Node()
         n := Node()
         !: n defined?
+        !: n
         n i := Number()
         !: n defined?
+        !: n
         n i value := 1
         ?: n defined?
+        ?: n
     }
 
     \virtual? {

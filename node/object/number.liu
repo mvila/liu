@@ -11,9 +11,13 @@ Object Number {
     \defined? {
     test:
         !: Number defined?
+        !: Number
         !: Number() defined?
+        !: Number()
         ?: Number(0) defined?
+        ?: Number(0)
         ?: 3.14 defined?
+        ?: 3.14
     }
 
     \`+` {

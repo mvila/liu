@@ -195,7 +195,7 @@ void Node::setOrigin(Node *node) {
     _origin = node;
 }
 
-bool Node::isOriginatingFrom(Node *orig) const {
+bool Node::isOriginatingFrom(Node *orig) const { // TODO: Optimize and secure with a alreadySeen cache
     orig = orig->real();
     const Node *node = real();
     while(node != orig) {
@@ -530,16 +530,17 @@ LIU_DEFINE_NATIVE_METHOD(Node, parent) {
     return message->isQuestioned() ? Boolean::make(hasOneParent()) : parent();
 }
 
-Node *Node::findParentOriginatingFrom(Node *orig) const {
+Node *Node::findParentOriginatingFrom(Node *orig) const { // TODO: Optimize and secure with a alreadySeen cache
     if(_parents) {
         orig = orig->real();
         Node *node;
         foreach(Node *parent, _parents->keys()) {
             if(parent->isOriginatingFrom(orig)) return parent;
-            if(parent != this) { // for Node::root which is child of itself
+            if(parent != this)
                 if((node = parent->findParentOriginatingFrom(orig))) return node;
-            }
         }
+        if(origin() != this)
+            if((node = origin()->findParentOriginatingFrom(orig))) return node;
     }
     return NULL;
 }

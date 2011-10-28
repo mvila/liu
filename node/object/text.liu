@@ -38,11 +38,15 @@ Object Text {
     \defined? {
     test:
         !: Text defined?
+        !: Text
         !: Text() defined?
+        !: Text()
         txt := Text()
         !: txt defined?
+        !: txt
         txt value = "a"
         ?: txt defined?
+        ?: txt
     }
 
     \`==` {

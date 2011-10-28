@@ -5,8 +5,10 @@ Object Character {
         !: Character() defined?
         char := Character()
         !: char defined?
+        !: char
         char value = 'a'
         ?: char defined?
+        ?: char
     }
 
     \`==` {

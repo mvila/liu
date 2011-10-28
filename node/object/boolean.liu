@@ -2,11 +2,15 @@ Object Boolean {
     \defined? {
     test:
         !: Boolean defined?
+        !: Boolean
         !: Boolean() defined?
+        !: Boolean()
         bool := Boolean()
         !: bool defined?
+        !: bool
         bool value = false
         ?: bool defined?
+        !: bool
     }
 
     \`==` {
