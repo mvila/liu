@@ -27,11 +27,6 @@ Object Pair {
         ?: p defined?
     }
 
-    \first {
-    test:
-        // !: Pair first
-    }
-
     \`==` {
     inputs:
         (other)

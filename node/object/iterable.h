@@ -45,8 +45,7 @@ public:
     virtual NodeQPair last(bool *wasFoundPtr = NULL) const;
     LIU_DECLARE_NATIVE_METHOD(last);
 
-
-    const QString join(const QString &separator = "", const QString &prefix = "",
+    virtual const QString join(const QString &separator = "", const QString &prefix = "",
                        const QString &suffix = "", bool debug = false, short level = 0) const;
 
     // === Iterator ===

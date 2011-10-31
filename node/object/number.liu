@@ -20,6 +20,14 @@ Object Number {
         ?: 3.14
     }
 
+    \hash {
+    test:
+        ?: Number hash == Number() hash
+        ?: Number() hash == 0 hash
+        ?: 123 hash == 123 hash
+        ?: 3.14 hash == 3.14 hash
+    }
+
     \`+` {
     inputs:
         (value)

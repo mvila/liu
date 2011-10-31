@@ -25,6 +25,8 @@ public:
 
     virtual bool isEqualTo(const Node *other) const;
 
+    virtual uint hash() const { return qHash(value()); }
+
     virtual bool toBool() const { return value(); };
 
     virtual double toDouble(bool *okPtr = NULL) const {

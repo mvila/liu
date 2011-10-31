@@ -29,6 +29,8 @@ public:
     virtual short compare(const Node *other) const;
     short compare(const QChar &other) const;
 
+    virtual uint hash() const { return qHash(value()); }
+
     virtual double toDouble(bool *okPtr = NULL) const {
         if(okPtr) *okPtr = true;
         return value().unicode();

@@ -28,6 +28,7 @@ public:
     // --- Indexable ---
 
     virtual Node *get(Node *index, bool *wasFoundPtr = NULL);
+    virtual bool indexIsSequential() const { return false; }
 private:
     Node *_source;
 public:

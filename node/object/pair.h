@@ -30,6 +30,8 @@ public:
 
     virtual short compare(const Node *other) const;
 
+    virtual uint hash() const;
+
     virtual QString toString(bool debug = false, short level = 0) const {
         return QString("%1: %2").arg(first()->toString(debug, level), second()->toString(debug, level));
     }

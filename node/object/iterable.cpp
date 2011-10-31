@@ -109,7 +109,7 @@ NodeQPair Iterable::first(bool *wasFoundPtr) const {
     return i->next(wasFoundPtr);
 }
 
-LIU_DEFINE_NATIVE_METHOD(Iterable, first) { // *** YO ***
+LIU_DEFINE_NATIVE_METHOD(Iterable, first) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     bool wasFound = true;
@@ -181,7 +181,9 @@ const QString Iterable::join(const QString &separator, const QString &prefix,
     bool isFirst = true;
     while(i->hasNext()) {
         if(!isFirst) str += separator; else isFirst = false;
-        str += prefix + i->next().second->toString(debug, level) + suffix;
+        str += prefix;
+        str += i->next().second->toString(debug, level);
+        str += suffix;
     }
     return str;
 }

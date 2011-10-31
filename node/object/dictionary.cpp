@@ -1,4 +1,5 @@
 #include "node/object/dictionary.h"
+#include "node/object/text.h"
 #include "node/object/language/nativemethod.h"
 
 LIU_BEGIN
@@ -28,10 +29,33 @@ void Dictionary::initRoot() {
     addExtension(Insertable::root());
 
     setIndexes(List::root()->fork());
+
+    LIU_ADD_NATIVE_METHOD(Dictionary, make);
 }
 
 LIU_DEFINE_NODE_ACCESSOR(Dictionary, List, indexes, Indexes);
 LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(Dictionary, indexes);
+
+LIU_DEFINE_NATIVE_METHOD(Dictionary, make) {
+    LIU_FIND_LAST_MESSAGE;
+    Dictionary *dict = Dictionary::make();
+    for(int i = 0; i < message->numInputs(); ++i) {
+        Node *key = NULL;
+        Primitive *primitive = message->input(i)->label();
+        if(!primitive) LIU_THROW(ArgumentException, "missing key in Dictionary initialization");
+        if(primitive->hasNext()) LIU_THROW(ArgumentException, "invalid key in Dictionary initialization");
+        Message *msg = Message::dynamicCast(primitive->value());
+        if(msg) {
+            if(msg->inputs(false) || msg->outputs(false) || msg->isEscaped() || msg->isParented()
+                    || msg->isEllipsed() || msg->hasCodeInput())
+                LIU_THROW(ArgumentException, "invalid key in Dictionary initialization");
+            key = Text::make(msg->name());
+        } else
+            key = primitive->run();
+        dict->append(key, message->runInput(i));
+    }
+    return dict;
+}
 
 // --- Iterable ---
 
@@ -41,6 +65,24 @@ Dictionary::Iterator *Dictionary::iterator() const {
 
 int Dictionary::size() const {
     return indexes()->size();
+}
+
+// --- Collection ---
+
+void Dictionary::append(Node *item) {
+    _insert(size(), LIU_NODE(), item);
+}
+
+Node *Dictionary::remove(Node *item, bool *wasFoundPtr) {
+    Node *result = NULL;
+    bool wasFound;
+    Node *idx = index(item, &wasFound);
+    if(wasFound) result = unset(idx);
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound)
+        LIU_THROW(NotFoundException, "value not found");
+    return result;
 }
 
 // --- Indexable ---
@@ -78,7 +120,7 @@ void Dictionary::_set(Node *index, Node *item) {
 void Dictionary::append(Node *index, Node *item, bool *okPtr) {
     Q_UNUSED(okPtr);
     bool ok = _get(index) == NULL;
-    if(ok) _insert(size(), index, item);
+    if(ok) _insert(size(), index ? index : LIU_NODE(), item);
     if(okPtr)
         *okPtr = ok;
     else if(!ok)

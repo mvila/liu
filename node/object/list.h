@@ -50,6 +50,7 @@ public:
 private:
     void _unset(int index);
 public:
+    virtual bool indexIsSequential() const { return true; }
 
     // --- Insertable ---
 

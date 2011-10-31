@@ -181,4 +181,16 @@ short Number::compare(const double &other) const {
     else return 0;
 }
 
+uint Number::hash() const { // FIXME: ugly!
+    double val = value();
+    double uval = fabs(val);
+    uint result;
+    if(uval < UINT_MAX / 200 && uval * 100 == ceil(uval * 100)) {
+        result = uval * 100;
+        if(val < 0) result += UINT_MAX / 2;
+    } else
+        result = qHash(toString());
+    return result;
+}
+
 LIU_END

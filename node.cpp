@@ -119,6 +119,7 @@ void Node::initRoot() {
     LIU_ADD_NATIVE_METHOD(Node, dump);
 
     LIU_ADD_NATIVE_METHOD(Node, memory_address);
+    LIU_ADD_NATIVE_METHOD(Node, hash);
 }
 
 const QString Node::nodeName() const {
@@ -674,6 +675,12 @@ QString Node::toString(bool debug, short level) const {
         str += i->next().first->toString();
     }
     return QString("%1:%2: [%3]").arg(nodeName()).arg(hexMemoryAddress()).arg(str);
+}
+
+LIU_DEFINE_NATIVE_METHOD(Node, hash) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0);
+    return Number::make(hash());
 }
 
 LIU_END

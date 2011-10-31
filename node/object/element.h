@@ -5,8 +5,6 @@
 
 LIU_BEGIN
 
-inline uint qHash(const double &number) { LIU_TODO; return number; }
-
 template<typename T>
 class GenericElement : public Object {
 public:

@@ -26,6 +26,14 @@ Object Boolean {
         ?: true != false
         ?: Boolean() == false
     }
+
+    \hash {
+    test:
+        ?: Boolean hash == Boolean() hash
+        ?: Boolean() hash == false hash
+        ?: false hash == false hash
+        ?: true hash == true hash
+    }
 test:
 //    ?: origin == Object
 //    ?: parent == Object

@@ -75,6 +75,14 @@ Object Text {
         ?: "abc" < "def"
     }
 
+    \hash {
+    test:
+        ?: Text hash == Text() hash
+        ?: Text() hash == "" hash
+        ?: "" hash == "" hash
+        ?: "abc" hash == "abc" hash
+    }
+
     // --- Iterable ---
 
     \iterator {

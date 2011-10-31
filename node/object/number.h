@@ -48,6 +48,8 @@ public:
     virtual short compare(const Node *other) const;
     short compare(const double &other) const;
 
+    virtual uint hash() const;
+
     virtual double toDouble(bool *okPtr = NULL) const {
         if(okPtr) *okPtr = true;
         return value();

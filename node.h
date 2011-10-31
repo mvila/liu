@@ -374,6 +374,7 @@ public:
     virtual QString toString(bool debug = false, short level = 0) const;
 
     virtual uint hash() const { return ::qHash(this); }
+    LIU_DECLARE_NATIVE_METHOD(hash);
 private:
     Node *_origin;
     QList<Node *> *_extensions;

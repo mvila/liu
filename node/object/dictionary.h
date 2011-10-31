@@ -18,11 +18,18 @@ public:
 
     LIU_DECLARE_NODE_ACCESSOR(List, indexes, Indexes);
 
+    LIU_DECLARE_NATIVE_METHOD(make);
+
     // --- Iterable ---
 
     class Iterator;
     virtual Iterator *iterator() const;
     virtual int size() const;
+
+    // --- Collection ---
+
+    virtual void append(Node *item);
+    virtual Node *remove(Node *item, bool *wasFoundPtr = NULL);
 
     // --- Indexable ---
 
@@ -39,6 +46,7 @@ public:
 private:
     void _unset(Node *index);
 public:
+    virtual bool indexIsSequential() const { return false; }
 
     // --- Insertable ---
 

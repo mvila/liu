@@ -38,7 +38,7 @@ public:
     virtual short compare(const Node *other) const;
     short compare(const QString &other) const;
 
-    virtual uint hash() const { return qHash(_value); }
+    virtual uint hash() const { return qHash(value()); }
 
     virtual double toDouble(bool *okPtr = NULL) const;
     virtual QChar toChar(bool *okPtr = NULL) const;
@@ -65,6 +65,7 @@ public:
     virtual void set(Node *index, Node *item, bool *wasFoundPtr = NULL);
     virtual void append(Node *index, Node *item, bool *okPtr = NULL);
     virtual Character *unset(Node *index, bool *wasFoundPtr = NULL);
+    virtual bool indexIsSequential() const { return true; }
 
     // --- Insertable ---
 

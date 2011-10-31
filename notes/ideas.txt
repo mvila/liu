@@ -110,13 +110,13 @@ require: append, remove
 attribute: uniqueValue?
 provide: append(iterable), remove_all(value), remove(iterable), replace, clear
 
-Indexable := Collection() // Dictionary
-require: get, set, append(index, value), unset, index_iterator
-attribute: uniqueIndex?
+Indexable := Collection()
+require: get, set, append(index, value), unset, iterator
+attribute: sequentialIndex?
 provide: append_or_set, indexes, unset(iterable -> ex. : range), index(item, from, reverse?), slice,
          swap, take, unite(indexable), first_index, last_index
 
-Insertable := Indexable() // List
+Insertable := Indexable() // List and Dictionary
 require: insert
 provide: move(from, to)
 

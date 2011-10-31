@@ -80,4 +80,8 @@ short Pair::compare(const Node *other) const {
     return result;
 }
 
+uint Pair::hash() const {
+    LIU_TODO;
+}
+
 LIU_END

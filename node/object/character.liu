@@ -35,6 +35,13 @@ Object Character {
         ?: "a" <=> 'a' == 0
         ?: ConversionException throw? { 'a' <=> "ab" }
     }
+
+    \hash {
+    test:
+        ?: Character hash == Character() hash
+        ?: 'a' hash == 'a' hash
+        ?: '\n' hash == '\n' hash
+    }
 test:
 //    ?: origin == Object
 //    ?: parent == Object

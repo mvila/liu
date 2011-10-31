@@ -224,7 +224,7 @@ namespace Language {
         if(rightBracket.contains("?")) message->setIsQuestioned(true);
         if(rightBracket.contains("!")) message->setIsExclaimed(true);
         QStringRef sourceCodeRef = lexer()->source().midRef(begin, end - begin);
-        Primitive *primitive = LIU_PRIMITIVE(LIU_MESSAGE(!hasKey ? "List" : "OldDictionary"), sourceCodeRef);
+        Primitive *primitive = LIU_PRIMITIVE(LIU_MESSAGE(!hasKey ? "List" : "Dictionary"), sourceCodeRef);
         primitive->setNext(LIU_PRIMITIVE(message, sourceCodeRef));
         return primitive;
     }

@@ -118,4 +118,26 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, index) {
     return result;
 }
 
+const QString Indexable::join(const QString &separator, const QString &prefix,
+                   const QString &suffix, bool debug, short level) const {
+    QString str;
+    QScopedPointer<Iterator> i(iterator());
+    bool isFirst = true;
+    while(i->hasNext()) {
+        if(!isFirst) str += separator; else isFirst = false;
+        str += prefix;
+        NodeQPair item = i->next();
+        if(!indexIsSequential()) {
+            Node *index = item.first;
+            if(index && index->isDefined()) {
+                str += index->toString(debug, level);
+                str += debug ? ": " : ":";
+            }
+        }
+        str += item.second->toString(debug, level);
+        str += suffix;
+    }
+    return str;
+}
+
 LIU_END

@@ -32,7 +32,7 @@ void List::initRoot() {
 
 LIU_DEFINE_NATIVE_METHOD(List, make) {
     LIU_FIND_LAST_MESSAGE;
-    List *list = fork();
+    List *list = List::make();
     for(int i = 0; i < message->numInputs(); ++i)
         list->append(message->runInput(i));
     return list;

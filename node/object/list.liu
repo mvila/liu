@@ -277,7 +277,7 @@ Object List {
     \`[]:=` {
     test:
         list := []
-        list[0] := "a"
+        list[] := "a"
         ?: list[0] == "a"
         ?: IndexOutOfBoundsException throw? { list[2] := 'x' }
         !: list[2]? := 'x'
@@ -344,9 +344,11 @@ Object List {
 
     \`[]<<` {
     test:
-        list := ["a", "b", "c", "d", "e"]
-        ?: IndexOutOfBoundsException throw? { list[6] << "*" }
-        !: list[6]? << "*"
+        list := ["a", "b", "c", "d"]
+        ?: IndexOutOfBoundsException throw? { list[5] << "*" }
+        !: list[5]? << "*"
+        list[] << "e"
+        ?: Text(list) == "a b c d e"
         list2 := list fork
         list2[1] = "B"
         list2[2] = "C"
