@@ -12,6 +12,8 @@ LIU_BEGIN
 class List : public Insertable {
     LIU_DECLARE_2(List, Object, Object);
 public:
+    friend class Dictionary;
+
     explicit List(Node *origin = context()->child("Object", "List")) :
         Insertable(origin), _operations(NULL) {}
 
@@ -19,7 +21,6 @@ public:
 
     LIU_DECLARE_NATIVE_METHOD(make);
 
-    virtual QString toString(bool debug = false, short level = 0) const;
     virtual void inspectInternal() const;
 
     // --- Iterable ---

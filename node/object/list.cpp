@@ -38,10 +38,6 @@ LIU_DEFINE_NATIVE_METHOD(List, make) {
     return list;
 }
 
-QString List::toString(bool debug, short level) const {
-    return Insertable::toString(debug, level);
-}
-
 void List::inspectInternal() const {
     QString str;
     if(!_operations)

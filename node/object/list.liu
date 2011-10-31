@@ -70,10 +70,12 @@ Object List {
         list := List()
         ?: list count(7) == 0
         list << 3
+        ?: list count(3) == 1
         ?: list count(7) == 0
         list << 7
         ?: list count(7) == 1
         list << 3
+        ?: list count(3) == 2
         ?: list count(7) == 1
         list << 7
         ?: list count(7) == 2
