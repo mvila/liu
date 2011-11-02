@@ -162,7 +162,6 @@ Object Dictionary {
         dict << "b"
         ?: Text(dict) == "a b"
         dict2 := dict fork
-        "*" print
         ?: Text(dict2) == "a b"
         dict2 << "c"
         ?: Text(dict2) == "a b c"

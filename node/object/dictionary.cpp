@@ -216,7 +216,10 @@ bool Dictionary::Iterator::hasNext() const {
 NodeQPair Dictionary::Iterator::peekNext() const {
     if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
     Node *theIndex = source()->indexes()->_get(index());
-    return NodeQPair(theIndex, source()->_get(theIndex));
+    Node *theValue = source()->_get(theIndex);
+    if(!theIndex) LIU_THROW_NULL_POINTER_EXCEPTION("index is NULL");
+    if(!theValue) LIU_THROW_NULL_POINTER_EXCEPTION("value is NULL");
+    return NodeQPair(theIndex, theValue);
 }
 
 void Dictionary::Iterator::skipNext() {

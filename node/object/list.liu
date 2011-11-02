@@ -247,7 +247,8 @@ Object List {
         list3 := ["H", "e", "l", "l", "o"]
         list4 := list3 fork
         list4[0] value = "h"
-        list3[0] print
+        ?: list4[0] == "h"
+        ?: list3[0] == "H"
     }
 
     \`[]=` {
