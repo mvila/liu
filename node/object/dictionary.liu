@@ -162,6 +162,7 @@ Object Dictionary {
         dict << "b"
         ?: Text(dict) == "a b"
         dict2 := dict fork
+        "*" print
         ?: Text(dict2) == "a b"
         dict2 << "c"
         ?: Text(dict2) == "a b c"
@@ -240,6 +241,93 @@ Object Dictionary {
         dict2 := dict fork
         ?: dict2["a"] == "H"
         ?: dict2["e"] == "o"
+    }
+
+    \`[]=` {
+    test:
+        dict := [1: "a", 2: "b", 3: "c", 4: "x", 5: "e", 6: "f"]
+        dict[4] = 'd'
+        ?: Text(dict) == "1:a 2:b 3:c 4:d 5:e 6:f"
+        dict[6] = "!"
+        ?: Text(dict) == "1:a 2:b 3:c 4:d 5:e 6:!"
+        ?: NotFoundException throw? { dict[7] = 'x' }
+        !: dict[7]? = 'x'
+        dict2 := dict fork
+        ?: Text(dict2) == "1:a 2:b 3:c 4:d 5:e 6:!"
+        dict[6] = "F"
+        ?: Text(dict2) == "1:a 2:b 3:c 4:d 5:e 6:F"
+        dict2[6] = "f"
+        ?: Text(dict2) == "1:a 2:b 3:c 4:d 5:e 6:f"
+        ?: Text(dict) == "1:a 2:b 3:c 4:d 5:e 6:F"
+        dict2[3] = "C"
+        dict2[2] = "B"
+        dict2[4] = "D"
+        ?: Text(dict2) == "1:a 2:B 3:C 4:D 5:e 6:f"
+        dict2[3] = "c"
+        ?: Text(dict2) == "1:a 2:B 3:c 4:D 5:e 6:f"
+    }
+
+    \`[]:=` {
+    test:
+        dict := Dictionary()
+        dict[] := "a"
+        ?: dict first == "a"
+        dict[1] := "B"
+        dict[1] := "b"
+        ?: Text(dict) == "a 1:b"
+        dict2 := dict fork
+        dict2[2] := "c"
+        ?: Text(dict2) == "a 1:b 2:c"
+        dict2[dict2 index("a")] := "A"
+        ?: Text(dict2) == "A 1:b 2:c"
+        ?: Text(dict) == "a 1:b"
+    }
+
+    \`[]>>` {
+    test:
+        ?: NotFoundException throw? { Dictionary[1] >> }
+        !: Dictionary[1]? >>
+        dict := [1: "a", 2: "b", 3: "c", 4: "d", 5: "e", 6: "f"]
+        ?: NotFoundException throw? { dict[11] >> }
+        !: dict[11]? >>
+        ?: dict[6] >> == "f"
+        ?: Text(dict) == "1:a 2:b 3:c 4:d 5:e"
+        ?: dict[1] >> == "a"
+        ?: Text(dict) == "2:b 3:c 4:d 5:e"
+        dict2 := dict fork
+        ?: dict2[4] >> == "d"
+        ?: dict2[5] >> == "e"
+        ?: Text(dict2) == "2:b 3:c"
+        ?: Text(dict) == "2:b 3:c 4:d 5:e"
+        dict3 := dict fork
+        dict3[5] >>
+        dict3[4] >>
+        ?: dict3[2] >> == "b"
+        ?: dict3[3] == "c"
+        dict4 := dict fork
+        dict4[5] >>
+        dict4[4] >>
+        ?: dict4[3] >> == "c"
+        ?: Text(dict4) == "2:b"
+        dict5 := [1: "a", 2: "b", 3: "c", 4: "d", 5: "e", 6: "f"]
+        dict6 := dict5 fork
+        dict6[2] = "B"
+        dict6[3] = "C"
+        dict6[4] = "D"
+        ?: dict6[3] >> == "C"
+        ?: Text(dict6) == "1:a 2:B 4:D 5:e 6:f"
+    }
+
+    \index {
+    test:
+        ?: NotFoundException throw? { Dictionary index("x") }
+        ?: NotFoundException throw? { Dictionary() index("x") }
+        !: Dictionary() index?("x")
+        ?: NotFoundException throw? { [1: "a", 2: "b", 3: "c"] index("x") }
+        !: [1: "a", 2: "b", 3: "c"] index?("x")
+        ?: [1: "x", 2: "b", 3: "c"] index("x") == 1
+        ?: [1: "a", 2: "x", 3: "c"] index("x") == 2
+        ?: [1: "a", 2: "b", 3: "x"] index("x") == 3
     }
 test:
 //    ?: origin == Object

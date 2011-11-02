@@ -1,6 +1,6 @@
 #define LIU_CATCH_EXCEPTIONS
 #define LIU_RUN_TEST_SUITE
-//#define LIU_IS_OPTIMIZED
+#define LIU_IS_OPTIMIZED
 
 #include <QtCore/QFile>
 

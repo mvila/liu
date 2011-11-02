@@ -9,9 +9,9 @@ Object List {
         ?: Text(list2) == "a b c"
         list[1] = "B"
         ?: Text(list) == "a B c"
-        ?: Text(list2) == "a B c"
+        ?: Text(list2) == "a b c"
         list2[2] = "C"
-        ?: Text(list2) == "a B C"
+        ?: Text(list2) == "a b C"
         ?: Text(list) == "a B c"
     }
 
@@ -243,6 +243,11 @@ Object List {
         list2 := list fork
         ?: list2[0] == "H"
         ?: list2[-1] == "o"
+
+        list3 := ["H", "e", "l", "l", "o"]
+        list4 := list3 fork
+        list4[0] value = "h"
+        list3[0] print
     }
 
     \`[]=` {
@@ -257,7 +262,7 @@ Object List {
         list2 := list fork
         ?: Text(list2) == "a b c d e !"
         list[-1] = "F"
-        ?: Text(list2) == "a b c d e F"
+        ?: Text(list2) == "a b c d e !"
         list2[-1] = "f"
         ?: Text(list2) == "a b c d e f"
         ?: Text(list) == "a b c d e F"

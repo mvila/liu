@@ -123,19 +123,26 @@ Node *List::get(Node *index, bool *wasFoundPtr) {
 }
 
 Node *List::_get(int index) {
+    int i = index;
     if(_operations) {
         foreach(const Operation &operation, *_operations) {
-            if(operation.index > index) break;
+            if(operation.index > i) break;
             if((operation.type == Operation::Set || operation.type == Operation::Insert)
-                    && index < operation.index + operation.size)
-                return operation.data.at(index - operation.index);
+                    && i < operation.index + operation.size)
+                return operation.data.at(i - operation.index);
             else if(operation.type == Operation::Insert)
-                index -= operation.size;
+                i -= operation.size;
             else if(operation.type == Operation::Remove)
-                index += operation.size;
+                i += operation.size;
         }
     }
-    if(List *orig = List::dynamicCast(origin())) return orig->_get(index);
+    if(List *orig = List::dynamicCast(origin())) {
+        Node *result = orig->_get(i);
+        result = result->fork();
+        result->setIsVirtual(true);
+        constCast(this)->_set(index, result);
+        return result;
+    }
     LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
 }
 
