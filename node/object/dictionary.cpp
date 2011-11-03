@@ -99,7 +99,15 @@ Node *Dictionary::get(Node *index, bool *wasFoundPtr) {
 
 Node *Dictionary::_get(Node *index) {
     if(_items && _items->contains(index)) return _items->value(index);
-    if(Dictionary *orig = Dictionary::dynamicCast(origin())) return orig->_get(index);
+    if(Dictionary *orig = Dictionary::dynamicCast(origin())) {
+        Node *result = orig->_get(index);
+        if(result) {
+            result = result->fork();
+            result->setIsVirtual(true);
+            constCast(this)->_set(index, result);
+            return result;
+        }
+    }
     return NULL;
 }
 
@@ -144,7 +152,7 @@ Node *Dictionary::unset(Node *index, bool *wasFoundPtr) {
 void Dictionary::_unset(Node *index) {
     if(!_items) _items = new QHash<Node::Reference, Node *>;
     Dictionary *orig = Dictionary::dynamicCast(origin());
-    if(orig->_get(index))
+    if(orig && orig->_get(index))
         _items->insert(index, NULL);
     else
         _items->remove(index);

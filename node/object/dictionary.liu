@@ -9,9 +9,9 @@ Object Dictionary {
         ?: Text(dict2) == "a:1 b:2 c:3"
         dict["b"] = -2
         ?: Text(dict) == "a:1 b:-2 c:3"
-        ?: Text(dict2) == "a:1 b:-2 c:3"
+        ?: Text(dict2) == "a:1 b:2 c:3"
         dict2["c"] = -3
-        ?: Text(dict2) == "a:1 b:-2 c:-3"
+        ?: Text(dict2) == "a:1 b:2 c:-3"
         ?: Text(dict) == "a:1 b:-2 c:3"
     }
 
@@ -254,7 +254,7 @@ Object Dictionary {
         dict2 := dict fork
         ?: Text(dict2) == "1:a 2:b 3:c 4:d 5:e 6:!"
         dict[6] = "F"
-        ?: Text(dict2) == "1:a 2:b 3:c 4:d 5:e 6:F"
+        ?: Text(dict2) == "1:a 2:b 3:c 4:d 5:e 6:!"
         dict2[6] = "f"
         ?: Text(dict2) == "1:a 2:b 3:c 4:d 5:e 6:f"
         ?: Text(dict) == "1:a 2:b 3:c 4:d 5:e 6:F"

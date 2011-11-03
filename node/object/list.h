@@ -65,14 +65,29 @@ public:
     void sort() { _quickSort(0, size() - 1); }
     LIU_DECLARE_NATIVE_METHOD(sort);
 private:
-    struct Operation {
+    class Operation {
+    public:
         enum Type { Null, Set, Insert, Remove };
-        Operation(const Type theType, const int theIndex, const int theSize, const QList<Node *> theData = QList<Node *>()) :
-            type(theType), index(theIndex), size(theSize), data(theData) {};
+
+        Operation(const Node *theParent, const Type theType, const int theIndex, const int theSize,
+                  const QList<Node *> theData = QList<Node *>()) :
+            parent(theParent), type(theType), index(theIndex), size(theSize), oldData(theData), _data(NULL) {};
+
+        virtual ~Operation();
+
+        QList<Node *> *data() const;
+        Node *getData(int index) const;
+        void setData(int index, Node *value);
+        void unsetData(int index);
+        void insertData(int index, Node *value);
+
+        const Node *parent;
         Type type;
         int index;
         int size;
-        QList<Node *> data;
+        QList<Node *> oldData;
+    private:
+        QList<Node *> *_data;
     };
     QList<Operation> *_operations;
 public:

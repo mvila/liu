@@ -103,7 +103,7 @@ void List::clear() {
     int s = size();
     if(s > 0) {
         if(!_operations) _operations = new QList<Operation>;
-        _operations->append(Operation(Operation::Remove, 0, s));
+        _operations->append(Operation(this, Operation::Remove, 0, s));
     }
 }
 
@@ -129,7 +129,7 @@ Node *List::_get(int index) {
             if(operation.index > i) break;
             if((operation.type == Operation::Set || operation.type == Operation::Insert)
                     && i < operation.index + operation.size)
-                return operation.data.at(i - operation.index);
+                return operation.oldData.at(i - operation.index);
             else if(operation.type == Operation::Insert)
                 i -= operation.size;
             else if(operation.type == Operation::Remove)
@@ -168,17 +168,17 @@ void List::_set(int index, Node *item) {
         if(operation.type == Operation::Set && operation.index - 1 <= index
                 && index <= operation.index + operation.size) {
             if(index == operation.index - 1) { // S[1..2] + S[0] -> S[0..2]
-                operation.data.prepend(item);
+                operation.oldData.prepend(item);
                 operation.index--;
                 operation.size++;
             } else if(index == operation.index + operation.size) { // S[1..2] + S[3] -> S[1..3]
-                operation.data.append(item);
+                operation.oldData.append(item);
                 operation.size++;
                 if(i + 1 < size) {
                     Operation &nextOperation = (*_operations)[i + 1];
                     if(nextOperation.type == Operation::Set && nextOperation.index == index) {
                         if(nextOperation.size > 1) {
-                            nextOperation.data.removeAt(0);
+                            nextOperation.oldData.removeAt(0);
                             nextOperation.index++;
                             nextOperation.size--;
                         } else
@@ -186,13 +186,13 @@ void List::_set(int index, Node *item) {
                     }
                 }
             } else // S[1..2] + S[1] -> S[1..2]
-                operation.data.replace(index - operation.index, item);
+                operation.oldData.replace(index - operation.index, item);
             return;
         }
         if(operation.index > index) break;
         if(operation.type == Operation::Insert) {
             if(index < operation.index + operation.size) { // I[1..2] + S[1] -> I[1..2]
-                operation.data.replace(index - operation.index, item);
+                operation.oldData.replace(index - operation.index, item);
                 return;
             } else
                 index -= operation.size;
@@ -201,7 +201,7 @@ void List::_set(int index, Node *item) {
     }
     QList<Node *> data;
     data.append(item);
-    _operations->insert(i, Operation(Operation::Set, index, 1, data));
+    _operations->insert(i, Operation(this, Operation::Set, index, 1, data));
 }
 
 void List::append(Node *index, Node *value, bool *okPtr) {
@@ -255,22 +255,22 @@ void List::_unset(int index) {
             if(index < operation.index + operation.size) { // S[1..3] + R[2] -> S[1..1] + R[2..2] + S[3..3]
                 int s = index - operation.index;
                 QList<Node *> data;
-                for(int j = 0; j < s; ++j) data.append(operation.data.takeAt(0));
+                for(int j = 0; j < s; ++j) data.append(operation.oldData.takeAt(0));
                 int indexCopy = operation.index;
                 operation.size -= s;
                 if(operation.size > 1) {
-                    operation.data.removeFirst();
+                    operation.oldData.removeFirst();
                     operation.size--;
                     operation.index = index + 1;
                 } else
                     _operations->removeAt(i);
-                if(s > 0) _operations->insert(i++, Operation(Operation::Set, indexCopy, s, data));
+                if(s > 0) _operations->insert(i++, Operation(this, Operation::Set, indexCopy, s, data));
                 break;
             }
         } else if(operation.type == Operation::Insert) { // I[1..3] + R[2] -> I[1..2]
             if(index < operation.index + operation.size) {
                 if(operation.size > 1) {
-                    operation.data.removeAt(index - operation.index);
+                    operation.oldData.removeAt(index - operation.index);
                     operation.size--;
                 } else
                     _operations->removeAt(i);
@@ -280,7 +280,7 @@ void List::_unset(int index) {
         } else if(operation.type == Operation::Remove)
             index += operation.size;
     }
-    _operations->insert(i, Operation(Operation::Remove, index, 1));
+    _operations->insert(i, Operation(this, Operation::Remove, index, 1));
 }
 
 // --- Insertable ---
@@ -311,17 +311,17 @@ void List::_insert(int index, Node *item) {
                 if(index > operation.index) { // S[1..3] + I[2] -> S[1] + I[2] + S[2..3]
                     int s = index - operation.index;
                     QList<Node *> data;
-                    for(int j = 0; j < s; ++j) data.append(operation.data.takeAt(0));
+                    for(int j = 0; j < s; ++j) data.append(operation.oldData.takeAt(0));
                     operation.size -= s;
                     int indexCopy = operation.index;
                     operation.index = index;
-                    _operations->insert(i++, Operation(Operation::Set, indexCopy, s, data));
+                    _operations->insert(i++, Operation(this, Operation::Set, indexCopy, s, data));
                 }
                 break;
             }
         } else if(operation.type == Operation::Insert) {
             if(index <= operation.index + operation.size) { // I[1..2] + I[1] -> I[1..3]
-                operation.data.insert(index - operation.index, item);
+                operation.oldData.insert(index - operation.index, item);
                 operation.size++;
                 return;
             } else
@@ -335,7 +335,7 @@ void List::_insert(int index, Node *item) {
                     _operations->removeAt(i);
                 QList<Node *> data;
                 data.append(item);
-                _operations->insert(i, Operation(Operation::Set, index, 1, data));
+                _operations->insert(i, Operation(this, Operation::Set, index, 1, data));
                 return;
             } else
                 index += operation.size;
@@ -343,7 +343,7 @@ void List::_insert(int index, Node *item) {
     }
     QList<Node *> data;
     data.append(item);
-    _operations->insert(i, Operation(Operation::Insert, index, 1, data));
+    _operations->insert(i, Operation(this, Operation::Insert, index, 1, data));
 }
 
 int List::_partition(int left, int right, int pivotIndex) {
@@ -390,6 +390,45 @@ LIU_DEFINE_NATIVE_METHOD(List, sort) {
         sortedList->sort();
         return sortedList;
     }
+}
+
+// === List::Operation ===
+
+List::Operation::~Operation() {
+    if(_data) {
+        foreach(Node *value, *_data) Node::constCast(parent)->removeUnnamedChild(value);
+        delete _data;
+    }
+}
+
+QList<Node *> *List::Operation::data() const {
+    if(!_data) const_cast<Operation *>(this)->_data = new QList<Node *>;
+    return _data;
+}
+
+Node *List::Operation::getData(int index) const {
+    return data()->at(index);
+}
+
+void List::Operation::setData(int index, Node *value) {
+    Node *oldValue = getData(index);
+    if(value != oldValue) {
+        Node::constCast(parent)->removeUnnamedChild(oldValue);
+        data()->replace(index, value);
+        Node::constCast(parent)->addUnnamedChild(value);
+    }
+}
+
+void List::Operation::unsetData(int index) {
+    Node::constCast(parent)->removeUnnamedChild(getData(index));
+    data()->removeAt(index);
+    size--;
+}
+
+void List::Operation::insertData(int index, Node *value) {
+    data()->insert(index, value);
+    Node::constCast(parent)->addUnnamedChild(value);
+    size++;
 }
 
 // === List::Iterator ===
