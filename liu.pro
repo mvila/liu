@@ -66,7 +66,8 @@ SOURCES += main.cpp \
     node/object/pair.cpp \
     node/object/namedchilddictionary.cpp \
     node/object/unnamedchildcollection.cpp \
-    node/object/childcollection.cpp
+    node/object/childcollection.cpp \
+    node/object/parentset.cpp
 
 HEADERS += \
     liu.h \
@@ -121,7 +122,8 @@ HEADERS += \
     node/object/pair.h \
     node/object/namedchilddictionary.h \
     node/object/unnamedchildcollection.h \
-    node/object/childcollection.h
+    node/object/childcollection.h \
+    node/object/parentset.h
 
 OTHER_FILES += \
     README.txt \

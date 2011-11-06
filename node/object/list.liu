@@ -15,21 +15,21 @@ Object List {
         ?: Text(list) == "a B c"
     }
 
-    \copy {
-    test:
-        list := List()
-        list << "a"
-        list << "b"
-        list << "c"
-        list2 := list copy
-        ?: Text(list2) == "a b c"
-        list[1] = "B"
-        ?: Text(list) == "a B c"
-        ?: Text(list2) == "a b c"
-        list2[2] = "C"
-        ?: Text(list2) == "a b C"
-        ?: Text(list) == "a B c"
-    }
+//    \copy {
+//    test:
+//        list := List()
+//        list << "a"
+//        list << "b"
+//        list << "c"
+//        list2 := list copy
+//        ?: Text(list2) == "a b c"
+//        list[1] = "B"
+//        ?: Text(list) == "a B c"
+//        ?: Text(list2) == "a b c"
+//        list2[2] = "C"
+//        ?: Text(list2) == "a b C"
+//        ?: Text(list) == "a B c"
+//    }
 
     // --- Iterable ---
 

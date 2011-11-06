@@ -23,6 +23,17 @@ public:
 
     virtual void inspectInternal() const;
 
+private:
+    class Operation;
+public:
+    Operation *getOperation(int index) const;
+    void unsetOperation(int index);
+    void insertOperation(int index, Operation *operation);
+    void appendOperation(Operation *operation) { insertOperation(countOperations(), operation); }
+    void clearOperations();
+    int countOperations() const;
+    QList<Operation *> *copyOperations(Node *parent) const;
+
     // --- Iterable ---
 
     class Iterator;
@@ -65,31 +76,34 @@ public:
     void sort() { _quickSort(0, size() - 1); }
     LIU_DECLARE_NATIVE_METHOD(sort);
 private:
+    QList<Operation *> *_operations;
+
     class Operation {
     public:
         enum Type { Null, Set, Insert, Remove };
 
-        Operation(const Node *theParent, const Type theType, const int theIndex, const int theSize,
-                  const QList<Node *> theData = QList<Node *>()) :
-            parent(theParent), type(theType), index(theIndex), size(theSize), oldData(theData), _data(NULL) {};
+        Operation(const Node *theParent, const Type theType, const int theIndex, const int theSize = 0) :
+            parent(theParent), type(theType), index(theIndex), size(theSize), _data(NULL) {};
 
         virtual ~Operation();
+
+        Operation *copy(Node *parent) const;
 
         QList<Node *> *data() const;
         Node *getData(int index) const;
         void setData(int index, Node *value);
-        void unsetData(int index);
+        Node *unsetData(int index);
         void insertData(int index, Node *value);
+        void prependData(Node *value) { insertData(0, value); }
+        void appendData(Node *value) { insertData(data()->size(), value); }
 
         const Node *parent;
         Type type;
         int index;
         int size;
-        QList<Node *> oldData;
     private:
         QList<Node *> *_data;
     };
-    QList<Operation> *_operations;
 public:
     // === Iterator ===
 
