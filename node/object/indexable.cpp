@@ -30,8 +30,17 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, get) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
     Node *index = message->runFirstInput();
+    Node *value = NULL;
+    if(Primitive *label = message->firstInput()->label()) { // TODO: DRY!
+        Message *msg = Message::dynamicCast(label->value());
+        if(msg && msg->name() == "value") value = index;
+    }
+    Node *result;
     bool wasFound = true;
-    Node *result = get(index, message->isQuestioned() ? &wasFound : NULL);
+    if(value)
+        result = getValue(index, message->isQuestioned() ? &wasFound : NULL);
+    else
+        result = get(index, message->isQuestioned() ? &wasFound : NULL);
     if(!wasFound) Primitive::skip(Boolean::make(false));
     return result;
 }

@@ -21,6 +21,9 @@ public:
     virtual Iterator *iterator() const { LIU_ABSTRACT_CALL; }
     LIU_DECLARE_NATIVE_METHOD(iterator);
 
+    virtual Node *getValue(Node *value, bool *wasFoundPtr = NULL);
+    LIU_DECLARE_NATIVE_METHOD(get);
+
     virtual bool contains(Node *value) const;
     LIU_DECLARE_NATIVE_METHOD(contains);
 

@@ -98,6 +98,20 @@ QList<List::Operation *> *List::copyOperations(Node *parent) const {
     return result;
 }
 
+Node *List::unnamedChild(int index) const {
+    if(_operations) {
+        int i = 0;
+        foreach(Operation *operation, *_operations)
+            if(operation->type == Operation::Set || operation->type == Operation::Insert) {
+                if(index < i + operation->size)
+                    return operation->getData(index - i);
+                else
+                    i += operation->size;
+            }
+    }
+    return NULL;
+}
+
 // --- Iterable ---
 
 List::Iterator *List::iterator() const {

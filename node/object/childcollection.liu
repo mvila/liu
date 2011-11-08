@@ -45,5 +45,26 @@ Object ChildCollection {
 test:
 //    ?: origin == Object
 //    ?: parent == Object
+
     ?: is?(Iterable)
+
+    n1 := Node()
+    c1 := Node()
+    c2 := Node()
+    n1 c3 := c1
+    ?: n1 children contains?(c1)
+    ?: n1 children[:c1] == c1
+    !: n1 children contains?(c2)
+    ?: NotFoundException throw? { n1 children[:c2] }
+    n1 c3 >>
+    !: n1 children contains?(c1)
+
+// TODO:
+//    a := 1
+//    b := 2
+//    c := 3
+//    p := Pair(a, b)
+//    ?: p children(with_unnamed?: yes) contains?(a)
+//    ?: p children(with_unnamed?: yes) contains?(b)
+//    !: p children(with_unnamed?: yes) contains?(c)
 }

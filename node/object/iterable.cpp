@@ -23,6 +23,8 @@ Iterable::~Iterable() {}
 void Iterable::initRoot() {
     LIU_ADD_NATIVE_METHOD(Iterable, iterator);
 
+    LIU_ADD_NATIVE_METHOD(Iterable, get, []);
+
     LIU_ADD_NATIVE_METHOD(Iterable, contains);
     LIU_ADD_NATIVE_METHOD(Iterable, count);
     LIU_ADD_NATIVE_METHOD(Iterable, size);
@@ -46,6 +48,37 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, iterator) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     return iterator();
+}
+
+Node *Iterable::getValue(Node *value, bool *wasFoundPtr) {
+    QScopedPointer<Iterator> i(iterator());
+    Node *result = NULL;
+    while(!result && i->hasNext()) {
+        Node *item = i->next().second;
+        if(item->isEqualTo(value)) result = item;
+    };
+    bool wasFound = result != NULL;
+    if(wasFoundPtr)
+        *wasFoundPtr = wasFound;
+    else if(!wasFound)
+        LIU_THROW(NotFoundException, "value not found");
+    return result;
+}
+
+LIU_DEFINE_NATIVE_METHOD(Iterable, get) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(1);
+    Node *value = NULL;
+    if(Primitive *label = message->firstInput()->label()) { // TODO: DRY!
+        Message *msg = Message::dynamicCast(label->value());
+        if(msg && msg->name() == "value")
+            value = message->runFirstInput();
+    }
+    if(!value) LIU_THROW(ArgumentException, "a value is exepected (ex.: iterable[:123] >>)");
+    bool wasFound = true;
+    Node *result = getValue(value, message->isQuestioned() ? &wasFound : NULL);
+    if(!wasFound) Primitive::skip(Boolean::make(false));
+    return result;
 }
 
 bool Iterable::contains(Node *value) const {
@@ -182,7 +215,8 @@ const QString Iterable::join(const QString &separator, const QString &prefix,
     while(i->hasNext()) {
         if(!isFirst) str += separator; else isFirst = false;
         str += prefix;
-        str += i->next().second->toString(debug, level);
+        Node *value = i->next().second;
+        str += value != this ? value->toString(debug, level) : "<self>";
         str += suffix;
     }
     return str;

@@ -42,85 +42,71 @@ LIU_DEFINE_READ_ONLY_NODE_PROPERTY(ParentSet, source);
 
 // --- Iterable ---
 
-//NamedChildDictionary::Iterator *NamedChildDictionary::iterator() const {
-//    return NamedChildDictionary::Iterator::make(source());
-//}
+ParentSet::Iterator *ParentSet::iterator() const {
+    return ParentSet::Iterator::make(source());
+}
 
 // === NamedChildDictionary::Iterator ===
 
-//LIU_DEFINE_2(NamedChildDictionary::Iterator, Iterable::Iterator, NamedChildDictionary);
+LIU_DEFINE_2(ParentSet::Iterator, Iterable::Iterator, ParentSet);
 
-//NamedChildDictionary::Iterator *NamedChildDictionary::Iterator::init(Node *source) {
-//    Iterable::Iterator::init();
-//    setSource(source);
-//    return this;
-//}
+ParentSet::Iterator *ParentSet::Iterator::init(Node *source) {
+    Iterable::Iterator::init();
+    setSource(source);
+    return this;
+}
 
-//NamedChildDictionary::Iterator *NamedChildDictionary::Iterator::initCopy(const NamedChildDictionary::Iterator *other) {
-//    Iterable::Iterator::initCopy(other);
-//    setSource(other->_source);
-//    return this;
-//}
+ParentSet::Iterator *ParentSet::Iterator::initCopy(const ParentSet::Iterator *other) {
+    Iterable::Iterator::initCopy(other);
+    setSource(other->_source);
+    return this;
+}
 
-//NamedChildDictionary::Iterator::~Iterator() {
-//    setSource();
-//    unsetSourceIterator();
-//}
+ParentSet::Iterator::~Iterator() {
+    setSource();
+    unsetSourceIterator();
+}
 
-//void NamedChildDictionary::Iterator::initRoot() {
-//    setSource(Node::root()->fork());
+void ParentSet::Iterator::initRoot() {
+    setSource(Node::root()->fork());
 
-//    LIU_ADD_READ_ONLY_PROPERTY(NamedChildDictionary::Iterator, source)
-//}
+    LIU_ADD_READ_ONLY_PROPERTY(ParentSet::Iterator, source)
+}
 
-//LIU_DEFINE_NODE_ACCESSOR(NamedChildDictionary::Iterator, Node, source, Source);
+LIU_DEFINE_NODE_ACCESSOR(ParentSet::Iterator, Node, source, Source);
 
-//void NamedChildDictionary::Iterator::sourceWillChange() {}
-//void NamedChildDictionary::Iterator::sourceHasChanged() { unsetSourceIterator(); }
+void ParentSet::Iterator::sourceWillChange() {}
+void ParentSet::Iterator::sourceHasChanged() { unsetSourceIterator(); }
 
-//LIU_DEFINE_READ_ONLY_NODE_PROPERTY(NamedChildDictionary::Iterator, source);
+LIU_DEFINE_READ_ONLY_NODE_PROPERTY(ParentSet::Iterator, source);
 
-//NamedChildDictionary::Iterator::SourceIterator *NamedChildDictionary::Iterator::sourceIterator() const {
-//    if(!_sourceIterator) {
-//        if(!source()) LIU_THROW_NULL_POINTER_EXCEPTION("source is NULL");
-//        if(source()->_children) constCast(this)->_sourceIterator = new SourceIterator(*source()->_children);
-//    }
-//    return _sourceIterator;
-//}
+ParentSet::Iterator::SourceIterator *ParentSet::Iterator::sourceIterator() const {
+    if(!_sourceIterator) {
+        if(!source()) LIU_THROW_NULL_POINTER_EXCEPTION("source is NULL");
+        if(source()->_parents) constCast(this)->_sourceIterator = new SourceIterator(*source()->_parents);
+    }
+    return _sourceIterator;
+}
 
-//void NamedChildDictionary::Iterator::unsetSourceIterator() {
-//    if(_sourceIterator) {
-//        delete _sourceIterator;
-//        _sourceIterator = NULL;
-//    }
-//}
+void ParentSet::Iterator::unsetSourceIterator() {
+    if(_sourceIterator) {
+        delete _sourceIterator;
+        _sourceIterator = NULL;
+    }
+}
 
-//bool NamedChildDictionary::Iterator::hasNext() const {
-//    if(!sourceIterator()) return false;
-//    while(true) {
-//        if(!sourceIterator()->hasNext()) return false;
-//        Node *node = sourceIterator()->peekNext().value();
-//        if(!node || node->isVirtual()) {
-//            sourceIterator()->next();
-//            continue;
-//        }
-//        const QString &name = sourceIterator()->peekNext().key();
-//        if(name.startsWith(".")) {
-//            sourceIterator()->next();
-//            continue;
-//        }
-//        return true;
-//    }
-//}
+bool ParentSet::Iterator::hasNext() const {
+    return sourceIterator() ? sourceIterator()->hasNext() : false;
+}
 
-//NodeQPair NamedChildDictionary::Iterator::peekNext() const {
-//    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
-//    return NodeQPair(Text::make(sourceIterator()->peekNext().key()), sourceIterator()->peekNext().value());
-//}
+NodeQPair ParentSet::Iterator::peekNext() const {
+    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
+    return NodeQPair(NULL, sourceIterator()->peekNext().key());
+}
 
-//void NamedChildDictionary::Iterator::skipNext() {
-//    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
-//    sourceIterator()->next();
-//}
+void ParentSet::Iterator::skipNext() {
+    if(!hasNext()) LIU_THROW(IndexOutOfBoundsException, "Iterator is out of bounds");
+    sourceIterator()->next();
+}
 
 LIU_END

@@ -133,6 +133,7 @@ if(!(POINTER)) LIU_THROW_NULL_POINTER_EXCEPTION("Node pointer is NULL")
 class Node {
 public:
     friend class NamedChildDictionary;
+    friend class ParentSet;
 
     typedef Node *NodePtr;
 
@@ -298,6 +299,8 @@ public:
         Q_UNUSED(index);
         return NULL;
     }
+
+    LIU_DECLARE_NATIVE_METHOD(parents);
 
     Node *parent() const;
     bool hasOneParent() const;

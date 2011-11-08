@@ -1,0 +1,50 @@
+Object ParentSet {
+test:
+    ?: is?(Iterable)
+
+    n1 := Node()
+    n2 := Node()
+    c1 := Node()
+    n1 c2 := c1
+    ?: c1 parents is?(ParentSet)
+    ?: c1 parents contains?(n1)
+    ?: c1 parents[:n1] == n1
+    !: c1 parents contains?(n2)
+    ?: NotFoundException throw? { c1 parents[:n2] }
+    !: c1 parents[:n2]?
+    n1 c2 >>
+    !: c1 parents contains?(n1)
+
+    a := 1
+    b := 2
+    p1 := Pair(a, b)
+    p2 := Pair(1, 2)
+    p3 := Pair(2, 1)
+    ?: a parents contains?(p1)
+    ?: a parents contains?(p2)
+    !: a parents contains?(p3)
+    ?: b parents contains?(p1)
+    ?: b parents contains?(p2)
+    !: b parents contains?(p3)
+    c := 3
+    p1 first = c
+    !: a parents contains?(p1)
+    !: a parents contains?(p2)
+    !: a parents contains?(p3)
+
+    a := 1
+    b := 2
+    c := 3
+    l1 := [a, b, c]
+    l2 := [-1, -2, -3]
+    ?: a parents contains?(l1)
+    !: a parents contains?(l2)
+    ?: b parents contains?(l1)
+    !: b parents contains?(l2)
+    ?: c parents contains?(l1)
+    !: c parents contains?(l2)
+    d := 4
+    l1[0] = d
+    !: a parents contains?(l1)
+    !: a parents contains?(l2)
+}

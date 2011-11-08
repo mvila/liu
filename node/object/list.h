@@ -34,6 +34,8 @@ public:
     int countOperations() const;
     QList<Operation *> *copyOperations(Node *parent) const;
 
+    virtual Node *unnamedChild(int index) const;
+
     // --- Iterable ---
 
     class Iterator;

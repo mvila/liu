@@ -8,6 +8,7 @@
 #include "node/object/text.h"
 #include "node/object/property.h"
 #include "node/object/childcollection.h"
+#include "node/object/parentset.h"
 #include "node/object/language/message.h"
 #include "node/object/language/block.h"
 #include "node/object/language/nativemethod.h"
@@ -96,6 +97,7 @@ void Node::initRoot() {
     LIU_ADD_NATIVE_METHOD(Node, has);
 
     LIU_ADD_NATIVE_METHOD(Node, children);
+    LIU_ADD_NATIVE_METHOD(Node, parents);
     LIU_ADD_NATIVE_METHOD(Node, parent);
 
     LIU_ADD_NATIVE_METHOD(Node, or, ||);
@@ -514,6 +516,12 @@ LIU_DEFINE_NATIVE_METHOD(Node, children) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     return NamedChildDictionary::make(this);
+}
+
+LIU_DEFINE_NATIVE_METHOD(Node, parents) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0);
+    return ParentSet::make(this);
 }
 
 Node *Node::parent() const {

@@ -16,6 +16,14 @@ Object UnnamedChildCollection {
         ?: iter read! == 1
         ?: iter read! == 2
         ?: IndexOutOfBoundsException throw? { iter read! }
+
+        list := [1, 2, 3]
+        col := UnnamedChildCollection(list)
+        iter := col iterator
+        ?: iter read! == 1
+        ?: iter read! == 2
+        ?: iter read! == 3
+        ?: IndexOutOfBoundsException throw? { iter read! }
     }
 
     \size {

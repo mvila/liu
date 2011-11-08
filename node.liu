@@ -19,9 +19,6 @@ body:
         ?: n2 origin == n1
     }
 
-    \parent {
-    }
-
     \extensions {
     test:
         // Adding...

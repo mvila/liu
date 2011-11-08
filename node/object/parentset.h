@@ -22,38 +22,38 @@ public:
 
     // --- Iterable ---
 
-//    class Iterator;
-//    virtual Iterator *iterator() const;
+    class Iterator;
+    virtual Iterator *iterator() const;
 private:
     Node *_source;
 public:
     // === Iterator ===
 
-//    class Iterator : public Iterable::Iterator {
-//        LIU_DECLARE_2(Iterator, Iterable::Iterator, ParentSet);
-//    public:
-//        typedef QHashIterator<QString, Node *> SourceIterator;
+    class Iterator : public Iterable::Iterator {
+        LIU_DECLARE_2(Iterator, Iterable::Iterator, ParentSet);
+    public:
+        typedef QHashIterator<Node *, HugeUnsignedInteger> SourceIterator;
 
-//        explicit Iterator(Node *origin = context()->child("Object", "ParentSet", "Iterator")) :
-//            Iterable::Iterator(origin), _source(NULL), _sourceIterator(NULL) {};
+        explicit Iterator(Node *origin = context()->child("Object", "ParentSet", "Iterator")) :
+            Iterable::Iterator(origin), _source(NULL), _sourceIterator(NULL) {};
 
-//        static Iterator *make(const Node *source) { return (new Iterator())->init(Node::constCast(source)); }
+        static Iterator *make(const Node *source) { return (new Iterator())->init(Node::constCast(source)); }
 
-//        Iterator *init(Node *source = NULL);
+        Iterator *init(Node *source = NULL);
 
-//        LIU_DECLARE_NODE_ACCESSOR(Node, source, Source);
-//        LIU_DECLARE_READ_ONLY_PROPERTY(source);
+        LIU_DECLARE_NODE_ACCESSOR(Node, source, Source);
+        LIU_DECLARE_READ_ONLY_PROPERTY(source);
 
-//        SourceIterator *sourceIterator() const;
-//        void unsetSourceIterator();
+        SourceIterator *sourceIterator() const;
+        void unsetSourceIterator();
 
-//        virtual bool hasNext() const;
-//        virtual NodeQPair peekNext() const;
-//        virtual void skipNext();
-//    private:
-//        Node *_source;
-//        SourceIterator *_sourceIterator;
-//    };
+        virtual bool hasNext() const;
+        virtual NodeQPair peekNext() const;
+        virtual void skipNext();
+    private:
+        Node *_source;
+        SourceIterator *_sourceIterator;
+    };
 };
 
 LIU_END

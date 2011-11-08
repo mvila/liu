@@ -155,4 +155,5 @@ OTHER_FILES += \
     node/object/pair.liu \
     node/object/namedchilddictionary.liu \
     node/object/unnamedchildcollection.liu \
-    node/object/childcollection.liu
+    node/object/childcollection.liu \
+    node/object/parentset.liu
