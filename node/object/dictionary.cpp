@@ -15,14 +15,20 @@ Dictionary *Dictionary::init() {
 
 Dictionary *Dictionary::initCopy(const Dictionary *other) {
     Insertable::initCopy(other);
-    if(other->_items) _items = new QHash<Node::Reference, Node *>(*other->_items);
+    if(other->_items) {
+        _items = new QHash<Node::Reference, Node *>(*other->_items);
+        foreach(Node *item, *_items) if(item) addUnnamedChild(item);
+    }
     if(other->_indexes) _indexes = other->_indexes->copy();
     return this;
 }
 
 Dictionary::~Dictionary() {
-    delete _items;
-    setIndexes();
+    if(_items) {
+        foreach(Node *item, *_items) if(item) removeUnnamedChild(item);
+        delete _items;
+    }
+    deleteIndexes();
 }
 
 void Dictionary::initRoot() {
@@ -55,6 +61,19 @@ LIU_DEFINE_NATIVE_METHOD(Dictionary, make) {
         dict->append(key, message->runInput(i));
     }
     return dict;
+}
+
+Node *Dictionary::unnamedChild(int index) const {
+    int i = index;
+    if(_items) {
+        foreach(Node *item, *_items) if(item) {
+            if(i == 0) return item; else i--;
+        }
+    }
+    if(_indexes)
+        return _indexes->unnamedChild(i);
+    else
+        return NULL;
 }
 
 // --- Iterable ---
@@ -121,8 +140,13 @@ void Dictionary::set(Node *index, Node *item, bool *wasFoundPtr) {
 }
 
 void Dictionary::_set(Node *index, Node *item) {
-    if(!_items) _items = new QHash<Node::Reference, Node *>;
+    if(_items) {
+        Node *oldItem = _items->value(index);
+        if(oldItem) removeUnnamedChild(oldItem);
+    } else
+        _items = new QHash<Node::Reference, Node *>;
     _items->insert(index, item);
+    addUnnamedChild(item);
 }
 
 void Dictionary::append(Node *index, Node *item, bool *okPtr) {
@@ -150,12 +174,15 @@ Node *Dictionary::unset(Node *index, bool *wasFoundPtr) {
 }
 
 void Dictionary::_unset(Node *index) {
-    if(!_items) _items = new QHash<Node::Reference, Node *>;
+    if(!_items) LIU_THROW_NULL_POINTER_EXCEPTION("_items is NULL");
+    Node *oldItem = _items->value(index);
+    if(oldItem) removeUnnamedChild(oldItem);
     Dictionary *orig = Dictionary::dynamicCast(origin());
     if(orig && orig->_get(index))
         _items->insert(index, NULL);
-    else
+    else {
         _items->remove(index);
+    }
     indexes()->remove(index);
 }
 
@@ -182,6 +209,7 @@ void Dictionary::_insert(int position, Node *index, Node *item) {
     if(!_items) _items = new QHash<Node::Reference, Node *>;
     _items->insert(index, item);
     indexes()->_insert(position, index);
+    addUnnamedChild(item);
 }
 
 // === Dictionary::Iterator ===

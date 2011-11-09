@@ -24,6 +24,15 @@ Object UnnamedChildCollection {
         ?: iter read! == 2
         ?: iter read! == 3
         ?: IndexOutOfBoundsException throw? { iter read! }
+
+        dict := [x: 1, y: 2]
+        col := UnnamedChildCollection(dict)
+        iter := col iterator
+        ?: iter read! == 1
+        ?: iter read! == 2
+        ?: iter read! == "x"
+        ?: iter read! == "y"
+        ?: IndexOutOfBoundsException throw? { iter read! }
     }
 
     \size {

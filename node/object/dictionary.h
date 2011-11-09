@@ -20,6 +20,8 @@ public:
 
     LIU_DECLARE_NATIVE_METHOD(make);
 
+    virtual Node *unnamedChild(int index) const;
+
     // --- Iterable ---
 
     class Iterator;

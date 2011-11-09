@@ -12,6 +12,8 @@ test:
     !: c1 parents contains?(n2)
     ?: NotFoundException throw? { c1 parents[:n2] }
     !: c1 parents[:n2]?
+    n3 := n1 copy
+    ?: c1 parents contains?(n3)
     n1 c2 >>
     !: c1 parents contains?(n1)
 
@@ -26,11 +28,13 @@ test:
     ?: b parents contains?(p1)
     ?: b parents contains?(p2)
     !: b parents contains?(p3)
+    p4 := p1 copy
+    ?: a parents contains?(p4) // TODO: contains?(node: p4) is a more accurate test
+    ?: b parents contains?(p4) // TODO: contains?(node: p4) is a more accurate test
     c := 3
     p1 first = c
     !: a parents contains?(p1)
-    !: a parents contains?(p2)
-    !: a parents contains?(p3)
+//    !: a parents contains?(node: p2)
 
     a := 1
     b := 2
@@ -43,8 +47,30 @@ test:
     !: b parents contains?(l2)
     ?: c parents contains?(l1)
     !: c parents contains?(l2)
+    l3 := l1 copy
+    ?: a parents contains?(l3) // TODO: contains?(node: l3) is a more accurate test
+    ?: b parents contains?(l3) // TODO: contains?(node: l3) is a more accurate test
+    ?: c parents contains?(l3) // TODO: contains?(node: l3) is a more accurate test
     d := 4
     l1[0] = d
     !: a parents contains?(l1)
-    !: a parents contains?(l2)
+    l1[1] >>
+    !: b parents contains?(l1)
+
+    a := 1
+    b := 2
+    d1 := [x: a, y: b]
+    d2 := [x: -1, y: -2]
+    ?: a parents contains?(d1)
+    !: a parents contains?(d2)
+    ?: b parents contains?(d1)
+    !: b parents contains?(d2)
+    d3 := d1 copy
+    ?: a parents contains?(d3) // TODO: contains?(node: d3) is a more accurate test
+    ?: b parents contains?(d3) // TODO: contains?(node: d3) is a more accurate test
+    c := 3
+    d1["x"] = c
+    !: a parents contains?(d1)
+    d1["y"] >>
+    !: b parents contains?(d1)
 }
