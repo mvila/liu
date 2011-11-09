@@ -15,6 +15,8 @@ public:
 
     Iterable *init();
 
+    virtual bool isEqualTo(const Node *other) const;
+
     virtual QString toString(bool debug = false, short level = 0) const;
 
     class Iterator;

@@ -69,6 +69,7 @@ public:
 
     virtual void insert(Node *index, Node *item, Node *before = NULL, bool *okPtr = NULL);
 private:
+    void _insertListOrItem(int index, Node *listOrItem);
     void _insert(int index, Node *item);
 public:
 private:

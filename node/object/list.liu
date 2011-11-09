@@ -31,6 +31,22 @@ Object List {
         ?: Text(list) == "a B c"
     }
 
+    \`==` {
+    inputs:
+        (other)
+    test:
+        ?: List == List
+        ?: List() == List()
+        ?: List() == []
+        ?: [] == []
+        ?: [1] == [1]
+        ?: [1] != [2]
+        ?: [1, 2] == [1, 2]
+        ?: [1, 2] != [1, 3]
+        ?: [1, 2] != [1]
+        ?: [1] != [1, 2]
+    }
+
     // --- Iterable ---
 
     \iterator {
@@ -152,6 +168,24 @@ Object List {
     }
 
     // --- Collection ---
+
+    \flattened? {
+    test:
+        list := [1, 2]
+        ?: list flattened?
+        list << [3, 4]
+        ?: list == [1, 2, 3, 4]
+        list flattened? = no
+        !: list flattened?
+        list << [5, 6]
+        ?: list == [1, 2, 3, 4, [5, 6]]
+
+        list := [1, 2]
+        ?: list flattened?
+        list[1] = [3, 4]
+        list inspect
+        ?: list == [1, 3, 4]
+    }
 
     \`<<` {
     test:

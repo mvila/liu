@@ -1,10 +1,10 @@
-Object ChildCollection {
+Object Language ChildCollection {
     // --- Iterable ---
 
     \iterator {
     test:
         obj := Object()
-        col := ChildCollection(obj)
+        col := Language ChildCollection(obj)
         iter := col iterator
         ?: IndexOutOfBoundsException throw? { iter read }
         ?: IndexOutOfBoundsException throw? { iter read! }
@@ -13,7 +13,7 @@ Object ChildCollection {
         pair := Pair(1, 2)
         pair a := "A"
         pair b := "B"
-        col := ChildCollection(pair)
+        col := Language ChildCollection(pair)
         iter := col iterator
         list := []
         list << iter read!
@@ -30,13 +30,13 @@ Object ChildCollection {
     \size {
     test:
         obj := Object()
-        col := ChildCollection(obj)
+        col := Language ChildCollection(obj)
         ?: col size == 0
         obj a := 1
         ?: col size == 1
 
         pair := Pair(1, 2)
-        col := ChildCollection(pair)
+        col := Language ChildCollection(pair)
         ?: col size == 2
         pair a := "A"
         pair b := "B"

@@ -46,7 +46,7 @@ if((VALUE) != FIELD) { \
 #define LIU_UNSET_FIELD(FIELD) \
 if(FIELD) removeUnnamedChild(FIELD);
 
-namespace Language { class Primitive; class Message; }
+namespace Language { class Primitive; class Message; class NamedChildDictionary; class ParentSet; }
 using namespace Language;
 
 #define LIU_DECLARE_NATIVE_METHOD(METHOD) \
@@ -132,8 +132,8 @@ if(!(POINTER)) LIU_THROW_NULL_POINTER_EXCEPTION("Node pointer is NULL")
 
 class Node {
 public:
-    friend class NamedChildDictionary;
-    friend class ParentSet;
+    friend class Language::NamedChildDictionary;
+    friend class Language::ParentSet;
 
     typedef Node *NodePtr;
 
@@ -232,6 +232,16 @@ public:
 
     Node *child(const QString &name1, const QString &name2, const QString &name3) const {
         return child(name1)->child(name2)->child(name3);
+    }
+
+    Node *child(const QString &name1, const QString &name2, const QString &name3,
+                const QString &name4) const {
+        return child(name1)->child(name2)->child(name3)->child(name4);
+    }
+
+    Node *child(const QString &name1, const QString &name2, const QString &name3,
+                const QString &name4, const QString &name5) const {
+        return child(name1)->child(name2)->child(name3)->child(name4)->child(name5);
     }
 
     Node *addChild(const QString &name, Node *value);

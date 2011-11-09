@@ -1,4 +1,4 @@
-Object ParentSet {
+Object Language ParentSet {
 test:
     ?: is?(Iterable)
 
@@ -6,7 +6,7 @@ test:
     n2 := Node()
     c1 := Node()
     n1 c2 := c1
-    ?: c1 parents is?(ParentSet)
+    ?: c1 parents is?(Language ParentSet)
     ?: c1 parents contains?(n1)
     ?: c1 parents[:n1] == n1
     !: c1 parents contains?(n2)

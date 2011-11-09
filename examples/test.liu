@@ -1,3 +1,8 @@
+//list := List()
+//list flattened? print
+//list flattened? = no
+//list flattened? print
+
 //list := []
 //loop(10) { list << Number random % 10000 }
 //list2 := list fork

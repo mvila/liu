@@ -35,6 +35,7 @@ void Dictionary::initRoot() {
     addExtension(Insertable::root());
 
     setIndexes(List::root()->fork());
+    indexes()->setIsFlattened(false);
 
     LIU_ADD_NATIVE_METHOD(Dictionary, make);
 }

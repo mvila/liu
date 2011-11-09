@@ -1,4 +1,4 @@
-Object NamedChildDictionary {
+Object Language NamedChildDictionary {
     // --- Iterable ---
 
     \iterator {
@@ -6,7 +6,7 @@ Object NamedChildDictionary {
         obj := Object()
         obj a := 1
         obj b := 2
-        dict := NamedChildDictionary(obj)
+        dict := Language NamedChildDictionary(obj)
         iter := dict iterator
         ?: iter source === obj
         ?: iter read?
@@ -23,7 +23,7 @@ Object NamedChildDictionary {
     \size {
     test:
         obj := Object()
-        dict := NamedChildDictionary(obj)
+        dict := Language NamedChildDictionary(obj)
         ?: dict size == 0
         obj a := 1
         ?: dict size == 1

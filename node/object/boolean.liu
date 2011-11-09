@@ -15,7 +15,7 @@ Object Boolean {
 
     \`==` {
     inputs:
-        (value)
+        (other)
     test:
         ?: false == false
         ?: false == no

@@ -160,12 +160,12 @@ body:
 
     \`==` {
     inputs:
-        (\value)
+        (\other)
     }
 
     \`!=` {
     inputs:
-        (\value)
+        (\other)
     }
 
     \`||` {

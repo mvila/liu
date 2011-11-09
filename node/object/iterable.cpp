@@ -36,6 +36,22 @@ void Iterable::initRoot() {
     LIU_ADD_NATIVE_METHOD(Iterable, last);
 }
 
+bool Iterable::isEqualTo(const Node *other) const {
+    if(isSameAs(other)) return true;
+    const Iterable *otherIterable = Iterable::dynamicCast(other);
+    if(!otherIterable) return false;
+    if(size() != otherIterable->size()) return false;
+    QScopedPointer<Iterator> i1(iterator());
+    QScopedPointer<Iterator> i2(otherIterable->iterator());
+    while(i1->hasNext()) {
+        NodeQPair item = i1->next();
+        NodeQPair otherItem = i2->next();
+        if(!item.second->isEqualTo(otherItem.second)) return false;
+        if(!item.first->isEqualTo(otherItem.first)) return false;
+    }
+    return true;
+}
+
 QString Iterable::toString(bool debug, short level) const {
     QString str;
     if(debug) str += "[";

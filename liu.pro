@@ -64,10 +64,10 @@ SOURCES += main.cpp \
     node/object/dictionary.cpp \
     node/object/oldpair.cpp \
     node/object/pair.cpp \
-    node/object/namedchilddictionary.cpp \
-    node/object/unnamedchildcollection.cpp \
-    node/object/childcollection.cpp \
-    node/object/parentset.cpp
+    node/object/language/namedchilddictionary.cpp \
+    node/object/language/unnamedchildcollection.cpp \
+    node/object/language/childcollection.cpp \
+    node/object/language/parentset.cpp
 
 HEADERS += \
     liu.h \
@@ -120,10 +120,10 @@ HEADERS += \
     node/object/dictionary.h \
     node/object/oldpair.h \
     node/object/pair.h \
-    node/object/namedchilddictionary.h \
-    node/object/unnamedchildcollection.h \
-    node/object/childcollection.h \
-    node/object/parentset.h
+    node/object/language/namedchilddictionary.h \
+    node/object/language/unnamedchildcollection.h \
+    node/object/language/childcollection.h \
+    node/object/language/parentset.h
 
 OTHER_FILES += \
     README.txt \
@@ -153,7 +153,7 @@ OTHER_FILES += \
     node/object/comparable.liu \
     node/object/dictionary.liu \
     node/object/pair.liu \
-    node/object/namedchilddictionary.liu \
-    node/object/unnamedchildcollection.liu \
-    node/object/childcollection.liu \
-    node/object/parentset.liu
+    node/object/language/namedchilddictionary.liu \
+    node/object/language/unnamedchildcollection.liu \
+    node/object/language/childcollection.liu \
+    node/object/language/parentset.liu

@@ -1,24 +1,24 @@
-Object UnnamedChildCollection {
+Object Language UnnamedChildCollection {
     // --- Iterable ---
 
     \iterator {
     test:
         obj := Object()
-        col := UnnamedChildCollection(obj)
+        col := Language UnnamedChildCollection(obj)
         iter := col iterator
         ?: IndexOutOfBoundsException throw? { iter read }
         ?: IndexOutOfBoundsException throw? { iter read! }
         !: iter read?
 
         pair := Pair(1, 2)
-        col := UnnamedChildCollection(pair)
+        col := Language UnnamedChildCollection(pair)
         iter := col iterator
         ?: iter read! == 1
         ?: iter read! == 2
         ?: IndexOutOfBoundsException throw? { iter read! }
 
         list := [1, 2, 3]
-        col := UnnamedChildCollection(list)
+        col := Language UnnamedChildCollection(list)
         iter := col iterator
         ?: iter read! == 1
         ?: iter read! == 2
@@ -26,7 +26,7 @@ Object UnnamedChildCollection {
         ?: IndexOutOfBoundsException throw? { iter read! }
 
         dict := [x: 1, y: 2]
-        col := UnnamedChildCollection(dict)
+        col := Language UnnamedChildCollection(dict)
         iter := col iterator
         ?: iter read! == 1
         ?: iter read! == 2
@@ -38,7 +38,7 @@ Object UnnamedChildCollection {
     \size {
     test:
         obj := Object()
-        col := UnnamedChildCollection(obj)
+        col := Language UnnamedChildCollection(obj)
         ?: col size == 0
     }
 test:

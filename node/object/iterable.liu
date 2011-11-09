@@ -21,7 +21,7 @@ Object Iterable {
 
     \`==` {
     inputs:
-        (value)
+        (other)
     }
 
     Iterator {
@@ -33,7 +33,7 @@ Object Iterable {
 
         \`==` {
         inputs:
-            (value)
+            (other)
         }
     }
 }

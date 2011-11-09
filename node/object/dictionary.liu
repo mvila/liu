@@ -31,6 +31,22 @@ Object Dictionary {
         ?: Text(dict) == "a:1 b:-2 c:3"
     }
 
+    \`==` {
+    inputs:
+        (other)
+    test:
+        ?: Dictionary == Dictionary
+        ?: Dictionary() == Dictionary()
+        ?: [a: 1] == [a: 1]
+        ?: [a: 1] != [a: 2]
+        ?: [a: 1] != [b: 1]
+        ?: [a: 1, b: 2] == [a: 1, b: 2]
+        ?: [a: 1, b: 2] != [a: 1, b: 3]
+        ?: [a: 1, b: 2] != [a: 1, c: 2]
+        ?: [a: 1, b: 2] != [a: 1]
+        ?: [a: 1] != [a: 1, b: 2]
+    }
+
     // --- Iterable ---
 
     \iterator {

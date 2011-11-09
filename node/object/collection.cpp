@@ -18,10 +18,29 @@ Collection *Collection::initCopy(const Collection *other) {
 Collection::~Collection() {}
 
 void Collection::initRoot() {
+    LIU_ADD_PROPERTY(Collection, flattened);
+
     LIU_ADD_NATIVE_METHOD(Collection, append, <<);
     LIU_ADD_NATIVE_METHOD(Collection, remove, []>>);
 
     LIU_ADD_NATIVE_METHOD(Collection, clear);
+}
+
+LIU_DEFINE_ACCESSOR(Collection, bool, isFlattened, IsFlattened, true);
+
+LIU_DEFINE_NATIVE_METHOD(Collection, flattened_get) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_QUESTION_MARK;
+    LIU_CHECK_INPUT_SIZE(0);
+    return Boolean::make(Collection::cast(parent())->isFlattened());
+}
+
+LIU_DEFINE_NATIVE_METHOD(Collection, flattened_set) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_QUESTION_MARK;
+    LIU_CHECK_INPUT_SIZE(1);
+    Collection::cast(parent())->setIsFlattened(message->runFirstInput()->toBool());
+    return this;
 }
 
 LIU_DEFINE_NATIVE_METHOD(Collection, append) {

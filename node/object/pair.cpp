@@ -68,6 +68,7 @@ Node *Pair::unnamedChild(int index) const {
 }
 
 bool Pair::isEqualTo(const Node *other) const {
+    if(isSameAs(other)) return true;
     const Pair *otherPair = Pair::dynamicCast(other);
     return otherPair && first()->isEqualTo(otherPair->first()) && second()->isEqualTo(otherPair->second());
 }

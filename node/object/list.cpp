@@ -37,7 +37,7 @@ LIU_DEFINE_NATIVE_METHOD(List, make) {
     LIU_FIND_LAST_MESSAGE;
     List *list = List::make();
     for(int i = 0; i < message->numInputs(); ++i)
-        list->append(message->runInput(i));
+        list->_insert(i, message->runInput(i));
     return list;
 }
 
@@ -135,7 +135,7 @@ int List::size() const {
 // --- Collection ---
 
 void List::append(Node *item) {
-    _insert(size(), item);
+    _insertListOrItem(size(), item);
 }
 
 Node *List::remove(Node *item, bool *wasFoundPtr) {
@@ -256,7 +256,7 @@ void List::append(Node *index, Node *value, bool *okPtr) {
     int i = index ? index->toDouble() : max;
     if(i < 0) i = max + i;
     bool ok = i == max;
-    if(ok) _insert(i, value);
+    if(ok) _insertListOrItem(i, value);
     if(okPtr)
         *okPtr = ok;
     else if(!ok) {
@@ -334,12 +334,21 @@ void List::insert(Node *index, Node *item, Node *before, bool *okPtr) {
     int i = index ? index->toDouble() : max;
     if(i < 0) i = max + i;
     bool ok = i >= 0 && i <= max;
-    if(ok) _insert(i, item);
+    if(ok) _insertListOrItem(i, item);
     if(okPtr)
         *okPtr = ok;
     else if(!ok) {
         LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
     }
+}
+
+void List::_insertListOrItem(int index, Node *listOrItem) {
+    List *list = List::dynamicCast(listOrItem);
+    if(list && isFlattened()) {
+        QScopedPointer<Iterator> i(list->iterator());
+        while(i->hasNext()) _insert(index++, i->next().second);
+    } else
+        _insert(index, listOrItem);
 }
 
 void List::_insert(int index, Node *item) {

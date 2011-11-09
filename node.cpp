@@ -7,12 +7,12 @@
 #include "node/object/number.h"
 #include "node/object/text.h"
 #include "node/object/property.h"
-#include "node/object/childcollection.h"
-#include "node/object/parentset.h"
 #include "node/object/language/message.h"
 #include "node/object/language/block.h"
 #include "node/object/language/nativemethod.h"
 #include "node/object/language/method.h"
+#include "node/object/language/childcollection.h"
+#include "node/object/language/parentset.h"
 
 LIU_BEGIN
 
@@ -392,9 +392,11 @@ Node *Node::defineOrAssign(bool isDefine) {
     } else // rhs is not a block
         value = message->runSecondInput();
     Property *property = NULL;
-    if(!isDefine && (property = Property::dynamicCast(findChild(msg->name()))))
-        LIU_MESSAGE("set", value)->run(property);
-    else
+    if(!isDefine && (property = Property::dynamicCast(findChild(msg->name())))) {
+        Message *setMessage = LIU_MESSAGE("set", value);
+        setMessage->setModifiers(msg->modifiers());
+        setMessage->run(property);
+    } else
         setChild(msg->name(), value, isDefine);
     if(isDefine) value->hasBeenDefined(msg);
     return value;

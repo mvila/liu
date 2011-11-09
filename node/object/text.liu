@@ -51,7 +51,7 @@ Object Text {
 
     \`==` {
     inputs:
-        (\what)
+        (other)
     test:
         ?: "" == ""
         !: "a" == ""
@@ -62,6 +62,8 @@ Object Text {
     }
 
     \`<=>` {
+    inputs:
+        (other)
     test:
         ?: ("" <=> "") == 0
         ?: ("abc" <=> "abc") == 0
