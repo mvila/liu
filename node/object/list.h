@@ -56,6 +56,7 @@ private:
 public:
     virtual void set(Node *index, Node *item, bool *wasFoundPtr = NULL);
 private:
+    void _setListOrItem(int index, Node *listOrItem);
     void _set(int index, Node *item);
 public:
     virtual void append(Node *index, Node *item, bool *okPtr = NULL);

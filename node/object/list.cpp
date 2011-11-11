@@ -202,12 +202,30 @@ void List::set(Node *index, Node *item, bool *wasFoundPtr) {
     int i = index ? index->toDouble() : max;
     if(i < 0) i = max + i;
     bool wasFound = i >= 0 && i < max;
-    if(wasFound) _set(i, item);
+    if(wasFound) _setListOrItem(i, item);
     if(wasFoundPtr)
         *wasFoundPtr = wasFound;
     else if(!wasFound) {
         LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
     }
+}
+
+void List::_setListOrItem(int index, Node *listOrItem) {
+    List *list = List::dynamicCast(listOrItem);
+    if(list && isFlattened()) {
+        QScopedPointer<Iterator> i(list->iterator());
+        bool isFirst = true;
+        while(i->hasNext()) {
+            Node *item = i->next().second;
+            if(isFirst) {
+                _set(index, item);
+                isFirst = false;
+            } else
+                _insert(index, item);
+            index++;
+        }
+    } else
+        _set(index, listOrItem);
 }
 
 void List::_set(int index, Node *item) {
