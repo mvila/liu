@@ -9,6 +9,7 @@ namespace Language {
         if(!_root) {
             _root = Object::root()->fork();
             Object::root()->addChild("Language", _root);
+            _root->setNodeOwner(Object::root()); \
             _root->declare("Language");
         }
         return _root;

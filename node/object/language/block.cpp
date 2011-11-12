@@ -38,7 +38,7 @@ namespace Language {
             }
             if(testSection()) {
                 TestSuite *testSuite = TestSuite::cast(child("test_suite"));
-                testSuite->append(LIU_TEST(testSection(), receiver));
+                testSuite->append(Test::make(testSection(), receiver));
             }
             _metaSectionsHaveBeenRun = true;
         }

@@ -151,6 +151,7 @@ public:
 
     virtual ~Node();
 
+    inline static Node *dynamicCast(Node *node) { return node; }
     inline static Node *constCast(const Node *node) { return const_cast<Node *>(node); }
 
     static Node *root();
@@ -158,6 +159,10 @@ public:
 
     const QString nodeName() const;
     void setNodeName(const QString &name);
+
+    Node *nodeOwner() const;
+    void setNodeOwner(Node *owner);
+
     const QString nodePath() const;
 
     void declare(const QString &name) const;
@@ -466,6 +471,7 @@ NAME *NAME::root() { \
         int pos = name.lastIndexOf("::"); \
         if(pos != -1) name = name.mid(pos + 2); \
         PARENT::root()->addOrSetChild(name, _root); \
+        _root->setNodeOwner(PARENT::root()); \
         _root->declare(name); \
     } \
     return _root; \
@@ -482,6 +488,7 @@ NAME *NAME::root() { \
         int pos = name.lastIndexOf("::"); \
         if(pos != -1) name = name.mid(pos + 2); \
         PARENT::root()->addOrSetChild(name, _root); \
+        _root->setNodeOwner(PARENT::root()); \
         _root->declare(name); \
     } \
     return _root; \

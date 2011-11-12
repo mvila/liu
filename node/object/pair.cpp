@@ -33,8 +33,8 @@ void Pair::initRoot() {
 
     LIU_ADD_NATIVE_METHOD(Pair, init);
 
-    LIU_ADD_PROPERTY(Pair, first)
-    LIU_ADD_PROPERTY(Pair, second)
+    LIU_ADD_PROPERTY(Pair, first);
+    LIU_ADD_PROPERTY(Pair, second);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Pair, init) {
@@ -49,11 +49,11 @@ LIU_DEFINE_NATIVE_METHOD(Pair, init) {
 
 LIU_DEFINE_NODE_ACCESSOR(Pair, Node, first, First);
 LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(Pair, first);
-LIU_DEFINE_NODE_PROPERTY(Pair, first, First);
+LIU_DEFINE_NODE_PROPERTY(Pair, Node, first, First);
 
 LIU_DEFINE_NODE_ACCESSOR(Pair, Node, second, Second);
 LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(Pair, second);
-LIU_DEFINE_NODE_PROPERTY(Pair, second, Second);
+LIU_DEFINE_NODE_PROPERTY(Pair, Node, second, Second);
 
 Node *Pair::unnamedChild(int index) const {
     if(_first) {

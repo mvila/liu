@@ -62,6 +62,7 @@ Node *Node::root() {
         _root = new Node(NULL);
         _root->setOrigin(_root);
         _root->addChild("Node", _root);
+        _root->setNodeOwner(_root);
         _root->declare("Node");
     }
     return _root;
@@ -132,11 +133,19 @@ void Node::setNodeName(const QString &name) {
     addOrSetChild(".name", (new Text(Text::root()))->init(&name));
 }
 
+Node *Node::nodeOwner() const {
+    return child(".owner");
+}
+
+void Node::setNodeOwner(Node *owner) {
+    addOrSetChild(".owner", owner);
+}
+
 const QString Node::nodePath() const {
     QString path;
     const Node *cur = this;
     const Node *par;
-    while((par = cur->parent()) != cur) {
+    while((par = cur->nodeOwner()) != cur) {
         path.prepend(par->nodeName().toLower() + "/");
         cur = par;
     }

@@ -15,12 +15,14 @@ LIU_DECLARE_NATIVE_METHOD(NAME##_set);
 #define LIU_DECLARE_READ_ONLY_PROPERTY(NAME) \
 LIU_DECLARE_NATIVE_METHOD(NAME##_get);
 
-#define LIU_DEFINE_NODE_PROPERTY(CLASS, NAME, NAME_CAP) \
+#define LIU_DEFINE_NODE_PROPERTY(CLASS, TYPE, NAME, NAME_CAP) \
 LIU_DEFINE_READ_ONLY_NODE_PROPERTY(CLASS, NAME); \
 LIU_DEFINE_NATIVE_METHOD(CLASS, NAME##_set) { \
     LIU_FIND_LAST_MESSAGE; \
     LIU_CHECK_INPUT_SIZE(1); \
-    CLASS::cast(parent())->set##NAME_CAP(message->runFirstInput()); \
+    TYPE *value = TYPE::dynamicCast(message->runFirstInput()); \
+    if(!value) LIU_THROW_TYPECAST_EXCEPTION(QString("%1 is expected").arg(#TYPE)); \
+    CLASS::cast(parent())->set##NAME_CAP(value); \
     return this; \
 }
 

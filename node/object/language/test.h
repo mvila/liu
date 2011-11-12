@@ -1,30 +1,27 @@
 #ifndef LIU_LANGUAGE_TEST_H
 #define LIU_LANGUAGE_TEST_H
 
-#include "node/object/element.h"
+#include "node/object/property.h"
 #include "node/object/language/section.h"
 
 LIU_BEGIN
 
 namespace Language {
-    #define LIU_TEST(ARGS...) \
-    new Language::Test(context()->child("Object", "Language", "Test"), ##ARGS)
-
-    class Test : public GenericNodeElement<Section> {
-        LIU_DECLARE(Test, Element, Language);
+    class Test : public Object {
+        LIU_DECLARE_2(Test, Object, Language);
     public:
-        explicit Test(Node *origin, Section *section = NULL, Node *receiver = NULL) :
-            GenericNodeElement<Section>(origin), _receiver(receiver) { setSection(section); }
+        explicit Test(Node *origin = context()->child("Object", "Language", "Test")) :
+            Object(origin), _section(NULL), _receiver(NULL) {}
 
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD(Test);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(Test, LIU_FORK_IF_NOT_NULL(section()), LIU_FORK_IF_NOT_NULL(receiver()));
+        static Test *make(Section *section, Node *receiver) { return (new Test())->init(section, receiver); }
 
-        // aliases...
-        Section *section() const { return value(); }
-        void setSection(Section *section) { setValue(section); }
+        Test *init(Section *section = NULL, Node *receiver = NULL);
 
-        Node *receiver() const { return _receiver; }
-        void setReceiver(Node *receiver) { _receiver = receiver; }
+        LIU_DECLARE_NODE_ACCESSOR(Section, section, Section);
+        LIU_DECLARE_PROPERTY(section);
+
+        LIU_DECLARE_NODE_ACCESSOR(Node, receiver, Receiver);
+        LIU_DECLARE_PROPERTY(receiver);
 
         virtual Node *run(Node *receiver = context()) {
             Q_UNUSED(receiver);
@@ -37,6 +34,7 @@ namespace Language {
             return section() ? section()->toString(debug, level) : "NULL";
         }
     private:
+        Section *_section;
         Node *_receiver;
     };
 }
