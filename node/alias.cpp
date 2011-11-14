@@ -18,7 +18,7 @@ LIU_DEFINE_NATIVE_METHOD(Alias, init) {
         Message *msg = Message::dynamicCast(primitive->value());
         if(!msg) LIU_THROW(ArgumentException, "expected 'Message'");
         names().append(msg->name());
-        primitive = primitive->next();
+        primitive = primitive->hasNext();
     }
     return this;
 }

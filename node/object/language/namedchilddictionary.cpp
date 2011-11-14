@@ -55,7 +55,7 @@ namespace Language {
     Node *NamedChildDictionary::get(Node *index, bool *wasFoundPtr) {
         QString name = index->toString();
         Node *result = hasDirectChild(name);
-        if(result->isVirtual()) result = NULL;
+        if(result && result->isVirtual()) result = NULL;
         bool wasFound = result;
         if(wasFoundPtr)
             *wasFoundPtr = wasFound;

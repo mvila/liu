@@ -88,20 +88,29 @@ void CLASS::set##NAME_CAP(const TYPE *NAME) { \
 
 #define LIU_DECLARE_NODE_ACCESSOR(TYPE, NAME, NAME_CAP) \
 TYPE *NAME() const; \
+TYPE *has##NAME_CAP() const; \
 void set##NAME_CAP(TYPE *NAME = NULL); \
 void delete##NAME_CAP(); \
 virtual void NAME##WillChange(); \
 virtual void NAME##HasChanged();
 
 #define LIU_DEFINE_NODE_ACCESSOR(CLASS, TYPE, NAME, NAME_CAP) \
-TYPE *CLASS::NAME() const { \
+TYPE *CLASS::has##NAME_CAP() const { \
     if(_##NAME) return _##NAME; \
     CLASS *orig = CLASS::dynamicCast(origin()); \
-    if(!orig) LIU_THROW_NULL_POINTER_EXCEPTION(QString("'%1' is undefined").arg(#NAME)); \
-    TYPE *result = orig->NAME()->fork(); \
-    result->setIsVirtual(true); \
-    constCast(this)->_##NAME = result; \
-    constCast(this)->addUnnamedChild(result); \
+    if(!orig) return NULL; \
+    TYPE *result = orig->has##NAME_CAP(); \
+    if(result) { \
+        result = result->fork(); \
+        result->setIsVirtual(true); \
+        constCast(this)->_##NAME = result; \
+        constCast(this)->addUnnamedChild(result); \
+    } \
+    return result; \
+} \
+TYPE *CLASS::NAME() const { \
+    TYPE *result = has##NAME_CAP(); \
+    if(!result) LIU_THROW_NULL_POINTER_EXCEPTION(QString("'%1' is undefined").arg(#NAME)); \
     return result; \
 } \
 void CLASS::set##NAME_CAP(TYPE *NAME) { \
@@ -281,7 +290,9 @@ public:
     Node *findChild(const QString &name, bool searchInParents = true, Node **parentPtr = NULL,
                    bool autoFork = true, bool *isDirectPtr = NULL) const;
 private:
-    Node *findChildInSelfOrOrigins(const QString &name, bool autoFork = true, bool *isDirectPtr = NULL) const;
+    Node *findChildInSelfOriginsOrParents(const QString &name, bool searchInParents, Node **parentPtr,
+                   bool autoFork, bool *isDirectPtr, QSet<const Node *> *alreadySeen) const;
+    Node *findChildInSelfOrOrigins(const QString &name, bool autoFork, bool *isDirectPtr, QSet<const Node *> *alreadySeen) const;
 public:
     bool hasChild(const QString &name, bool searchInParents = true) const {
         return findChild(name, searchInParents);
@@ -322,7 +333,9 @@ public:
     LIU_DECLARE_NATIVE_METHOD(parent);
 
     Node *findParentOriginatingFrom(Node *orig) const;
-
+private:
+    Node *_findParentOriginatingFrom(Node *orig, QSet<const Node *> *alreadySeen) const;
+public:
     virtual Node *receive(Primitive *primitive);
 
     virtual Node *run(Node *receiver = context()) {

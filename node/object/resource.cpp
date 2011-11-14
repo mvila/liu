@@ -26,7 +26,7 @@ LIU_DEFINE_NATIVE_METHOD(Resource, init) {
 
 //    // === TODO: DRY ===
 //    LIU_FIND_LAST_PRIMITIVE;
-//    Primitive *nextPrimitive = primitive->next();
+//    Primitive *nextPrimitive = primitive->hasNext();
 //    if(nextPrimitive) {
 //        nextPrimitive->run(this);
 //        Primitive::skip(this);

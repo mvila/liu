@@ -23,7 +23,7 @@ namespace Language {
             GenericPair<Primitive *, Primitive *>(origin, NULL, NULL) { setLabel(label); setValue(value); }
 
         Argument(Node *origin, Node *node) :
-            GenericPair<Primitive *, Primitive *>(origin, NULL, NULL) { setValue(LIU_PRIMITIVE(node)); }
+            GenericPair<Primitive *, Primitive *>(origin, NULL, NULL) { setValue(Primitive::make(node)); }
 
         virtual ~Argument() {
             setLabel(NULL);

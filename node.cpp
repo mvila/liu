@@ -175,7 +175,7 @@ LIU_DEFINE_NATIVE_METHOD(Node, fork) {
 
 LIU_DEFINE_NATIVE_METHOD(Node, init) {
     LIU_FIND_LAST_PRIMITIVE;
-    Primitive *nextPrimitive = primitive->next();
+    Primitive *nextPrimitive = primitive->hasNext();
     if(nextPrimitive && Block::dynamicCast(nextPrimitive->value())) {
         nextPrimitive->run(this);
         Primitive::skip(this);
@@ -241,7 +241,7 @@ bool Node::isDefined(QSet<const Node *> *alreadySeen) const {
         while(!result && i->hasNext()) result = i->next().second->isDefined(alreadySeen);
         if(!result && origin() != this) result = origin()->isDefined(alreadySeen);
     }
-    if(firstRecursion) delete alreadySeen;
+    if(firstRecursion) delete alreadySeen; // FIXME: potential memory leak
     return result;
 }
 
@@ -457,14 +457,21 @@ LIU_DEFINE_NATIVE_METHOD(Node, remove) {
 }
 
 Node *Node::findChild(const QString &name, bool searchInParents, Node **parentPtr, bool autoFork, bool *isDirectPtr) const {
-    Node *node = findChildInSelfOrOrigins(name, autoFork, isDirectPtr);
+    QScopedPointer< QSet<const Node *> > alreadySeen(new QSet<const Node *>);
+    return findChildInSelfOriginsOrParents(name, searchInParents, parentPtr, autoFork, isDirectPtr, alreadySeen.data());
+}
+
+Node *Node::findChildInSelfOriginsOrParents(const QString &name, bool searchInParents, Node **parentPtr,
+                                            bool autoFork, bool *isDirectPtr, QSet<const Node *> *alreadySeen) const {
+    Node *node = findChildInSelfOrOrigins(name, autoFork, isDirectPtr, alreadySeen);
     if(searchInParents) {
         if(node) {
             if(parentPtr) *parentPtr = constCast(this);
         } else if(_parents)
             foreach(Node *parent, _parents->keys()) {
-                if(parent != this) { // for Node::root which is child of itself
-                    node = parent->findChild(name, searchInParents, parentPtr, autoFork, isDirectPtr);
+                if(parent != this && !alreadySeen->contains(parent)) { // for Node::root which is child of itself
+                    node = parent->findChildInSelfOriginsOrParents(name, searchInParents, parentPtr,
+                                                                   autoFork, isDirectPtr, alreadySeen);
                     if(node) break;
                 }
             }
@@ -472,15 +479,18 @@ Node *Node::findChild(const QString &name, bool searchInParents, Node **parentPt
     return node;
 }
 
-Node *Node::findChildInSelfOrOrigins(const QString &name, bool autoFork, bool *isDirectPtr) const {
+Node *Node::findChildInSelfOrOrigins(const QString &name, bool autoFork,
+                                     bool *isDirectPtr, QSet<const Node *> *alreadySeen) const {
+    if(alreadySeen->contains(this)) return NULL;
+    alreadySeen->insert(this);
     bool isRemoved;
     Node *node = hasDirectChild(name, &isRemoved);
     bool isDirect = node || isRemoved;
     if(!isDirect) {
-        if(origin() != this) node = origin()->findChildInSelfOrOrigins(name);
+        if(origin() != this) node = origin()->findChildInSelfOrOrigins(name, true, NULL, alreadySeen);
         if(!node && _extensions) {
             foreach(Node *extension, *_extensions) {
-                node = extension->findChildInSelfOrOrigins(name);
+                node = extension->findChildInSelfOrOrigins(name, true, NULL, alreadySeen);
                 if(node) break;
             }
         }
@@ -550,22 +560,30 @@ LIU_DEFINE_NATIVE_METHOD(Node, parent) {
     return message->isQuestioned() ? Boolean::make(hasOneParent()) : parent();
 }
 
-Node *Node::findParentOriginatingFrom(Node *orig) const { // TODO: Optimize and secure with a alreadySeen cache
-    if(_parents) {
+Node *Node::findParentOriginatingFrom(Node *orig) const {
+    QScopedPointer< QSet<const Node *> > alreadySeen(new QSet<const Node *>);
+    return _findParentOriginatingFrom(orig, alreadySeen.data());
+}
+
+Node *Node::_findParentOriginatingFrom(Node *orig, QSet<const Node *> *alreadySeen) const {
+    if(_parents && !alreadySeen->contains(this)) {
+        alreadySeen->insert(this);
         orig = orig->real();
         Node *node;
         foreach(Node *parent, _parents->keys()) {
             if(parent->isOriginatingFrom(orig)) return parent;
             if(parent != this)
-                if((node = parent->findParentOriginatingFrom(orig))) return node;
+                if((node = parent->_findParentOriginatingFrom(orig, alreadySeen))) return node;
         }
         if(origin() != this)
-            if((node = origin()->findParentOriginatingFrom(orig))) return node;
+            if((node = origin()->_findParentOriginatingFrom(orig, alreadySeen))) return node;
     }
     return NULL;
 }
 
 Node *Node::receive(Primitive *primitive) {
+//    primitive->value()->inspect();
+//    inspect();
     return primitive->run(this);
 }
 
@@ -634,9 +652,8 @@ LIU_DEFINE_NATIVE_METHOD(Node, throw) {
     LIU_CHECK_INPUT_SIZE(0);
     if(!message->isQuestioned()) throw *this;
     LIU_FIND_LAST_PRIMITIVE;
-    Primitive *nextPrimitive = primitive->next();
-    if(!nextPrimitive)
-        LIU_THROW(InterpreterException, "missing code after 'throw?' method");
+    Primitive *nextPrimitive = primitive->hasNext();
+    if(!nextPrimitive) LIU_THROW(InterpreterException, "missing code after 'throw?' method");
     bool result = false;
     try {
         nextPrimitive->run();
@@ -653,7 +670,7 @@ Node *Node::assert(bool isAssertTrue) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     LIU_FIND_LAST_PRIMITIVE;
-    Primitive *nextPrimitive = primitive->next();
+    Primitive *nextPrimitive = primitive->hasNext();
     if(!nextPrimitive)
         LIU_THROW(InterpreterException, QString("missing code after '%1' statement").arg(message->name()));
     Node *result = nextPrimitive->run();

@@ -25,7 +25,7 @@ namespace Language {
             }
         } else {
             LIU_FIND_LAST_PRIMITIVE;
-            Primitive *nextPrimitive = primitive->next();
+            Primitive *nextPrimitive = primitive->hasNext();
             if(nextPrimitive) {
                 setCode(nextPrimitive);
                 Primitive::skip(this);
@@ -36,7 +36,7 @@ namespace Language {
 
     LIU_DEFINE_NATIVE_METHOD(Method, return) {
         LIU_FIND_LAST_PRIMITIVE;
-        if(primitive->next())
+        if(primitive->hasNext())
             LIU_THROW(InterpreterException, "dead code found after a return statement");
         LIU_FIND_LAST_MESSAGE;
         LIU_CHECK_INPUT_SIZE(0, 1);

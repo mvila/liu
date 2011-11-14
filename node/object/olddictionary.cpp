@@ -103,7 +103,7 @@ LIU_DEFINE_NATIVE_METHOD(OldDictionary, empty) {
 
 LIU_DEFINE_NATIVE_METHOD(OldDictionary, each) {
     LIU_FIND_LAST_PRIMITIVE;
-    Primitive *nextPrimitive = primitive->next();
+    Primitive *nextPrimitive = primitive->hasNext();
     if(!nextPrimitive) LIU_THROW(InterpreterException, QString("missing code after an each statement"));
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(2);

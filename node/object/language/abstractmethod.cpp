@@ -49,8 +49,8 @@ namespace Language {
         }
         if(hasCodeInput()) {
             LIU_FIND_LAST_PRIMITIVE;
-            Primitive *nextPrimitive = primitive->next();
-            forkedMethod->addOrSetChild(codeInputName(), nextPrimitive ? nextPrimitive : LIU_PRIMITIVE()); // FIXME: abstract primitive?
+            Primitive *nextPrimitive = primitive->hasNext();
+            forkedMethod->addOrSetChild(codeInputName(), nextPrimitive ? nextPrimitive : Primitive::make()); // FIXME: abstract primitive?
         }
     }
 }

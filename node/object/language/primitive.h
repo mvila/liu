@@ -1,38 +1,36 @@
 #ifndef LIU_LANGUAGE_PRIMITIVE_H
 #define LIU_LANGUAGE_PRIMITIVE_H
 
-#include "node/object/element.h"
+#include "node/object/property.h"
 #include "node/object/language.h"
 
 LIU_BEGIN
 
 namespace Language {
-    #define LIU_PRIMITIVE(ARGS...) \
-    new Language::Primitive(context()->child("Object", "Language", "Primitive"), ##ARGS)
-
     #define LIU_PRIMITIVE_ADD(BASE, OTHER) \
     if(BASE) BASE->last()->setNext(OTHER); else BASE = (OTHER);
 
-    class Primitive : public Element {
-        LIU_DECLARE(Primitive, Element, Language);
+    class Primitive : public Object {
+        LIU_DECLARE_2(Primitive, Object, Language);
     public:
-        explicit Primitive(Node *origin, Node *value = NULL, const QStringRef &sourceCodeRef = QStringRef(),
-                           Primitive *next = NULL) :
-            Element(origin, value), _sourceCodeRef(sourceCodeRef),  _previous(NULL), _next(NULL) { setNext(next); }
+        explicit Primitive(Node *origin = context()->child("Object", "Language", "Primitive")) :
+            Object(origin), _value(NULL), _sourceCodeRef(NULL), _next(NULL), _previous(NULL) {}
 
-        virtual ~Primitive() {
-            setNext(NULL);
+        static Primitive *make(Node *value) { return (new Primitive())->init(value); }
+
+        static Primitive *make(Node *value, const QStringRef &sourceCodeRef) {
+            return (new Primitive())->init(value, &sourceCodeRef);
         }
 
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD(Primitive);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(Primitive, LIU_FORK_IF_NOT_NULL(value()), sourceCodeRef(), LIU_FORK_IF_NOT_NULL(next()));
+        Primitive *init(Node *value = NULL, const QStringRef *sourceCodeRef = NULL);
 
-        const QStringRef &sourceCodeRef() const { return _sourceCodeRef; }
-        void setSourceCodeRef(const QStringRef &sourceCodeRef) { _sourceCodeRef = sourceCodeRef; }
+        LIU_DECLARE_NODE_ACCESSOR(Node, value, Value);
+        LIU_DECLARE_PROPERTY(value);
 
-        Primitive *next() const { return _next; }
-        Primitive *setNext(Primitive *next);
-        bool hasNext() const { return _next; }
+        LIU_DECLARE_ACCESSOR(QStringRef, sourceCodeRef, SourceCodeRef);
+
+        LIU_DECLARE_NODE_ACCESSOR(Primitive, next, Next);
+        LIU_DECLARE_PROPERTY(next);
         Primitive *last();
         int size() const;
 
@@ -43,9 +41,10 @@ namespace Language {
 
         virtual QString toString(bool debug = false, short level = 0) const;
     private:
-        QStringRef _sourceCodeRef;
-        Primitive *_previous;
+        Node *_value;
+        QStringRef *_sourceCodeRef;
         Primitive *_next;
+        Primitive *_previous;
     public:
         // === Skip ===
 

@@ -14,7 +14,7 @@ namespace Language {
         _sourceCodes = LIU_SOURCE_CODE_DICTIONARY();
         addChild("source_codes", _sourceCodes);
 //        TestSuite::root();
-        setTestSuite(LIU_TEST_SUITE());
+        setTestSuite(TestSuite::make());
     }
 
     void Interpreter::initOperatorTable() {

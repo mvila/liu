@@ -138,7 +138,7 @@ namespace Language {
             name.remove('!');
         }
         message->setName(name);
-        Primitive *primitive = LIU_PRIMITIVE(message);
+        Primitive *primitive = Primitive::make(message);
         int begin = token()->sourceCodeRef.position();
         consume();
         if(is(Token::LeftParenthesis)) {
@@ -196,7 +196,7 @@ namespace Language {
         default:
             throw parserException("unimplemented token");
         }
-        Primitive *primitive = LIU_PRIMITIVE(value, token()->sourceCodeRef);
+        Primitive *primitive = Primitive::make(value, token()->sourceCodeRef);
         consume();
         consumeUselessNewline();
         return primitive;
@@ -224,13 +224,13 @@ namespace Language {
         if(rightBracket.contains("?")) message->setIsQuestioned(true);
         if(rightBracket.contains("!")) message->setIsExclaimed(true);
         QStringRef sourceCodeRef = lexer()->source().midRef(begin, end - begin);
-        Primitive *primitive = LIU_PRIMITIVE(LIU_MESSAGE(!hasKey ? "List" : "Dictionary"), sourceCodeRef);
-        primitive->setNext(LIU_PRIMITIVE(message, sourceCodeRef));
+        Primitive *primitive = Primitive::make(LIU_MESSAGE(!hasKey ? "List" : "Dictionary"), sourceCodeRef);
+        primitive->setNext(Primitive::make(message, sourceCodeRef));
         return primitive;
     }
 
     Primitive *Parser::scanSubexpression() {
-        Primitive *primitive = LIU_PRIMITIVE();
+        Primitive *primitive = Primitive::make();
         int begin = token()->sourceCodeRef.position();
         openToken();
         consume(); // Left parenthesis
@@ -244,7 +244,7 @@ namespace Language {
     }
 
     Primitive *Parser::scanNestedBlock() {
-        Primitive *primitive = LIU_PRIMITIVE();
+        Primitive *primitive = Primitive::make();
         int begin = token()->sourceCodeRef.position();
         openToken();
         consume(); // Left brace
@@ -271,7 +271,7 @@ namespace Language {
         if(rightBracket.contains("?")) message->setIsQuestioned(true);
         if(rightBracket.contains("!")) message->setIsExclaimed(true);
         QStringRef sourceCodeRef = lexer()->source().midRef(begin, end - begin);
-        LIU_PRIMITIVE_ADD(currentPrimitive, LIU_PRIMITIVE(message, sourceCodeRef));
+        LIU_PRIMITIVE_ADD(currentPrimitive, Primitive::make(message, sourceCodeRef));
         return currentPrimitive;
     }
 
@@ -297,16 +297,16 @@ namespace Language {
                 if(!msg) throw parserException("missing message after '\\' operator");
                 msg->setIsEscaped(true);
             } else if(currentOp->name == "value:") {
-                Primitive *key = LIU_PRIMITIVE(LIU_MESSAGE("value"), sourceCodeRef);
-                chain = LIU_PRIMITIVE(LIU_OLD_PAIR(key, scanExpression()), sourceCodeRef);
+                Primitive *key = Primitive::make(LIU_MESSAGE("value"), sourceCodeRef);
+                chain = Primitive::make(LIU_OLD_PAIR(key, scanExpression()), sourceCodeRef);
             } else if(currentOp->name == "?:" || currentOp->name == "!:") {
-                chain = LIU_PRIMITIVE(LIU_MESSAGE(currentOp->name), sourceCodeRef);
+                chain = Primitive::make(LIU_MESSAGE(currentOp->name), sourceCodeRef);
                 LIU_PRIMITIVE_ADD(chain, scanExpression());
             } else
                 throw parserException("unimplemented special operator");
         } else {
             chain = scanUnaryExpression(NULL);
-            LIU_PRIMITIVE_ADD(chain, LIU_PRIMITIVE(LIU_MESSAGE(currentOp->name), sourceCodeRef));
+            LIU_PRIMITIVE_ADD(chain, Primitive::make(LIU_MESSAGE(currentOp->name), sourceCodeRef));
         }
         LIU_PRIMITIVE_ADD(currentPrimitive, chain);
         return currentPrimitive;
@@ -331,7 +331,7 @@ namespace Language {
         } else {
             if(currentOp->useLHSAsReceiver) {
                 LIU_PRIMITIVE_ADD(currentPrimitive,
-                                    LIU_PRIMITIVE(LIU_MESSAGE(currentOp->name), token()->sourceCodeRef));
+                                    Primitive::make(LIU_MESSAGE(currentOp->name), token()->sourceCodeRef));
             } else {
                 if(!currentPrimitive) throw parserException(QString("missing primitive before '%1'").arg(currentOp->name));
                 Message *message = Message::dynamicCast(currentPrimitive->last()->value());
@@ -341,7 +341,7 @@ namespace Language {
                     message = LIU_MESSAGE(currentOp->name);
                     message->inputs()->append(currentPrimitive->last());
                 }
-                Primitive *primitive = LIU_PRIMITIVE(message, token()->sourceCodeRef);
+                Primitive *primitive = Primitive::make(message, token()->sourceCodeRef);
                 if(currentPrimitive->hasNext())
                     currentPrimitive->last()->previous()->setNext(primitive);
                 else
@@ -378,12 +378,12 @@ namespace Language {
                                      const QStringRef &sourceCodeRef) {
         if(op->isSpecial) {
             if(op->name == ":")
-                lhs = LIU_PRIMITIVE(LIU_OLD_PAIR(lhs, rhs), sourceCodeRef);
+                lhs = Primitive::make(LIU_OLD_PAIR(lhs, rhs), sourceCodeRef);
             else if(op->name == ",") {
                 checkRightHandSide(rhs);
                 Bunch *bunch = Bunch::dynamicCast(lhs->value());
                 if(!bunch)
-                    lhs = LIU_PRIMITIVE(LIU_BUNCH(lhs, rhs), sourceCodeRef);
+                    lhs = Primitive::make(LIU_BUNCH(lhs, rhs), sourceCodeRef);
                 else
                     bunch->append(rhs);
             } else if(op->name == "->") {
@@ -401,7 +401,7 @@ namespace Language {
                 if(message && message->name() == "[]") {
                     message->setName("[]" + op->name);
                     message->inputs()->append(rhs);
-                    Primitive *primitive = LIU_PRIMITIVE(message, sourceCodeRef);
+                    Primitive *primitive = Primitive::make(message, sourceCodeRef);
                     if(lhs->hasNext())
                         lhs->last()->previous()->setNext(primitive);
                     else
@@ -412,7 +412,7 @@ namespace Language {
                     Message *message = LIU_MESSAGE(op->name);
                     message->inputs()->append(lhs->last());
                     message->inputs()->append(rhs);
-                    Primitive *primitive = LIU_PRIMITIVE(message, sourceCodeRef);
+                    Primitive *primitive = Primitive::make(message, sourceCodeRef);
                     if(lhs->hasNext())
                         lhs->last()->previous()->setNext(primitive);
                     else
@@ -422,7 +422,7 @@ namespace Language {
             if(useLHSAsReceiver) {
                 Message *message = LIU_MESSAGE(op->name);
                 message->inputs()->append(rhs);
-                LIU_PRIMITIVE_ADD(lhs, LIU_PRIMITIVE(message, sourceCodeRef));
+                LIU_PRIMITIVE_ADD(lhs, Primitive::make(message, sourceCodeRef));
             }
         }
         return lhs;

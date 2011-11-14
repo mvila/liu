@@ -31,7 +31,7 @@ Node *ControlFlow::ifOrUnless(bool isIf) {
         return testResult;
     }
     LIU_FIND_LAST_PRIMITIVE;
-    if(Primitive *nextPrimitive = primitive->next()) {
+    if(Primitive *nextPrimitive = primitive->hasNext()) {
         if(testResult->toBool() == isIf) Primitive::skip(nextPrimitive->run(this));
         Block *block = Block::dynamicCast(nextPrimitive->value());
         if(block && block->elseSection()) Primitive::skip(block->elseSection()->run(this));
@@ -44,7 +44,7 @@ LIU_DEFINE_NATIVE_METHOD(ControlFlow, loop) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0, 1);
     LIU_FIND_LAST_PRIMITIVE;
-    Primitive *nextPrimitive = primitive->next();
+    Primitive *nextPrimitive = primitive->hasNext();
     if(!nextPrimitive)
         LIU_THROW(InterpreterException, "missing code after a loop statement");
     Block *block = Block::dynamicCast(nextPrimitive->value());
@@ -81,7 +81,7 @@ Node *ControlFlow::whileOrUntil(bool isWhile) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
     LIU_FIND_LAST_PRIMITIVE;
-    Primitive *nextPrimitive = primitive->next();
+    Primitive *nextPrimitive = primitive->hasNext();
     if(!nextPrimitive)
         LIU_THROW(InterpreterException, QString("missing code after %1 statement").arg(isWhile ? "a while" : "an until"));
     Block *block = Block::dynamicCast(nextPrimitive->value());
@@ -114,7 +114,7 @@ Node *ControlFlow::whileOrUntil(bool isWhile) {
 
 LIU_DEFINE_NATIVE_METHOD(ControlFlow, break) {
     LIU_FIND_LAST_PRIMITIVE;
-    if(primitive->next())
+    if(primitive->hasNext())
         LIU_THROW(InterpreterException, "dead code found after a break statement");
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0, 1);
