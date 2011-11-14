@@ -5,9 +5,6 @@
 
 LIU_BEGIN
 
-#define LIU_PROPERTY(ARGS...) \
-new Property(context()->child("Object", "Property"), ##ARGS)
-
 #define LIU_DECLARE_PROPERTY(NAME) \
 LIU_DECLARE_NATIVE_METHOD(NAME##_get); \
 LIU_DECLARE_NATIVE_METHOD(NAME##_set);
@@ -37,23 +34,23 @@ LIU_DEFINE_NATIVE_METHOD(CLASS, NAME##_get) { \
 }
 
 #define LIU_ADD_PROPERTY(CLASS, NAME) \
-Property *NAME##Property = LIU_PROPERTY(); \
+Property *NAME##Property = Property::make(); \
 NAME##Property->LIU_ADD_NATIVE_METHOD(CLASS, NAME##_get, get); \
 NAME##Property->LIU_ADD_NATIVE_METHOD(CLASS, NAME##_set, set); \
 addChild(#NAME, NAME##Property);
 
 #define LIU_ADD_READ_ONLY_PROPERTY(CLASS, NAME) \
-Property *NAME##Property = LIU_PROPERTY(); \
+Property *NAME##Property = Property::make(); \
 NAME##Property->LIU_ADD_NATIVE_METHOD(CLASS, NAME##_get, get); \
 addChild(#NAME, NAME##Property);
 
 class Property : public Object {
-    LIU_DECLARE(Property, Object, Object);
+    LIU_DECLARE_2(Property, Object, Object);
 public:
-    explicit Property(Node *origin) : Object(origin) { setIsAutoRunnable(true); }
+    explicit Property(Node *origin = context()->child("Object", "Property")) :
+        Object(origin) {}
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(Property);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Property);
+    Property *init();
 
     virtual Node *run(Node *receiver = context()) {
         Q_UNUSED(receiver);

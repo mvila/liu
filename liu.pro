@@ -23,7 +23,6 @@ SOURCES += main.cpp \
     node/console.cpp \
     node/object.cpp \
     node/object/property.cpp \
-    node/object/element.cpp \
     node/object/boolean.cpp \
     node/object/number.cpp \
     node/object/character.cpp \
@@ -79,7 +78,6 @@ HEADERS += \
     node/console.h \
     node/object.h \
     node/object/property.h \
-    node/object/element.h \
     node/object/boolean.h \
     node/object/number.h \
     node/object/character.h \
@@ -156,4 +154,5 @@ OTHER_FILES += \
     node/object/language/namedchilddictionary.liu \
     node/object/language/unnamedchildcollection.liu \
     node/object/language/childcollection.liu \
-    node/object/language/parentset.liu
+    node/object/language/parentset.liu \
+    node/object/resource.liu

@@ -1,0 +1,7 @@
+Object Resource {
+    \init {
+    test:
+        r := Resource("file://abc.txt")
+        ?: r url == "file://abc.txt"
+    }
+}

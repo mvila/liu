@@ -3,18 +3,28 @@
 
 LIU_BEGIN
 
-// === Resource ===
+LIU_DEFINE_2(Resource, Object, Object);
 
-LIU_DEFINE(Resource, Object, Object);
+Resource *Resource::init(const QString *url) {
+    Object::init();
+    setUrl(url);
+    return this;
+}
 
-Resource::Resource(Node *origin, const QString &url) : Object(origin) {
-    if(!url.isNull()) setUrl(url);
+Resource *Resource::initCopy(const Resource *other) {
+    Object::initCopy(other);
+    setUrl(other->_url);
+    return this;
+}
+
+Resource::~Resource() {
+    setUrl();
 }
 
 void Resource::initRoot() {
     LIU_ADD_NATIVE_METHOD(Resource, init);
 
-    LIU_ADD_NATIVE_METHOD(Resource, equal_to, ==);
+    LIU_ADD_PROPERTY(Resource, url);
 
     LIU_ADD_NATIVE_METHOD(Resource, get);
 }
@@ -23,15 +33,24 @@ LIU_DEFINE_NATIVE_METHOD(Resource, init) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0, 1);
     if(message->hasInput(0)) setUrl(message->runFirstInput()->toString());
+    return this;
+}
 
-//    // === TODO: DRY ===
-//    LIU_FIND_LAST_PRIMITIVE;
-//    Primitive *nextPrimitive = primitive->hasNext();
-//    if(nextPrimitive) {
-//        nextPrimitive->run(this);
-//        Primitive::skip(this);
-//    }
+LIU_DEFINE_ACCESSOR(Resource, QString, url, Url,);
 
+LIU_DEFINE_NATIVE_METHOD(Resource, url_get) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(0);
+    if(message->isQuestioned())
+        return Boolean::make(Resource::cast(parent())->hasUrl());
+    else
+        return Text::make(Resource::cast(parent())->url());
+}
+
+LIU_DEFINE_NATIVE_METHOD(Resource, url_set) {
+    LIU_FIND_LAST_MESSAGE;
+    LIU_CHECK_INPUT_SIZE(1);
+    Resource::cast(parent())->setUrl(message->runFirstInput()->toString());
     return this;
 }
 
@@ -47,12 +66,6 @@ LIU_DEFINE_NATIVE_METHOD(Resource, get) {
 bool Resource::isEqualTo(const Node *other) const {
     const Resource *otherResource = Resource::dynamicCast(other);
     return otherResource && url() == otherResource->url();
-}
-
-LIU_DEFINE_NATIVE_METHOD(Resource, equal_to) {
-    LIU_FIND_LAST_MESSAGE;
-    LIU_CHECK_INPUT_SIZE(1);
-    return Boolean::make(url() == message->runFirstInput()->toString());
 }
 
 QString Resource::toString(bool debug, short level) const {
