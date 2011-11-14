@@ -118,7 +118,7 @@ body:
         n i := Number()
         !: n defined?
         !: n
-        n i value := 1
+        n i value = 1
         ?: n defined?
         ?: n
     }

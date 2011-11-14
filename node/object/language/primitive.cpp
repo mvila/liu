@@ -10,7 +10,7 @@ namespace Language {
         Object::init();
         setValue(value);
         setSourceCodeRef(sourceCodeRef);
-        // if(hasValue()) _value->setIsVirtual(false);
+        if(hasValue()) _value->setIsVirtual(false);
         return this;
     }
 

@@ -400,8 +400,7 @@ Node *Node::defineOrAssign(bool isDefine) {
         value = LIU_METHOD(message->secondInput()->value(), NULL, NULL, "");
     } else // rhs is not a block
         value = message->runSecondInput();
-    Property *property = NULL;
-    if(!isDefine && (property = Property::dynamicCast(findChild(msg->name())))) {
+    if(Property *property = Property::dynamicCast(findChild(msg->name()))) {
         Message *setMessage = LIU_MESSAGE("set", value);
         setMessage->setModifiers(msg->modifiers());
         setMessage->run(property);
@@ -562,22 +561,18 @@ LIU_DEFINE_NATIVE_METHOD(Node, parent) {
 
 Node *Node::findParentOriginatingFrom(Node *orig) const {
     QScopedPointer< QSet<const Node *> > alreadySeen(new QSet<const Node *>);
-    return _findParentOriginatingFrom(orig, alreadySeen.data());
+    return real()->_findParentOriginatingFrom(orig->real(), alreadySeen.data());
 }
 
 Node *Node::_findParentOriginatingFrom(Node *orig, QSet<const Node *> *alreadySeen) const {
-    if(_parents && !alreadySeen->contains(this)) {
-        alreadySeen->insert(this);
-        orig = orig->real();
-        Node *node;
-        foreach(Node *parent, _parents->keys()) {
-            if(parent->isOriginatingFrom(orig)) return parent;
-            if(parent != this)
-                if((node = parent->_findParentOriginatingFrom(orig, alreadySeen))) return node;
-        }
-        if(origin() != this)
-            if((node = origin()->_findParentOriginatingFrom(orig, alreadySeen))) return node;
+    if(alreadySeen->contains(this)) return NULL;
+    if(isOriginatingFrom(orig)) return constCast(this);
+    alreadySeen->insert(this);
+    if(_parents) {
+        foreach(Node *parent, _parents->keys())
+            if(Node *node = parent->_findParentOriginatingFrom(orig, alreadySeen)) return node;
     }
+    if(Node *node = origin()->_findParentOriginatingFrom(orig, alreadySeen)) return node;
     return NULL;
 }
 
