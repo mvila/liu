@@ -6,7 +6,19 @@
 
 LIU_BEGIN
 
-LIU_DEFINE(ControlFlow, Node, Node);
+LIU_DEFINE_2(ControlFlow, Node, Node);
+
+ControlFlow *ControlFlow::init() {
+    Node::init();
+    return this;
+}
+
+ControlFlow *ControlFlow::initCopy(const ControlFlow *other) {
+    Node::initCopy(other);
+    return this;
+}
+
+ControlFlow::~ControlFlow() {}
 
 void ControlFlow::initRoot() {
     LIU_ADD_NATIVE_METHOD(ControlFlow, if);

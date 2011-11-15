@@ -56,6 +56,11 @@ bool Boolean::isDefined(QSet<const Node *> *alreadySeen) const {
     return hasValue() ? true : Object::isDefined(alreadySeen);
 }
 
+Node *Boolean::run(Node *receiver) {
+    Q_UNUSED(receiver);
+    return Boolean::make(value());
+}
+
 bool Boolean::isEqualTo(const Node *other) const {
     const Boolean *otherBoolean = Boolean::dynamicCast(other);
     return otherBoolean && value() == otherBoolean->value();

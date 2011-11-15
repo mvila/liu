@@ -64,6 +64,11 @@ bool Character::isDefined(QSet<const Node *> *alreadySeen) const {
     return hasValue() ? true : Object::isDefined(alreadySeen);
 }
 
+Node *Character::run(Node *receiver) {
+    Q_UNUSED(receiver);
+    return Character::make(value());
+}
+
 bool Character::isEqualTo(const Node *other) const {
     const Text *otherText = Text::dynamicCast(other);
     if(otherText) return value() == otherText->toChar();

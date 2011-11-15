@@ -5,15 +5,12 @@
 
 LIU_BEGIN
 
-#define LIU_CONSOLE(ARGS...) new Console(context()->child("Console"), ##ARGS)
-
 class Console : public Node {
-    LIU_DECLARE(Console, Node, Node);
+    LIU_DECLARE_2(Console, Node, Node);
 public:
-    explicit Console(Node *origin) : Node(origin) {}
+    explicit Console(Node *origin = context()->child("Console")) : Node(origin) {}
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(Console);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Console);
+    Console *init();
 
     LIU_DECLARE_NATIVE_METHOD(write);
     LIU_DECLARE_NATIVE_METHOD(print);

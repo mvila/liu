@@ -59,7 +59,8 @@ Node *NAME::_##METHOD##_()
 TYPE *has##NAME_CAP() const; \
 TYPE NAME() const; \
 void set##NAME_CAP(const TYPE *NAME = NULL); \
-void set##NAME_CAP(const TYPE &NAME) { set##NAME_CAP(&NAME); }
+void set##NAME_CAP(const TYPE &NAME) { set##NAME_CAP(&NAME); } \
+TYPE *NAME##Data();
 
 #define LIU_DEFINE_ACCESSOR(CLASS, TYPE, NAME, NAME_CAP, DEFAULT) \
 TYPE *CLASS::has##NAME_CAP() const { \
@@ -84,6 +85,10 @@ void CLASS::set##NAME_CAP(const TYPE *NAME) { \
         _##NAME = NULL; \
     } \
     CLASS::hasChanged(); \
+} \
+TYPE *CLASS::NAME##Data() { \
+    if(!_##NAME) _##NAME = new TYPE(NAME()); \
+    return _##NAME; \
 }
 
 #define LIU_DECLARE_NODE_ACCESSOR(TYPE, NAME, NAME_CAP) \

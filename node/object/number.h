@@ -26,22 +26,7 @@ public:
 
     virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const;
 
-    LIU_DECLARE_NATIVE_METHOD(add);
-    LIU_DECLARE_NATIVE_METHOD(subtract);
-    LIU_DECLARE_NATIVE_METHOD(multiply);
-    LIU_DECLARE_NATIVE_METHOD(divide);
-    LIU_DECLARE_NATIVE_METHOD(modulo);
-
-    LIU_DECLARE_NATIVE_METHOD(unary_plus);
-    LIU_DECLARE_NATIVE_METHOD(unary_minus);
-
-    LIU_DECLARE_NATIVE_METHOD(prefix_increment);
-    LIU_DECLARE_NATIVE_METHOD(prefix_decrement);
-
-    LIU_DECLARE_NATIVE_METHOD(nan);
-    LIU_DECLARE_NATIVE_METHOD(inf);
-
-    LIU_DECLARE_NATIVE_METHOD(random);
+    virtual Node *run(Node *receiver = context());
 
     virtual bool isEqualTo(const Node *other) const;
 
@@ -65,6 +50,23 @@ public:
         Q_UNUSED(level);
         return QString("%1").arg(value(), 0, 'g', 13);
     }
+
+    LIU_DECLARE_NATIVE_METHOD(add);
+    LIU_DECLARE_NATIVE_METHOD(subtract);
+    LIU_DECLARE_NATIVE_METHOD(multiply);
+    LIU_DECLARE_NATIVE_METHOD(divide);
+    LIU_DECLARE_NATIVE_METHOD(modulo);
+
+    LIU_DECLARE_NATIVE_METHOD(unary_plus);
+    LIU_DECLARE_NATIVE_METHOD(unary_minus);
+
+    LIU_DECLARE_NATIVE_METHOD(prefix_increment);
+    LIU_DECLARE_NATIVE_METHOD(prefix_decrement);
+
+    LIU_DECLARE_NATIVE_METHOD(nan);
+    LIU_DECLARE_NATIVE_METHOD(inf);
+
+    LIU_DECLARE_NATIVE_METHOD(random);
 private:
     double *_value;
 };

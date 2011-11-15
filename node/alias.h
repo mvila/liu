@@ -7,25 +7,24 @@
 
 LIU_BEGIN
 
-#define LIU_ALIAS(ARGS...) new Alias(context()->child("Alias"), ##ARGS)
-
 class Alias : public Node {
-    LIU_DECLARE(Alias, Node, Node);
+    LIU_DECLARE_2(Alias, Node, Node);
 public:
-    explicit Alias(Node *origin, const QStringList &names = QStringList()) : Node(origin), _names(names) {}
+    explicit Alias(Node *origin = context()->child("Alias")) :
+        Node(origin), _names(NULL) {}
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(Alias);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Alias, names());
+    static Alias *make(const QStringList &names) { return (new Alias())->init(&names); }
+
+    Alias *init(const QStringList *names = NULL);
 
     LIU_DECLARE_NATIVE_METHOD(init);
 
-    QStringList &names() const { return constCast(this)->_names; }
-    void setNames(const QStringList &names) { _names = names; }
+    LIU_DECLARE_ACCESSOR(QStringList, names, Names);
 
     bool isEmpty() const { return names().isEmpty(); }
     bool isNotEmpty() const { return !isEmpty(); }
 private:
-    QStringList _names;
+    QStringList *_names;
 };
 
 LIU_END

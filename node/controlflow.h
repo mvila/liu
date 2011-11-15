@@ -6,15 +6,12 @@
 
 LIU_BEGIN
 
-#define LIU_CONTROL_FLOW(ARGS...) new ControlFlow(context()->child("ControlFlow"), ##ARGS)
-
 class ControlFlow : public Node {
-    LIU_DECLARE(ControlFlow, Node, Node);
+    LIU_DECLARE_2(ControlFlow, Node, Node);
 public:
-    explicit ControlFlow(Node *origin) : Node(origin) {}
+    explicit ControlFlow(Node *origin = context()->child("ControlFlow")) : Node(origin) {}
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(ControlFlow);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(ControlFlow);
+    ControlFlow *init();
 
     LIU_DECLARE_NATIVE_METHOD(if) { return ifOrUnless(true); }
     LIU_DECLARE_NATIVE_METHOD(unless) { return ifOrUnless(false); }

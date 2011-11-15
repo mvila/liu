@@ -80,6 +80,40 @@ bool Number::isDefined(QSet<const Node *> *alreadySeen) const {
     return hasValue() ? true : Object::isDefined(alreadySeen);
 }
 
+Node *Number::run(Node *receiver) {
+    Q_UNUSED(receiver);
+    return Number::make(value());
+}
+
+bool Number::isEqualTo(const Node *other) const {
+    const Number *otherNumber = Number::dynamicCast(other);
+    return otherNumber && value() == otherNumber->value();
+}
+
+short Number::compare(const Node *other) const {
+    const Number *otherNumber = Number::dynamicCast(other);
+    if(otherNumber) return compare(otherNumber->value());
+    LIU_THROW(ArgumentException, "a Number is expected");
+}
+
+short Number::compare(const double &other) const {
+    if(value() > other) return 1;
+    else if(value() < other) return -1;
+    else return 0;
+}
+
+uint Number::hash() const { // FIXME: ugly!
+    double val = value();
+    double uval = fabs(val);
+    uint result;
+    if(uval < UINT_MAX / 200 && uval * 100 == ceil(uval * 100)) {
+        result = uval * 100;
+        if(val < 0) result += UINT_MAX / 2;
+    } else
+        result = qHash(toString());
+    return result;
+}
+
 LIU_DEFINE_NATIVE_METHOD(Number, add) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
@@ -162,35 +196,6 @@ LIU_DEFINE_NATIVE_METHOD(Number, random) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
     return Number::make(qrand());
-}
-
-bool Number::isEqualTo(const Node *other) const {
-    const Number *otherNumber = Number::dynamicCast(other);
-    return otherNumber && value() == otherNumber->value();
-}
-
-short Number::compare(const Node *other) const {
-    const Number *otherNumber = Number::dynamicCast(other);
-    if(otherNumber) return compare(otherNumber->value());
-    LIU_THROW(ArgumentException, "a Number is expected");
-}
-
-short Number::compare(const double &other) const {
-    if(value() > other) return 1;
-    else if(value() < other) return -1;
-    else return 0;
-}
-
-uint Number::hash() const { // FIXME: ugly!
-    double val = value();
-    double uval = fabs(val);
-    uint result;
-    if(uval < UINT_MAX / 200 && uval * 100 == ceil(uval * 100)) {
-        result = uval * 100;
-        if(val < 0) result += UINT_MAX / 2;
-    } else
-        result = qHash(toString());
-    return result;
 }
 
 LIU_END

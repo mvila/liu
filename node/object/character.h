@@ -24,6 +24,8 @@ public:
 
     virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const;
 
+    virtual Node *run(Node *receiver = context());
+
     virtual bool isEqualTo(const Node *other) const;
 
     virtual short compare(const Node *other) const;

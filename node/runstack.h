@@ -5,35 +5,35 @@
 
 LIU_BEGIN
 
-#define LIU_RUN_STACK(ARGS...) new RunStack(context()->child("RunStack"), ##ARGS)
-
 class RunStack : public Node {
-    LIU_DECLARE(RunStack, Node, Node);
+    LIU_DECLARE_2(RunStack, Node, Node);
 public:
-    explicit RunStack(Node *origin) : Node(origin) {}
+    explicit RunStack(Node *origin = context()->child("RunStack")) :
+        Node(origin), _stack(NULL) {}
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(RunStack);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(RunStack);
+    RunStack *init();
+
+    LIU_DECLARE_ACCESSOR(QStack<Node *>, stack, Stack);
 
     void push(Node *node) {
-        _stack.push(node);
+        stackData()->push(node);
     }
 
     Node *pop() {
-        if(_stack.isEmpty()) qFatal("Fatal error: run stack is empty!");
-        return _stack.pop();
+        if(stackData()->isEmpty()) qFatal("Fatal error: run stack is empty!");
+        return stackData()->pop();
     }
 
     Node *top() const {
-        if(_stack.isEmpty()) qFatal("Fatal error: run stack is empty!");
-        return _stack.top();
+        if(stack().isEmpty()) qFatal("Fatal error: run stack is empty!");
+        return stack().top();
     }
 
     template<class T>
     T *find(bool *okPtr = NULL) const {
         T *run = NULL;
-        for(int i = _stack.size() - 1; i > 0; --i) {
-            run = T::dynamicCast(_stack.at(i));
+        for(int i = stack().size() - 1; i > 0; --i) {
+            run = T::dynamicCast(stack().at(i));
             if(run) break;
         }
         if(okPtr)
@@ -45,11 +45,11 @@ public:
 
     void dump() const;
 private:
-    QStack<Node *> _stack;
+    QStack<Node *> *_stack;
 };
 
 inline RunStack *runStack() {
-    static RunStack *_stack = new RunStack(RunStack::root());
+    static RunStack *_stack = RunStack::root()->fork();
     return _stack;
 }
 

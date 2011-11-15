@@ -5,7 +5,19 @@
 
 LIU_BEGIN
 
-LIU_DEFINE(Console, Node, Node);
+LIU_DEFINE_2(Console, Node, Node);
+
+Console *Console::init() {
+    Node::init();
+    return this;
+}
+
+Console *Console::initCopy(const Console *other) {
+    Node::initCopy(other);
+    return this;
+}
+
+Console::~Console() {}
 
 void Console::initRoot() {
     LIU_ADD_NATIVE_METHOD(Console, write);

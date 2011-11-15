@@ -7,7 +7,19 @@
 
 LIU_BEGIN
 
-LIU_DEFINE(Object, Node, Node);
+LIU_DEFINE_2(Object, Node, Node);
+
+Object *Object::init() {
+    Node::init();
+    return this;
+}
+
+Object *Object::initCopy(const Object *other) {
+    Node::initCopy(other);
+    return this;
+}
+
+Object::~Object() {}
 
 void Object::initRoot() {
     addExtension(ControlFlow::root());

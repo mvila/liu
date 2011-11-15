@@ -6,15 +6,12 @@
 
 LIU_BEGIN
 
-#define LIU_OBJECT(ARGS...) new Object(context()->child("Object"), ##ARGS)
-
 class Object : public Node {
-    LIU_DECLARE(Object, Node, Node);
+    LIU_DECLARE_2(Object, Node, Node);
 public:
-    explicit Object(Node *origin) : Node(origin) {}
+    explicit Object(Node *origin = context()->child("Object")) : Node(origin) {}
 
-    LIU_DECLARE_AND_DEFINE_COPY_METHOD(Object);
-    LIU_DECLARE_AND_DEFINE_FORK_METHOD(Object);
+    Object *init();
 
     LIU_DECLARE_NATIVE_METHOD(postfix_increment);
     LIU_DECLARE_NATIVE_METHOD(postfix_decrement);

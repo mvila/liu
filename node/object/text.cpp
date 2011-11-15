@@ -95,9 +95,9 @@ bool Text::isDefined(QSet<const Node *> *alreadySeen) const {
 
 Node *Text::run(Node *receiver) {
     Q_UNUSED(receiver);
+    QString result = value();
     if(hasInterpolableSlices()) {
         LIU_PUSH_RUN(this);
-        QString result = value();
         QString source;
         QString str;
         int offset = 0;
@@ -107,9 +107,8 @@ Node *Text::run(Node *receiver) {
             result.replace(offset + slice.first, slice.second, str);
             offset += str.size() - slice.second;
         }
-        return Text::make(result);
-    } else
-        return this;
+    }
+    return Text::make(result);
 }
 
 bool Text::isEqualTo(const Node *other) const {
