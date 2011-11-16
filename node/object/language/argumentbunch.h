@@ -31,11 +31,11 @@ namespace Language {
             GenericList<Argument *>(origin, argument1, argument2, true) {}
 
         ArgumentBunch(Node *origin, Node *argument) :
-            GenericList<Argument *>(origin, LIU_ARGUMENT(argument), true) {}
+            GenericList<Argument *>(origin, Argument::make(argument), true) {}
 
         ArgumentBunch(Node *origin, Node *argument1, Node *argument2) :
             GenericList<Argument *>(
-                origin, LIU_ARGUMENT(argument1), LIU_ARGUMENT(argument2), true) {}
+                origin, Argument::make(argument1), Argument::make(argument2), true) {}
 
         ArgumentBunch(Node *origin, OldList *list) : GenericList<Argument *>(origin, true) {
             if(list) {

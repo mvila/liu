@@ -154,6 +154,7 @@ void List::clear() {
     clearOperations();
     int s = size();
     if(s > 0) appendOperation(new Operation(this, Operation::Remove, 0, s));
+    hasChanged();
 }
 
 // --- Indexable ---
@@ -191,7 +192,7 @@ Node *List::_get(int index) {
         Node *result = orig->_get(i);
         result = result->fork();
         result->setIsVirtual(true);
-        constCast(this)->_set(index, result);
+        constCast(this)->_set(index, result, true);
         return result;
     }
     LIU_THROW(IndexOutOfBoundsException, "index is out of bounds");
@@ -228,7 +229,7 @@ void List::_setListOrItem(int index, Node *listOrItem) {
         _set(index, listOrItem);
 }
 
-void List::_set(int index, Node *item) {
+void List::_set(int index, Node *item, bool silentMode) {
     int i;
     int count = countOperations();
     for(i = 0; i < count; ++i) {
@@ -252,12 +253,14 @@ void List::_set(int index, Node *item) {
                 }
             } else // S[1..2] + S[1] -> S[1..2]
                 operation->setData(index - operation->index, item);
+            if(!silentMode) hasChanged();
             return;
         }
         if(operation->index > index) break;
         if(operation->type == Operation::Insert) {
             if(index < operation->index + operation->size) { // I[1..2] + S[1] -> I[1..2]
                 operation->setData(index - operation->index, item);
+                if(!silentMode) hasChanged();
                 return;
             } else
                 index -= operation->size;
@@ -267,6 +270,7 @@ void List::_set(int index, Node *item) {
     Operation *operation = new Operation(this, Operation::Set, index);
     operation->appendData(item);
     insertOperation(i, operation);
+    if(!silentMode) hasChanged();
 }
 
 void List::append(Node *index, Node *value, bool *okPtr) {
@@ -312,6 +316,7 @@ void List::_unset(int index) {
                 (index == operation->index - 1 || index == operation->index)) {
             if(index == operation->index - 1) operation->index--; // R[1..2] + R[0] -> R[0..2]
             operation->size++; // R[1..2] + R[1] -> R[1..3]
+            hasChanged();
             return;
         }
         if(operation->index > index) break;
@@ -335,6 +340,7 @@ void List::_unset(int index) {
                     operation->unsetData(index - operation->index);
                 } else
                     unsetOperation(i);
+                hasChanged();
                 return;
             } else
                 index -= operation->size;
@@ -342,6 +348,7 @@ void List::_unset(int index) {
             index += operation->size;
     }
     insertOperation(i, new Operation(this, Operation::Remove, index, 1));
+    hasChanged();
 }
 
 // --- Insertable ---
@@ -389,6 +396,7 @@ void List::_insert(int index, Node *item) {
         } else if(operation->type == Operation::Insert) {
             if(index <= operation->index + operation->size) { // I[1..2] + I[1] -> I[1..3]
                 operation->insertData(index - operation->index, item);
+                hasChanged();
                 return;
             } else
                 index -= operation->size;
@@ -402,6 +410,7 @@ void List::_insert(int index, Node *item) {
                 Operation *operation2 = new Operation(this, Operation::Set, index);
                 operation2->appendData(item);
                 insertOperation(i, operation2);
+                hasChanged();
                 return;
             } else
                 index += operation->size;
@@ -410,6 +419,7 @@ void List::_insert(int index, Node *item) {
     Operation *operation = new Operation(this, Operation::Insert, index);
     operation->appendData(item);
     insertOperation(i, operation);
+    hasChanged();
 }
 
 int List::_partition(int left, int right, int pivotIndex) {

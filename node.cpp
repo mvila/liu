@@ -275,6 +275,14 @@ LIU_DEFINE_NATIVE_METHOD(Node, undefine) {
     return this;
 }
 
+void Node::setIsVirtual(bool isVirtual) {
+    if(_isVirtual == isVirtual) return;
+    _isVirtual = isVirtual;
+    if(!isVirtual && _parents)
+        foreach(Node *parent, _parents->keys())
+            if(parent->_isVirtual) parent->setIsVirtual(false);
+}
+
 Node *Node::virtualOrReal(bool virtualMode) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_QUESTION_MARK;
@@ -376,6 +384,7 @@ void Node::_setChild(const QString &name, Node *value) {
     if(!_children) _children = new QHash<QString, Node *>;
     _children->insert(name, value);
     if(value) value->_addParent(this);
+    if(!value || value->isReal()) hasChanged();
 }
 
 Node *Node::defineOrAssign(bool isDefine) {
@@ -580,6 +589,10 @@ Node *Node::receive(Primitive *primitive) {
 //    primitive->value()->inspect();
 //    inspect();
     return primitive->run(this);
+}
+
+void Node::hasChanged() {
+    setIsReal(true);
 }
 
 LIU_DEFINE_NATIVE_METHOD(Node, or) {

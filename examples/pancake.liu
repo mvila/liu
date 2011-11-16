@@ -1,0 +1,31 @@
+Recipe := Object() {
+    name := Text()
+    preparation_time := Number()
+    cook_time := Number()
+    ingredients := List()
+}
+
+Ingredient := Object() {
+    name := Text()
+}
+
+floor := Ingredient()
+floor name = "Floor"
+sugar := Ingredient()
+sugar name = "Sugar"
+milk := Ingredient()
+milk name = "Milk"
+egg := Ingredient()
+egg name = "Egg"
+butter := Ingredient()
+butter name = "Butter"
+
+pancakes := Recipe()
+pancakes name = "Pancakes"
+pancakes preparation_time = 5
+pancakes cook_time = 15
+pancakes ingredients << floor
+pancakes ingredients << sugar
+pancakes ingredients << milk
+pancakes ingredients << egg
+pancakes ingredients << butter

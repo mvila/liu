@@ -155,4 +155,5 @@ OTHER_FILES += \
     node/object/language/unnamedchildcollection.liu \
     node/object/language/childcollection.liu \
     node/object/language/parentset.liu \
-    node/object/resource.liu
+    node/object/resource.liu \
+    examples/pancake.liu

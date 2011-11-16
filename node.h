@@ -84,7 +84,7 @@ void CLASS::set##NAME_CAP(const TYPE *NAME) { \
         delete _##NAME; \
         _##NAME = NULL; \
     } \
-    CLASS::hasChanged(); \
+    hasChanged(); \
 } \
 TYPE *CLASS::NAME##Data() { \
     if(!_##NAME) _##NAME = new TYPE(NAME()); \
@@ -134,7 +134,7 @@ void CLASS::delete##NAME_CAP() { \
         _##NAME = NULL; \
     } \
     NAME##HasChanged(); \
-    CLASS::hasChanged(); \
+    hasChanged(); \
 }
 
 #define LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(CLASS, NAME) \
@@ -219,8 +219,8 @@ public:
 
     bool isVirtual() const { return _isVirtual; }
     bool isReal() const { return !_isVirtual; }
-    void setIsVirtual(bool isVirtual) { _isVirtual = isVirtual; }
-    void setIsReal(bool isReal) { _isVirtual = !isReal; }
+    void setIsVirtual(bool isVirtual);
+    void setIsReal(bool isReal) { setIsVirtual(!isReal); }
 
     Node *virtualOrReal(bool virtualMode);
     LIU_DECLARE_NATIVE_METHOD(virtual) { return virtualOrReal(true); }
@@ -348,6 +348,8 @@ public:
         return this;
     }
 
+    virtual void hasChanged();
+
     LIU_DECLARE_NATIVE_METHOD(or);
     LIU_DECLARE_NATIVE_METHOD(and);
     LIU_DECLARE_NATIVE_METHOD(not);
@@ -374,8 +376,6 @@ public:
     Node *assert(bool isAssertTrue = true);
     LIU_DECLARE_NATIVE_METHOD(assert_true) { return assert(true); }
     LIU_DECLARE_NATIVE_METHOD(assert_false) { return assert(false); }
-
-    virtual void hasChanged() {}
 
     void inspect() const { P(toString(true).toUtf8()); } // TODO: use Console print
     virtual void inspectInternal() const;

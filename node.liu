@@ -124,9 +124,29 @@ body:
     }
 
     \virtual? {
-    }
+    test:
+        n := Node()
+        n t := Text()
+        f := n fork
+        ?: f t virtual?
+        ?: f t value = "Hello" // change the value of a primitive should make it real
+        !: f t virtual?
+        ?: f t real?
 
-    \real? {
+        n := Node()
+        n o := Object()
+        f := n fork
+        ?: f o virtual?
+        f o t := "Hello" // add a real child to a virtual node should make it real
+        !: f o virtual?
+
+        n := Node()
+        n o := Object()
+        n o t := Text()
+        f := n fork
+        ?: f o virtual?
+        f o t value := "Hello" // a change in a child should propagate to parents
+        !: f o virtual?
     }
 
     \copy {

@@ -1,3 +1,4 @@
+#include "node/object/oldpair.h"
 #include "node/object/language/argumentbunch.h"
 
 LIU_BEGIN
@@ -14,11 +15,11 @@ namespace Language {
         else if(Bunch *bunch = Bunch::dynamicCast(value->value()))
             append(bunch);
         else
-            append(LIU_ARGUMENT(NULL, value));
+            append(Argument::make(NULL, value));
     }
 
     void ArgumentBunch::append(Primitive *label, Primitive *value) {
-        append(LIU_ARGUMENT(label, value));
+        append(Argument::make(label, value));
     }
 
     void ArgumentBunch::append(const Bunch *bunch) {

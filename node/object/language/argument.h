@@ -1,48 +1,34 @@
 #ifndef LIU_LANGUAGE_ARGUMENT_H
 #define LIU_LANGUAGE_ARGUMENT_H
 
-#include "node/object/oldpair.h"
+#include "node/object/pair.h"
 #include "node/object/language/primitive.h"
 
 LIU_BEGIN
 
 namespace Language {
-    #define LIU_ARGUMENT(ARGS...) \
-    new Language::Argument(context()->child("Object", "Language", "Argument"), ##ARGS)
-
-    class Argument : public GenericPair<Primitive *, Primitive *> {
-        LIU_DECLARE(Argument, OldPair, Language);
+    class Argument : public Pair {
+        LIU_DECLARE_2(Argument, Pair, Language);
     public:
-        explicit Argument(Node *origin) :
-            GenericPair<Primitive *, Primitive *>(origin, NULL, NULL) {}
+        explicit Argument(Node *origin = context()->child("Object", "Language", "Argument")) :
+            Pair(origin) {}
 
-        Argument(Node *origin, Primitive *value) :
-            GenericPair<Primitive *, Primitive *>(origin, NULL, NULL) { setValue(value); }
+        static Argument *make(Primitive *value) { return (new Argument())->init(NULL, value); }
+        static Argument *make(Primitive *label, Primitive *value) { return (new Argument())->init(label, value); }
+        static Argument *make(Node *node) { return (new Argument())->init(NULL, Primitive::make(node)); }
 
-        Argument(Node *origin, Primitive *label, Primitive *value) :
-            GenericPair<Primitive *, Primitive *>(origin, NULL, NULL) { setLabel(label); setValue(value); }
+        Argument *init(Primitive *label = NULL, Primitive *value = NULL);
 
-        Argument(Node *origin, Node *node) :
-            GenericPair<Primitive *, Primitive *>(origin, NULL, NULL) { setValue(Primitive::make(node)); }
-
-        virtual ~Argument() {
-            setLabel(NULL);
-            setValue(NULL);
-        }
-
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD(Argument);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(Argument, LIU_FORK_IF_NOT_NULL(label()), LIU_FORK_IF_NOT_NULL(value()));
-
-        virtual void firstValueWillChange() { if(first()) removeUnnamedChild(first()); }
-        virtual void firstValueHasChanged() { if(first()) addUnnamedChild(first()); }
-        virtual void secondValueWillChange() { if(second()) removeUnnamedChild(second()); }
-        virtual void secondValueHasChanged() { if(second()) addUnnamedChild(second()); }
-
-        // aliases...
-        Primitive *label() const { return key(); }
-        void setLabel(Primitive *label) { setKey(label); }
-
+        Primitive *label() const { return Primitive::cast(first()); }
+        Primitive *hasLabel() const { return Primitive::cast(first()); }
+        void setLabel(Primitive *label = NULL) { setFirst(label); }
         QString labelName() const;
+        LIU_DECLARE_PROPERTY(label);
+
+        Primitive *value() const { return Primitive::cast(second()); }
+        Primitive *hasValue() const { return Primitive::cast(second()); }
+        void setValue(Primitive *value = NULL) { setSecond(value); }
+        LIU_DECLARE_PROPERTY(value);
 
         virtual Node *run(Node *receiver = context()) {
             // LIU_PUSH_RUN(this); // is it really necessary?

@@ -1,3 +1,4 @@
+#include "node/object/oldpair.h"
 #include "node/object/language/parser.h"
 
 LIU_BEGIN
@@ -214,7 +215,7 @@ namespace Language {
             message->inputs(); // create an empty inputs argument bunch
         bool hasKey = false;
         for(int i = 0; i < message->numInputs(); ++i)
-            if(message->input(i)->label()) {
+            if(message->input(i)->label()->isDefined()) {
                 hasKey = true;
                 break;
             }

@@ -9,6 +9,23 @@ namespace Language {
     void AbstractMethod::initRoot() {
     }
 
+    void AbstractMethod::appendInput(Argument *argument) {
+        P(argument->label()->isDefined());
+        Primitive *label = argument->label();
+        Primitive *defaultValue = argument->value();
+        if(!label->isDefined()) {
+            label = defaultValue;
+            defaultValue = NULL;
+        }
+        if(label->hasNext())
+            LIU_THROW(ArgumentException, "illegal label parameter found in method definition (should be a Message");
+        Message *labelMsg = Message::dynamicCast(label->value());
+        if(!labelMsg)
+            LIU_THROW(ArgumentException, "illegal label parameter found in method definition (should be a Message)");
+        inputs()->append(LIU_PARAMETER(labelMsg->name(), defaultValue,
+                                         labelMsg->isEscaped(), labelMsg->isParented()));
+    }
+
     void AbstractMethod::runParameters() {
         return;
         LIU_FIND_LAST_MESSAGE;
@@ -23,7 +40,7 @@ namespace Language {
             bool labelFound = false;
             while(Argument *argument = iterator.next()) {
                 Parameter *parameter;
-                if(argument->label()) {
+                if(argument->label()->isDefined()) {
                     QString labelName = argument->labelName();
                     if(!hasInput(labelName)) LIU_THROW(NotFoundException, QString("unknown parameter label '%1'").arg(labelName));
                     if(!labels.contains(labelName)) LIU_THROW(DuplicateException, QString("duplicated parameter label '%1'").arg(labelName));

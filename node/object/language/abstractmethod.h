@@ -42,21 +42,7 @@ namespace Language {
         bool hasInput(const QString &label) const { return inputs(false) && inputs()->hasLabel(label); }
         bool hasAnInput() const { return hasInput(0); }
 
-        void appendInput(Argument *argument) {
-            Primitive *label = argument->label();
-            Primitive *defaultValue = argument->value();
-            if(!label) {
-                label = defaultValue;
-                defaultValue = NULL;
-            }
-            if(label->hasNext())
-                LIU_THROW(ArgumentException, "illegal label parameter found in method definition (should be a Message");
-            Message *labelMsg = Message::dynamicCast(label->value());
-            if(!labelMsg)
-                LIU_THROW(ArgumentException, "illegal label parameter found in method definition (should be a Message)");
-            inputs()->append(LIU_PARAMETER(labelMsg->name(), defaultValue,
-                                             labelMsg->isEscaped(), labelMsg->isParented()));
-        }
+        void appendInput(Argument *argument);
 
         ParameterList *outputs(bool createIfNull = true) const {
             if(!_outputs && createIfNull) constCast(this)->_outputs = LIU_PARAMETER_LIST();

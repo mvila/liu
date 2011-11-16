@@ -46,12 +46,12 @@ namespace Language {
 
         Message(Node *origin, const QString &name, Argument *input1, Node *input2) :
             Object(origin), _name(name), _inputs(NULL), _outputs(NULL), _modifiers(0) {
-            setInputs(LIU_ARGUMENT_BUNCH(input1, LIU_ARGUMENT(input2))); setOutputs(NULL);
+            setInputs(LIU_ARGUMENT_BUNCH(input1, Argument::make(input2))); setOutputs(NULL);
         }
 
         Message(Node *origin, const QString &name, Node *input1, Argument *input2) :
             Object(origin), _name(name), _inputs(NULL), _outputs(NULL), _modifiers(0) {
-            setInputs(LIU_ARGUMENT_BUNCH(LIU_ARGUMENT(input1), input2)); setOutputs(NULL);
+            setInputs(LIU_ARGUMENT_BUNCH(Argument::make(input1), input2)); setOutputs(NULL);
         }
 
         Message(Node *origin, const QString &name, Node *input1, Node *input2) :
