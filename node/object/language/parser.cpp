@@ -184,8 +184,8 @@ namespace Language {
             QList<IntPair> interpolableSlices;
             try {
                 s = Text::unescapeSequence(tokenText().mid(1, tokenText().size() - 2), &interpolableSlices);
-            } catch(const Exception &e) {
-                throw parserException(e.message);
+            } catch(Exception *e) {
+                throw parserException(e->message());
             }
             Text *text = Text::make(s);
             // text->setIsTranslatable(true);
@@ -438,7 +438,7 @@ namespace Language {
         return precedence;
     }
 
-    ParserException Parser::parserException(QString message) const {
+    ParserException *Parser::parserException(QString message) const {
         int column, line;
         computeColumnAndLineForPosition(lexer()->source(), token()->sourceCodeRef.position(), column, line);
         QString text = extractLine(lexer()->source(), line);
@@ -446,7 +446,7 @@ namespace Language {
             QString cursor = QString(" ").repeated(column - 1).append("^");
             message += "\n" + text + "\n" + cursor;
         }
-        return ParserException(context()->child("ParserException"), message, lexer()->resourceName(), line);
+        return ParserException::make(message, lexer()->resourceName(), line);
     }
 }
 

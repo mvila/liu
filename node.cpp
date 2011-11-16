@@ -645,15 +645,15 @@ short Node::compare(const Node *other) const {
 LIU_DEFINE_NATIVE_METHOD(Node, throw) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(0);
-    if(!message->isQuestioned()) throw *this;
+    if(!message->isQuestioned()) throw this;
     LIU_FIND_LAST_PRIMITIVE;
     Primitive *nextPrimitive = primitive->hasNext();
     if(!nextPrimitive) LIU_THROW(InterpreterException, "missing code after 'throw?' method");
     bool result = false;
     try {
         nextPrimitive->run();
-    } catch(const Node &node) {
-        if(node.isOriginatingFrom(this))
+    } catch(Node *node) {
+        if(node->isOriginatingFrom(this))
             result = true;
         else
             throw;

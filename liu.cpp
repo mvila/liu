@@ -51,9 +51,9 @@ void init() {
         }
         popContext();
     #ifdef LIU_CATCH_EXCEPTIONS
-    } catch(Exception &e) {
+    } catch(Exception *e) {
         bool ok;
-        Primitive *primitive = findLastPrimitive(e.runStackCapture, &ok);
+        Primitive *primitive = findLastPrimitive(e->runStackCapture(), &ok);
         if(ok && !primitive->sourceCodeRef().isNull()) {
             const QString &source = *(primitive->sourceCodeRef().string());
             int column, line;
@@ -61,14 +61,14 @@ void init() {
             QString text = extractLine(source, line);
             if(!text.isEmpty()) {
                 QString cursor = QString(" ").repeated(column - 1).append("^");
-                e.message += "\n" + text + "\n" + cursor;
+                e->setMessage(e->message() + "\n" + text + "\n" + cursor);
                 SourceCode *sourceCode = SourceCode::dynamicCast(primitive->findParentOriginatingFrom(SourceCode::root()));
-                e.file = sourceCode ? sourceCode->url() : "";
-                e.line = line;
-                e.function.clear();
+                e->setFile(sourceCode ? sourceCode->url() : "");
+                e->setLine(line);
+                e->setFunction("");
             }
         }
-        QTextStream(stderr) << e.report().toUtf8() << '\n';
+        QTextStream(stderr) << e->report().toUtf8() << '\n';
     }
     #endif
 }
@@ -167,7 +167,7 @@ QString preferSecondArgumentIfNotEmpty(const QString &a, const QString &b) {
 
 #define LIU_DEFINE_THROW_FUNCTION(EXCEPTION) \
 void throw##EXCEPTION(const QString &message, const QString &file, const int line, const QString &function) { \
-    throw EXCEPTION(context()->child(#EXCEPTION), message, file, line, function); \
+    throw EXCEPTION::make(message, file, line, function); \
 }
 
 LIU_DEFINE_THROW_FUNCTION(RuntimeException);

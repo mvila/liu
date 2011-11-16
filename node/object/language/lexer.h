@@ -81,7 +81,7 @@ namespace Language {
 
         Token *scanRightBracket();
 
-        LexerException lexerException(QString message) const;
+        LexerException *lexerException(QString message) const;
 
         virtual QString toString(bool debug = false, short level = 0) const;
     private:

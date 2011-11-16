@@ -99,7 +99,7 @@ namespace Language {
 
         short operatorPrecedence(const Operator *op) const;
 
-        ParserException parserException(QString message) const;
+        ParserException *parserException(QString message) const;
     private:
         Lexer *_lexer;
         Token *_currentToken;

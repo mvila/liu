@@ -249,7 +249,7 @@ namespace Language {
         return finishToken(Token::RightBracket);
     }
 
-    LexerException Lexer::lexerException(QString message) const {
+    LexerException *Lexer::lexerException(QString message) const {
         int column, line;
         computeColumnAndLineForPosition(source(), _position, column, line);
         QString text = extractLine(source(), line);
@@ -257,7 +257,7 @@ namespace Language {
             QString cursor = QString(" ").repeated(column - 1).append("^");
             message += "\n" + text + "\n" + cursor;
         }
-        return LexerException(context()->child("LexerException"), message, resourceName(), line);
+        return LexerException::make(message, resourceName(), line);
     }
 
     QString Lexer::toString(bool debug, short level) const {
