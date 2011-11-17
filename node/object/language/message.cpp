@@ -9,6 +9,10 @@ namespace Language {
     void Message::initRoot() {
     }
 
+    bool Message::isDefined(QSet<const Node *> *alreadySeen) const {
+        return !name().isEmpty() || Object::isDefined(alreadySeen); // TODO
+    }
+
     Node *Message::run(Node *receiver) {
         Node *rcvr = isParented() ? receiver->parent() : receiver;
         Node *parent;

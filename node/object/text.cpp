@@ -90,7 +90,7 @@ LIU_DEFINE_ACCESSOR(Text, bool, isTranslatable, IsTranslatable, true);
 LIU_DEFINE_ACCESSOR(Text, QList<IntPair>, interpolableSlices, InterpolableSlices,);
 
 bool Text::isDefined(QSet<const Node *> *alreadySeen) const {
-    return hasValue() || hasIsTranslatable() || hasInterpolableSlices() ? true : Object::isDefined(alreadySeen);
+    return hasValue() || hasIsTranslatable() || hasInterpolableSlices() || Object::isDefined(alreadySeen);
 }
 
 Node *Text::run(Node *receiver) {

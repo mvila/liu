@@ -53,7 +53,7 @@ LIU_DEFINE_NATIVE_METHOD(Boolean, value_set) {
 }
 
 bool Boolean::isDefined(QSet<const Node *> *alreadySeen) const {
-    return hasValue() ? true : Object::isDefined(alreadySeen);
+    return hasValue() || Object::isDefined(alreadySeen);
 }
 
 Node *Boolean::run(Node *receiver) {

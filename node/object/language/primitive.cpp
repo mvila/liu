@@ -72,6 +72,18 @@ namespace Language {
         return nextPrimitive ? result->receive(nextPrimitive) : result;
     }
 
+    Node *Primitive::unnamedChild(int index) const {
+        if(_value) {
+            if(index == 0) return _value;
+            index--;
+        }
+        if(_next) {
+            if(index == 0) return _next;
+            index--;
+        }
+        return NULL;
+    }
+
     QString Primitive::toString(bool debug, short level) const {
         QString str;
         const Primitive *primitive = this;

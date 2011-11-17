@@ -10,7 +10,6 @@ namespace Language {
     }
 
     void AbstractMethod::appendInput(Argument *argument) {
-        P(argument->label()->isDefined());
         Primitive *label = argument->label();
         Primitive *defaultValue = argument->value();
         if(!label->isDefined()) {

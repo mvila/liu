@@ -61,7 +61,7 @@ LIU_DEFINE_NATIVE_METHOD(Character, value_set) {
 }
 
 bool Character::isDefined(QSet<const Node *> *alreadySeen) const {
-    return hasValue() ? true : Object::isDefined(alreadySeen);
+    return hasValue() || Object::isDefined(alreadySeen);
 }
 
 Node *Character::run(Node *receiver) {

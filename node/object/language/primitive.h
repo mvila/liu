@@ -39,6 +39,8 @@ namespace Language {
 
         virtual Node *run(Node *receiver = context());
 
+        virtual Node *unnamedChild(int index) const;
+
         virtual QString toString(bool debug = false, short level = 0) const;
     private:
         Node *_value;

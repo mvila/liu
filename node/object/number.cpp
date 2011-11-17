@@ -77,7 +77,7 @@ LIU_DEFINE_NATIVE_METHOD(Number, value_set) {
 }
 
 bool Number::isDefined(QSet<const Node *> *alreadySeen) const {
-    return hasValue() ? true : Object::isDefined(alreadySeen);
+    return hasValue() || Object::isDefined(alreadySeen);
 }
 
 Node *Number::run(Node *receiver) {
