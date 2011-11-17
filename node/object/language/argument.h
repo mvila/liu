@@ -20,13 +20,13 @@ namespace Language {
         Argument *init(Primitive *label = NULL, Primitive *value = NULL);
 
         Primitive *label() const { return Primitive::cast(first()); }
-        Primitive *hasLabel() const { return Primitive::cast(first()); }
+        Primitive *hasLabel() const { return Primitive::cast(hasFirst()); }
         void setLabel(Primitive *label = NULL) { setFirst(label); }
         QString labelName() const;
         LIU_DECLARE_PROPERTY(label);
 
         Primitive *value() const { return Primitive::cast(second()); }
-        Primitive *hasValue() const { return Primitive::cast(second()); }
+        Primitive *hasValue() const { return Primitive::cast(hasSecond()); }
         void setValue(Primitive *value = NULL) { setSecond(value); }
         LIU_DECLARE_PROPERTY(value);
 

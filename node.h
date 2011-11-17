@@ -93,28 +93,28 @@ TYPE *CLASS::NAME##Data() { \
 
 #define LIU_DECLARE_NODE_ACCESSOR(TYPE, NAME, NAME_CAP) \
 TYPE *NAME() const; \
-TYPE *has##NAME_CAP() const; \
+TYPE *has##NAME_CAP(bool checkIsDefined = true) const; \
 void set##NAME_CAP(TYPE *NAME = NULL); \
 void delete##NAME_CAP(); \
 virtual void NAME##WillChange(); \
 virtual void NAME##HasChanged();
 
 #define LIU_DEFINE_NODE_ACCESSOR(CLASS, TYPE, NAME, NAME_CAP) \
-TYPE *CLASS::has##NAME_CAP() const { \
+TYPE *CLASS::has##NAME_CAP(bool checkIsDefined) const { \
     if(_##NAME) return _##NAME; \
     CLASS *orig = CLASS::dynamicCast(origin()); \
     if(!orig) return NULL; \
-    TYPE *result = orig->has##NAME_CAP(); \
-    if(result) { \
-        result = result->fork(); \
-        result->setIsVirtual(true); \
-        constCast(this)->_##NAME = result; \
-        constCast(this)->addUnnamedChild(result); \
-    } \
+    TYPE *result = orig->has##NAME_CAP(checkIsDefined); \
+    if(!result) return NULL; \
+    result = result->fork(); \
+    result->setIsVirtual(true); \
+    constCast(this)->_##NAME = result; \
+    constCast(this)->addUnnamedChild(result); \
+    if(checkIsDefined && !result->isDefined()) return NULL; \
     return result; \
 } \
 TYPE *CLASS::NAME() const { \
-    TYPE *result = has##NAME_CAP(); \
+    TYPE *result = has##NAME_CAP(false); \
     if(!result) LIU_THROW_NULL_POINTER_EXCEPTION(QString("'%1' is undefined").arg(#NAME)); \
     return result; \
 } \
