@@ -25,8 +25,7 @@ LIU_DEFINE_NATIVE_METHOD(AbstractList, get) { // TODO: use multiple return value
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
     Node *value = NULL;
-    Primitive *label = message->firstInput()->label();
-    if(label->isDefined()) {
+    if(Primitive *label = message->firstInput()->hasLabel()) {
         Message *msg = Message::dynamicCast(label->value());
         if(msg && msg->name() == "value")
             value = message->runFirstInput();
@@ -80,8 +79,7 @@ LIU_DEFINE_NATIVE_METHOD(AbstractList, remove) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
     Node *value = NULL;
-    Primitive *label = message->firstInput()->label();
-    if(label->isDefined()) { // TODO: DRY!
+    if(Primitive *label = message->firstInput()->hasLabel()) { // TODO: DRY!
         Message *msg = Message::dynamicCast(label->value());
         if(msg && msg->name() == "value")
             value = message->runFirstInput();

@@ -229,20 +229,19 @@ LIU_DEFINE_NATIVE_METHOD(Node, is) {
     return Boolean::make(isOriginatingFrom(message->runFirstInput()));
 }
 
+bool Node::isDefined() const {
+    QScopedPointer< QSet<const Node *> > alreadySeen(new QSet<const Node *>);
+    return isDefined(alreadySeen.data());
+}
+
 bool Node::isDefined(QSet<const Node *> *alreadySeen) const {
     if(_isDefined) return true;
     if(_isUndefined) return false;
-    bool firstRecursion = alreadySeen == NULL;
-    if(firstRecursion) alreadySeen = new QSet<const Node *>;
-    bool result = false;
-    if(!alreadySeen->contains(this)) {
-        alreadySeen->insert(this);
-        QScopedPointer<ChildCollection::Iterator> i(ChildCollection::Iterator::make(this));
-        while(!result && i->hasNext()) result = i->next().second->isDefined(alreadySeen);
-        if(!result && origin() != this) result = origin()->isDefined(alreadySeen);
-    }
-    if(firstRecursion) delete alreadySeen; // FIXME: potential memory leak
-    return result;
+    if(alreadySeen->contains(this)) return false;
+    alreadySeen->insert(this);
+    QScopedPointer<ChildCollection::Iterator> i(ChildCollection::Iterator::make(this));
+    while(i->hasNext()) if(i->next().second->isDefined(alreadySeen)) return true;
+    return origin()->isDefined(alreadySeen);;
 }
 
 LIU_DEFINE_NATIVE_METHOD(Node, defined) {

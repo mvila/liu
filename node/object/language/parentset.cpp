@@ -25,7 +25,7 @@ namespace Language {
     void ParentSet::initRoot() {
         addExtension(Iterable::root());
 
-        setSource(Node::root()->fork());
+        setSource(Node::root());
 
         LIU_ADD_NATIVE_METHOD(ParentSet, init);
 
@@ -71,7 +71,7 @@ namespace Language {
     }
 
     void ParentSet::Iterator::initRoot() {
-        setSource(Node::root()->fork());
+        setSource(Node::root());
 
         LIU_ADD_READ_ONLY_PROPERTY(ParentSet::Iterator, source)
     }

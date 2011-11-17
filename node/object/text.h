@@ -29,7 +29,7 @@ public:
 
     LIU_DECLARE_ACCESSOR(QList<IntPair>, interpolableSlices, InterpolableSlices);
 
-    virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const;
+    virtual bool isDefined(QSet<const Node *> *alreadySeen) const;
 
     virtual Node *run(Node *receiver = context());
 

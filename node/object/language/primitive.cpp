@@ -10,7 +10,6 @@ namespace Language {
         Object::init();
         setValue(value);
         setSourceCodeRef(sourceCodeRef);
-        // if(hasValue()) _value->setIsVirtual(false);
         return this;
     }
 
@@ -29,8 +28,8 @@ namespace Language {
     }
 
     void Primitive::initRoot() {
-//        setValue(Node::root()->fork());
-//        setNext(Primitive::root()->fork());
+        setValue(Node::root());
+        setNext(Primitive::root());
 
         LIU_ADD_PROPERTY(Primitive, value);
         LIU_ADD_PROPERTY(Primitive, next);
@@ -43,14 +42,23 @@ namespace Language {
     LIU_DEFINE_ACCESSOR(Primitive, QStringRef, sourceCodeRef, SourceCodeRef,);
 
     LIU_DEFINE_NODE_ACCESSOR(Primitive, Primitive, next, Next);
-    void Primitive::nextWillChange() { if(Primitive *nextPrimitive = hasNext()) nextPrimitive->_previous = NULL; }
-    void Primitive::nextHasChanged() { if(Primitive *nextPrimitive = hasNext()) nextPrimitive->_previous = this; }
+    LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(Primitive, next);
     LIU_DEFINE_NODE_PROPERTY(Primitive, Primitive, next, Next);
 
     Primitive *Primitive::last() {
-        Primitive *primitive = this;
-        while(Primitive *nextPrimitive = primitive->hasNext()) primitive = nextPrimitive;
-        return primitive;
+        Primitive *last = this;
+        while(Primitive *next = last->hasNext()) last = next;
+        return last;
+    }
+
+    Primitive *Primitive::beforeLast() {
+        Primitive *before = NULL;
+        Primitive *last = this;
+        while(Primitive *next = last->hasNext()) {
+            before = last;
+            last = next;
+        }
+        return before;
     }
 
     int Primitive::size() const {
@@ -61,23 +69,24 @@ namespace Language {
     }
 
     Node *Primitive::run(Node *receiver) {
-        Node *result;
+        Node *result = NULL;
         try {
             LIU_PUSH_RUN(this);
             result = value()->run(receiver);
         } catch(const Primitive::Skip &skip) {
             return skip.result;
         }
-        Primitive *nextPrimitive = hasNext();
-        return nextPrimitive ? result->receive(nextPrimitive) : result;
+        if(Primitive *nextPrimitive = hasNext())
+            result = result->receive(nextPrimitive);
+        return result;
     }
 
     Node *Primitive::unnamedChild(int index) const {
-        if(_value) {
+        if(_value && _value->isReal()) {
             if(index == 0) return _value;
             index--;
         }
-        if(_next) {
+        if(_next && _next->isReal()) {
             if(index == 0) return _next;
             index--;
         }

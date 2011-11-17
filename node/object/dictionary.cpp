@@ -48,8 +48,8 @@ LIU_DEFINE_NATIVE_METHOD(Dictionary, make) {
     Dictionary *dict = Dictionary::make();
     for(int i = 0; i < message->numInputs(); ++i) {
         Node *key = NULL;
-        Primitive *primitive = message->input(i)->label();
-        if(!primitive->isDefined()) LIU_THROW(ArgumentException, "missing key in Dictionary initialization");
+        Primitive *primitive = message->input(i)->hasLabel();
+        if(!primitive) LIU_THROW(ArgumentException, "missing key in Dictionary initialization");
         if(primitive->hasNext()) LIU_THROW(ArgumentException, "invalid key in Dictionary initialization");
         Message *msg = Message::dynamicCast(primitive->value());
         if(msg) {
@@ -67,7 +67,7 @@ LIU_DEFINE_NATIVE_METHOD(Dictionary, make) {
 Node *Dictionary::unnamedChild(int index) const {
     int i = index;
     if(_items) {
-        foreach(Node *item, *_items) if(item) {
+        foreach(Node *item, *_items) if(item && item->isReal()) {
             if(i == 0) return item; else i--;
         }
     }
@@ -237,6 +237,8 @@ Dictionary::Iterator::~Iterator() {
 }
 
 void Dictionary::Iterator::initRoot() {
+    setSource(Dictionary::root());
+
     LIU_ADD_READ_ONLY_PROPERTY(Dictionary::Iterator, source)
 }
 

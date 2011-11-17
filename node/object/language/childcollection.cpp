@@ -25,7 +25,7 @@ namespace Language {
     void ChildCollection::initRoot() {
         addExtension(Iterable::root());
 
-        setSource(Node::root()->fork());
+        setSource(Node::root());
 
         LIU_ADD_NATIVE_METHOD(ChildCollection, init);
 
@@ -76,9 +76,9 @@ namespace Language {
     }
 
     void ChildCollection::Iterator::initRoot() {
-        setSource(Node::root()->fork());
-        setNamedChildIterator(NamedChildDictionary::Iterator::root()->fork());
-        setUnnamedChildIterator(UnnamedChildCollection::Iterator::root()->fork());
+        setSource(Node::root());
+        setNamedChildIterator(NamedChildDictionary::Iterator::root());
+        setUnnamedChildIterator(UnnamedChildCollection::Iterator::root());
 
         LIU_ADD_READ_ONLY_PROPERTY(ChildCollection::Iterator, source)
     }

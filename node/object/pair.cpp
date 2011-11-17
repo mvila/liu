@@ -28,8 +28,8 @@ Pair::~Pair() {
 void Pair::initRoot() {
     addExtension(Comparable::root());
 
-    setFirst(Node::root()->fork());
-    setSecond(Node::root()->fork());
+    setFirst(Node::root());
+    setSecond(Node::root());
 
     LIU_ADD_NATIVE_METHOD(Pair, init);
 
@@ -56,11 +56,11 @@ LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(Pair, second);
 LIU_DEFINE_NODE_PROPERTY(Pair, Node, second, Second);
 
 Node *Pair::unnamedChild(int index) const {
-    if(_first) {
+    if(_first && _first->isReal()) {
         if(index == 0) return _first;
         index--;
     }
-    if(_second) {
+    if(_second && _second->isReal()) {
         if(index == 0) return _second;
         index--;
     }

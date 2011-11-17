@@ -100,13 +100,15 @@ QList<List::Operation *> *List::copyOperations(Node *parent) const {
 
 Node *List::unnamedChild(int index) const {
     if(_operations) {
-        int i = 0;
         foreach(Operation *operation, *_operations)
             if(operation->type == Operation::Set || operation->type == Operation::Insert) {
-                if(index < i + operation->size)
-                    return operation->getData(index - i);
-                else
-                    i += operation->size;
+                for(int i = 0; i < operation->size; ++i) {
+                    Node *item = operation->getData(i);
+                    if(item && item->isReal()) {
+                        if(index == 0) return item;
+                        index--;
+                    }
+                }
             }
     }
     return NULL;
@@ -543,6 +545,8 @@ List::Iterator::~Iterator() {
 }
 
 void List::Iterator::initRoot() {
+    setSource(List::root());
+
     LIU_ADD_READ_ONLY_PROPERTY(List::Iterator, source)
 }
 

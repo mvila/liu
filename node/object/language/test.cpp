@@ -26,8 +26,8 @@ namespace Language {
     }
 
     void Test::initRoot() {
-        setSection(Section::root()->fork());
-        setReceiver(Node::root()->fork());
+        setSection(Section::root());
+        setReceiver(Node::root());
 
         LIU_ADD_PROPERTY(Test, section);
         LIU_ADD_PROPERTY(Test, receiver);

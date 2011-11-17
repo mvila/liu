@@ -34,7 +34,9 @@ Exception::~Exception() {
     deleteRunStackCapture(); // FIXME: dangerous, could be referenced elsewhere...
 }
 
-void Exception::initRoot() {}
+void Exception::initRoot() {
+    setRunStackCapture(RunStack::root());
+}
 
 LIU_DEFINE_ACCESSOR(Exception, QString, message, Message,);
 LIU_DEFINE_ACCESSOR(Exception, QString, file, File,);

@@ -26,7 +26,7 @@ namespace Language {
     void NamedChildDictionary::initRoot() {
         addExtension(Indexable::root());
 
-        setSource(Node::root()->fork());
+        setSource(Node::root());
 
         LIU_ADD_NATIVE_METHOD(NamedChildDictionary, init);
 
@@ -86,7 +86,7 @@ namespace Language {
     }
 
     void NamedChildDictionary::Iterator::initRoot() {
-        setSource(Node::root()->fork());
+        setSource(Node::root());
 
         LIU_ADD_READ_ONLY_PROPERTY(NamedChildDictionary::Iterator, source)
     }

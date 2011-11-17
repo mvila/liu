@@ -19,7 +19,7 @@ namespace Language {
         LIU_DECLARE_AND_DEFINE_COPY_METHOD(Block);
         LIU_DECLARE_AND_DEFINE_FORK_METHOD(Block);
 
-        virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const { Q_UNUSED(alreadySeen); return true; } // TODO
+        virtual bool isDefined(QSet<const Node *> *alreadySeen) const { Q_UNUSED(alreadySeen); return true; } // TODO
 
         virtual Node *run(Node *receiver = context());
 

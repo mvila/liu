@@ -22,7 +22,7 @@ public:
     LIU_DECLARE_ACCESSOR(QChar, value, Value);
     LIU_DECLARE_PROPERTY(value);
 
-    virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const;
+    virtual bool isDefined(QSet<const Node *> *alreadySeen) const;
 
     virtual Node *run(Node *receiver = context());
 

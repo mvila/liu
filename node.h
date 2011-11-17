@@ -101,22 +101,22 @@ virtual void NAME##HasChanged();
 
 #define LIU_DEFINE_NODE_ACCESSOR(CLASS, TYPE, NAME, NAME_CAP) \
 TYPE *CLASS::has##NAME_CAP(bool checkIsDefined) const { \
-    if(_##NAME) return _##NAME; \
-    CLASS *orig = CLASS::dynamicCast(origin()); \
-    if(!orig) return NULL; \
-    TYPE *result = orig->has##NAME_CAP(checkIsDefined); \
-    if(!result) return NULL; \
-    result = result->fork(); \
-    result->setIsVirtual(true); \
-    constCast(this)->_##NAME = result; \
-    constCast(this)->addUnnamedChild(result); \
+    TYPE *result = _##NAME; \
+    if(!result) { \
+        CLASS *orig = CLASS::dynamicCast(origin()); \
+        if(!orig) LIU_THROW_NOT_FOUND_EXCEPTION(QString("'%1' not found").arg(#NAME)); \
+        result = orig->has##NAME_CAP(checkIsDefined); \
+        if(!result) return NULL; \
+        result = result->fork(); \
+        result->setIsVirtual(true); \
+        constCast(this)->_##NAME = result; \
+        constCast(this)->addUnnamedChild(result); \
+    } \
     if(checkIsDefined && !result->isDefined()) return NULL; \
     return result; \
 } \
 TYPE *CLASS::NAME() const { \
-    TYPE *result = has##NAME_CAP(false); \
-    if(!result) LIU_THROW_NULL_POINTER_EXCEPTION(QString("'%1' is undefined").arg(#NAME)); \
-    return result; \
+    return has##NAME_CAP(false); \
 } \
 void CLASS::set##NAME_CAP(TYPE *NAME) { \
     NAME##WillChange(); \
@@ -208,7 +208,8 @@ public:
     bool isOriginatingFrom(Node *node) const;
     LIU_DECLARE_NATIVE_METHOD(is);
 
-    virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const;
+    bool isDefined() const;
+    virtual bool isDefined(QSet<const Node *> *alreadySeen) const;
     void setIsDefined(bool isDefined) { _isDefined = isDefined; }
     void setIsUndefined(bool isUndefined) { _isUndefined = isUndefined; }
 
@@ -357,7 +358,7 @@ public:
     LIU_DECLARE_NATIVE_METHOD(or_assign);
     LIU_DECLARE_NATIVE_METHOD(and_assign);
 
-    bool isSameAs(const Node *other) const { return real() == other->real(); }
+    bool isSameAs(const Node *other) const { return other && real() == other->real(); }
     LIU_DECLARE_NATIVE_METHOD(same_as);
 
     virtual bool isEqualTo(const Node *other) const { return isSameAs(other); }
@@ -477,6 +478,7 @@ public: \
     virtual ~NAME(); \
     virtual NAME *fork() const { return (new NAME(constCast(this)))->init(); } \
     virtual NAME *copy() const { return (new NAME(this->origin()))->initCopy(this); } \
+    using Node::isDefined; \
 private:
 
 #define LIU_DEFINE(NAME, ORIGIN, PARENT) \

@@ -68,7 +68,7 @@ namespace Language {
         LIU_DECLARE_AND_DEFINE_FORK_METHOD(Message, name(), LIU_FORK_IF_NOT_NULL(inputs(false)),
                                              LIU_FORK_IF_NOT_NULL(outputs(false)), modifiers(), codeInputName());
 
-        virtual bool isDefined(QSet<const Node *> *alreadySeen = NULL) const;
+        virtual bool isDefined(QSet<const Node *> *alreadySeen) const;
 
         const QString &name() const { return _name; }
         void setName(const QString &name) { _name = name; }

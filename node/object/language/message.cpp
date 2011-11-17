@@ -10,7 +10,9 @@ namespace Language {
     }
 
     bool Message::isDefined(QSet<const Node *> *alreadySeen) const {
-        return !name().isEmpty() || Object::isDefined(alreadySeen); // TODO
+        Q_UNUSED(alreadySeen);
+//        return !name().isEmpty() || Object::isDefined(alreadySeen); // TODO
+        return true;
     }
 
     Node *Message::run(Node *receiver) {

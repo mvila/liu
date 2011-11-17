@@ -48,8 +48,8 @@ LIU_DEFINE_NATIVE_METHOD(OldDictionary, make) {
     OldDictionary *dict = fork();
     for(int i = 0; i < message->numInputs(); ++i) {
         Node *key = NULL;
-        Primitive *primitive = message->input(i)->label();
-        if(!primitive->isDefined()) LIU_THROW(ArgumentException, "missing key in Dictionary initialization");
+        Primitive *primitive = message->input(i)->hasLabel();
+        if(!primitive) LIU_THROW(ArgumentException, "missing key in Dictionary initialization");
         if(primitive->hasNext()) LIU_THROW(ArgumentException, "invalid key in Dictionary initialization");
         Message *msg = Message::dynamicCast(primitive->value());
         if(msg) {

@@ -215,7 +215,7 @@ namespace Language {
             message->inputs(); // create an empty inputs argument bunch
         bool hasKey = false;
         for(int i = 0; i < message->numInputs(); ++i)
-            if(message->input(i)->label()->isDefined()) {
+            if(message->input(i)->hasLabel()) {
                 hasKey = true;
                 break;
             }
@@ -319,12 +319,11 @@ namespace Language {
                 if(!currentPrimitive) throw parserException("missing primitive before '...'");
                 Message *message = Message::dynamicCast(currentPrimitive->last()->value());
                 if(!message) throw parserException("missing message before '...'");
-                if(currentPrimitive->hasNext()) {
-                    QString name = message->name();
-                    Message *methodSignature = Message::dynamicCast(currentPrimitive->last()->previous()->value());
+                if(Primitive *primitive = currentPrimitive->beforeLast()) {
+                    Message *methodSignature = Message::dynamicCast(primitive->value());
                     if(!methodSignature) throw parserException("missing method signature before '...'");
-                    methodSignature->setCodeInputName(name);
-                    currentPrimitive->last()->previous()->setNext(NULL);
+                    methodSignature->setCodeInputName(message->name());
+                    primitive->setNext();
                 } else
                     message->setIsEllipsed(true);
             } else
@@ -343,8 +342,8 @@ namespace Language {
                     message->inputs()->append(currentPrimitive->last());
                 }
                 Primitive *primitive = Primitive::make(message, token()->sourceCodeRef);
-                if(currentPrimitive->hasNext())
-                    currentPrimitive->last()->previous()->setNext(primitive);
+                if(Primitive *before = currentPrimitive->beforeLast())
+                    before->setNext(primitive);
                 else
                     currentPrimitive = primitive;
             }
@@ -403,8 +402,8 @@ namespace Language {
                     message->setName("[]" + op->name);
                     message->inputs()->append(rhs);
                     Primitive *primitive = Primitive::make(message, sourceCodeRef);
-                    if(lhs->hasNext())
-                        lhs->last()->previous()->setNext(primitive);
+                    if(Primitive *before = lhs->beforeLast())
+                        before->setNext(primitive);
                     else
                         lhs = primitive;
                 } else if(op->name == "<<") {
@@ -414,9 +413,9 @@ namespace Language {
                     message->inputs()->append(lhs->last());
                     message->inputs()->append(rhs);
                     Primitive *primitive = Primitive::make(message, sourceCodeRef);
-                    if(lhs->hasNext())
-                        lhs->last()->previous()->setNext(primitive);
-                    else
+                    if(Primitive *before = lhs->beforeLast()) {
+                        before->setNext(primitive);
+                    } else
                         lhs = primitive;
                 }
             }

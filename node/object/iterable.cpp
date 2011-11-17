@@ -47,7 +47,10 @@ bool Iterable::isEqualTo(const Node *other) const {
         NodeQPair item = i1->next();
         NodeQPair otherItem = i2->next();
         if(!item.second->isEqualTo(otherItem.second)) return false;
-        if(!item.first->isEqualTo(otherItem.first)) return false;
+        if(item.first) {
+            if(!item.first->isEqualTo(otherItem.first)) return false;
+        } else if(otherItem.first)
+            return false;
     }
     return true;
 }
@@ -85,8 +88,7 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, get) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_INPUT_SIZE(1);
     Node *value = NULL;
-    Primitive *label = message->firstInput()->label();
-    if(label->isDefined()) { // TODO: DRY!
+    if(Primitive *label = message->firstInput()->hasLabel()) { // TODO: DRY!
         Message *msg = Message::dynamicCast(label->value());
         if(msg && msg->name() == "value")
             value = message->runFirstInput();

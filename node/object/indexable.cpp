@@ -31,8 +31,7 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, get) {
     LIU_CHECK_INPUT_SIZE(1);
     Node *index = message->runFirstInput();
     Node *value = NULL;
-    Primitive *label = message->firstInput()->label();
-    if(label->isDefined()) { // TODO: DRY!
+    if(Primitive *label = message->firstInput()->hasLabel()) { // TODO: DRY!
         Message *msg = Message::dynamicCast(label->value());
         if(msg && msg->name() == "value") value = index;
     }
@@ -84,8 +83,7 @@ LIU_DEFINE_NATIVE_METHOD(Indexable, unset) {
     LIU_CHECK_INPUT_SIZE(1);
     Node *index = message->runFirstInput();
     Node *value = NULL;
-    Primitive *label = message->firstInput()->label();
-    if(label->isDefined()) { // TODO: DRY!
+    if(Primitive *label = message->firstInput()->hasLabel()) { // TODO: DRY!
         Message *msg = Message::dynamicCast(label->value());
         if(msg && msg->name() == "value")
             value = index;

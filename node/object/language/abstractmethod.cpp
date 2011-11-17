@@ -4,15 +4,15 @@
 LIU_BEGIN
 
 namespace Language {
-    LIU_DEFINE(AbstractMethod, Object, Language);
+    LIU_DEFINE_2(AbstractMethod, Object, Language);
 
     void AbstractMethod::initRoot() {
     }
 
     void AbstractMethod::appendInput(Argument *argument) {
-        Primitive *label = argument->label();
+        Primitive *label = argument->hasLabel();
         Primitive *defaultValue = argument->value();
-        if(!label->isDefined()) {
+        if(!label) {
             label = defaultValue;
             defaultValue = NULL;
         }
@@ -39,7 +39,7 @@ namespace Language {
             bool labelFound = false;
             while(Argument *argument = iterator.next()) {
                 Parameter *parameter;
-                if(argument->label()->isDefined()) {
+                if(argument->hasLabel()) {
                     QString labelName = argument->labelName();
                     if(!hasInput(labelName)) LIU_THROW(NotFoundException, QString("unknown parameter label '%1'").arg(labelName));
                     if(!labels.contains(labelName)) LIU_THROW(DuplicateException, QString("duplicated parameter label '%1'").arg(labelName));

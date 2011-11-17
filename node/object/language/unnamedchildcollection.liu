@@ -24,6 +24,14 @@ Object Language UnnamedChildCollection {
         ?: iter read! == 2
         ?: iter read! == 3
         ?: IndexOutOfBoundsException throw? { iter read! }
+        list2 := list fork
+        ?: list2[0] == 1
+        ?: list2[1] == 2
+        ?: list2[2] == 3
+        col := Language UnnamedChildCollection(list2)
+        ?: Text(col) == ""
+        list2[1] = -2
+        ?: Text(col) == "-2"
 
         dict := [x: 1, y: 2]
         col := Language UnnamedChildCollection(dict)

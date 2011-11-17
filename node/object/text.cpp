@@ -514,6 +514,8 @@ Text::Iterator::~Iterator() {
 }
 
 void Text::Iterator::initRoot() {
+    setSource(Text::root());
+
     LIU_ADD_READ_ONLY_PROPERTY(Text::Iterator, source)
 }
 

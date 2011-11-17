@@ -14,7 +14,7 @@ namespace Language {
         LIU_DECLARE_2(Primitive, Object, Language);
     public:
         explicit Primitive(Node *origin = context()->child("Object", "Language", "Primitive")) :
-            Object(origin), _value(NULL), _sourceCodeRef(NULL), _next(NULL), _previous(NULL) {}
+            Object(origin), _value(NULL), _sourceCodeRef(NULL), _next(NULL) {}
 
         static Primitive *make(Node *value) { return (new Primitive())->init(value); }
 
@@ -32,10 +32,8 @@ namespace Language {
         LIU_DECLARE_NODE_ACCESSOR(Primitive, next, Next);
         LIU_DECLARE_PROPERTY(next);
         Primitive *last();
+        Primitive *beforeLast();
         int size() const;
-
-        Primitive *previous() const { return _previous; }
-        bool hasPrevious() const { return _previous; }
 
         virtual Node *run(Node *receiver = context());
 
@@ -46,7 +44,6 @@ namespace Language {
         Node *_value;
         QStringRef *_sourceCodeRef;
         Primitive *_next;
-        Primitive *_previous;
     public:
         // === Skip ===
 
