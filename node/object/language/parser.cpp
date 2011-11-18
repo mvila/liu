@@ -55,7 +55,7 @@ namespace Language {
     }
 
     Block *Parser::scanBlock(const Token::Type terminator) {
-        Block *block = LIU_BLOCK();
+        Block *block = Block::make();
         Section *section = NULL;
         consumeNewline();
         while(!is(terminator)) {
@@ -65,12 +65,12 @@ namespace Language {
                     section = Section::make();
                     section->setLabel(Primitive::cast(pair->first()));
                     expression = Primitive::cast(pair->second());
-                    block->append(section);
+                    block->sections()->append(section);
                 }
             if(expression) {
                 if(!section) {
                     section = Section::make();
-                    block->append(section);
+                    block->sections()->append(section);
                 }
                 section->lines()->append(expression);
             }

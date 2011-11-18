@@ -45,8 +45,8 @@ Node *ControlFlow::ifOrUnless(bool isIf) {
     LIU_FIND_LAST_PRIMITIVE;
     if(Primitive *nextPrimitive = primitive->hasNext()) {
         if(testResult->toBool() == isIf) Primitive::skip(nextPrimitive->run(this));
-        Block *block = Block::dynamicCast(nextPrimitive->value());
-        if(block && block->elseSection()) Primitive::skip(block->elseSection()->run(this));
+        if(Block *block = Block::dynamicCast(nextPrimitive->value()))
+            if(Section *elseSection = block->section("else")) Primitive::skip(elseSection->run(this));
         Primitive::skip(testResult);
     }
     LIU_THROW(InterpreterException, QString("missing code after an %1 statement").arg(isIf ? "if" : "unless"));
@@ -60,7 +60,7 @@ LIU_DEFINE_NATIVE_METHOD(ControlFlow, loop) {
     if(!nextPrimitive)
         LIU_THROW(InterpreterException, "missing code after a loop statement");
     Block *block = Block::dynamicCast(nextPrimitive->value());
-    Section *between = block ? block->betweenSection() : NULL;
+    Section *between = block ? block->section("between") : NULL;
     HugeInteger count;
     if(message->hasAnInput()) { // finite loop
         count = message->runFirstInput()->toDouble();
@@ -97,7 +97,7 @@ Node *ControlFlow::whileOrUntil(bool isWhile) {
     if(!nextPrimitive)
         LIU_THROW(InterpreterException, QString("missing code after %1 statement").arg(isWhile ? "a while" : "an until"));
     Block *block = Block::dynamicCast(nextPrimitive->value());
-    Section *between = block ? block->betweenSection() : NULL;
+    Section *between = block ? block->section("between") : NULL;
     Node *result = NULL;
     try {
         Node *test = NULL;

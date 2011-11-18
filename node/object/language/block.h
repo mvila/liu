@@ -6,48 +6,36 @@
 LIU_BEGIN
 
 namespace Language {
-    #define LIU_BLOCK(ARGS...) \
-    new Language::Block(context()->child("Object", "Language", "Block"), ##ARGS)
-
-    class Block : public GenericList<Section *> {
-        LIU_DECLARE(Block, OldList, Language);
+    class Block : public Object {
+        LIU_DECLARE_2(Block, Object, Language);
     public:
-        explicit Block(Node *origin) : GenericList<Section *>(origin),
-            _doc(NULL), _docIsCached(false), _body(NULL), _bodyIsCached(false), _test(NULL), _testIsCached(false),
-            _else(NULL), _elseIsCached(false), _between(NULL), _betweenIsCached(false), _metaSectionsHaveBeenRun(false)  {}
+        explicit Block(Node *origin = context()->child("Object", "Language", "Block")) :
+            Object(origin), _sections(NULL), _cachedLabels(NULL), _metaSectionsHaveBeenRun(false)  {}
 
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD(Block);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(Block);
+        Block *init(List *sections = NULL);
+
+        LIU_DECLARE_NODE_ACCESSOR(List, sections, Sections);
 
         virtual bool isDefined(QSet<const Node *> *alreadySeen) const { Q_UNUSED(alreadySeen); return true; } // TODO
+
+        virtual Node *unnamedChild(int index) const;
+
+        virtual void hasChanged();
 
         virtual Node *run(Node *receiver = context());
 
         void runMetaSections(Node *receiver);
 
-        Section *section(const QString &label);
-        Section *docSection();
-        Section *bodySection();
-        Section *testSection();
-        Section *elseSection();
-        Section *betweenSection();
+        Section *section(const QString &label) const;
     private:
-        Section *findSection(const QString &label);
+        Section *findSection(const QString &label) const;
+        QHash<QString, Section *> *cachedLabels() const;
+        void deleteCachedLabels() const { delete _cachedLabels; _cachedLabels = NULL; }
     public:
-        Section *hasUnlabeledSection();
-
         virtual QString toString(bool debug = false, short level = 0) const;
     private:
-        Section *_doc;
-        bool _docIsCached;
-        Section *_body;
-        bool _bodyIsCached;
-        Section *_test;
-        bool _testIsCached;
-        Section *_else;
-        bool _elseIsCached;
-        Section *_between;
-        bool _betweenIsCached;
+        List *_sections;
+        mutable QHash<QString, Section *> *_cachedLabels;
         bool _metaSectionsHaveBeenRun;
     };
 }

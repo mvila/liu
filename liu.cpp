@@ -43,7 +43,7 @@ void init() {
         // run Application
         pushContext(Application::root());
         SourceCode *source = interpreter->loadSourceCode("../liu/examples/test.liu");
-        if(source->block()->isNotEmpty()) {
+        if(!source->block()->sections()->isEmpty()) {
             P("-----------------------------------------------------------------------");
             source->inspect();
             P("-----------------------------------------------------------------------");

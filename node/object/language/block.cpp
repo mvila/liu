@@ -6,23 +6,56 @@
 LIU_BEGIN
 
 namespace Language {
-    LIU_DEFINE(Block, OldList, Language);
+    LIU_DEFINE_2(Block, Object, Language);
+
+    Block *Block::init(List *sections) {
+        Object::init();
+        setSections(sections);
+        return this;
+    }
+
+    Block *Block::initCopy(const Block *other) {
+        Object::initCopy(other);
+        setSections(other->_sections);
+        return this;
+    }
+
+    Block::~Block() {
+        setSections();
+        deleteCachedLabels();
+    }
 
     void Block::initRoot() {
+        setSections(List::root());
+    }
+
+    LIU_DEFINE_NODE_ACCESSOR(Block, List, sections, Sections);
+    LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(Block, sections);
+
+    Node *Block::unnamedChild(int index) const {
+        if(_sections && _sections->isReal()) {
+            if(index == 0) return _sections;
+            index--;
+        }
+        return NULL;
+    }
+
+    void Block::hasChanged() {
+        deleteCachedLabels();
     }
 
     Node *Block::run(Node *receiver) {
         runMetaSections(receiver);
-        if(bodySection()) {
+        if(Section *body = section("body")) {
             LIU_PUSH_RUN(this);
-            return bodySection()->run(receiver);
+            return body->run(receiver);
         } else
             return receiver;
     }
 
     void Block::runMetaSections(Node *receiver) {
         if(!_metaSectionsHaveBeenRun) {
-            if(docSection()) receiver->addOrSetChild(".doc", docSection()->run(receiver));
+            if(Section *doc = section("doc")) receiver->addOrSetChild(".doc", doc->run(receiver));
             if(Section *inputsSection = section("inputs")) {
                 AbstractMethod *method = AbstractMethod::dynamicCast(receiver);
                 if(!method) LIU_THROW_RUNTIME_EXCEPTION("'inputs' section is reserved to Method objects");
@@ -36,88 +69,54 @@ namespace Language {
                 }
                 method->setInputs(inputs);
             }
-            if(testSection()) {
+            if(Section *test = section("test")) {
                 TestSuite *testSuite = TestSuite::cast(child("test_suite"));
-                testSuite->append(Test::make(testSection(), receiver));
+                testSuite->append(Test::make(test, receiver));
             }
             _metaSectionsHaveBeenRun = true;
         }
     }
 
-    Section *Block::section(const QString &label) {
-        if(label.isEmpty()) return hasUnlabeledSection();
-        else if(label == "doc") return docSection();
-        else if(label == "body") return bodySection();
-        else if(label == "test") return testSection();
-        else if(label == "else") return elseSection();
-        else if(label == "between") return betweenSection();
-        else return findSection(label);
+    Section *Block::section(const QString &label) const {
+        Section *result = findSection(label);
+        if(!result && ((label == "doc" && findSection("body")) || label == "body"))
+            result = findSection("");
+        return result;
     }
 
-    Section *Block::docSection() {
-        if(!_docIsCached) {
-            _doc = findSection("doc");
-            if(!_doc && findSection("body")) _doc = hasUnlabeledSection();
-            _docIsCached = true;
-        }
-        return _doc;
+    Section *Block::findSection(const QString &label) const {
+        return cachedLabels()->value(label);
     }
 
-    Section *Block::bodySection() {
-        if(!_bodyIsCached) {
-            _body = findSection("body");
-            if(!_body) _body = hasUnlabeledSection();
-            _bodyIsCached = true;
-        }
-        return _body;
-    }
-
-    Section *Block::testSection() {
-        if(!_testIsCached) {
-            _test = findSection("test");
-            _testIsCached = true;
-        }
-        return _test;
-    }
-
-    Section *Block::elseSection() {
-        if(!_elseIsCached) {
-            _else = findSection("else");
-            _elseIsCached = true;
-        }
-        return _else;
-    }
-
-    Section *Block::betweenSection() {
-        if(!_betweenIsCached) {
-            _between = findSection("between");
-            _betweenIsCached = true;
-        }
-        return _between;
-    }
-
-    Section *Block::findSection(const QString &label) {
-        Iterator i(this);
-        while(Section *section = i.next()) {
-            if(section->hasLabel() && !section->label()->hasNext()) {
-                Message *message = Message::dynamicCast(section->label()->value());
-                if(message && message->name() == label) return section;
+    QHash<QString, Section *> *Block::cachedLabels() const {
+        if(!_cachedLabels) {
+            _cachedLabels = new QHash<QString, Section *>;
+            bool first = true;
+            QScopedPointer<List::Iterator> i(sections()->iterator());
+            while(i->hasNext()) {
+                Section *section = Section::cast(i->next().second);
+                if(section->hasLabel()) {
+                    if(!section->label()->hasNext()) {
+                        if(Message *message = Message::dynamicCast(section->label()->value())) {
+                            if(_cachedLabels->contains(message->name()))
+                                LIU_THROW(DuplicateException, "a section label is duplicate");
+                            _cachedLabels->insert(message->name(), section);
+                        }
+                    }
+                } else if(first) {
+                    _cachedLabels->insert("", section);
+                } else
+                    LIU_THROW(ParserException, "unlabeled section found not in first position");
+                first = false;
             }
         }
-        return NULL;
-    }
-
-    Section *Block::hasUnlabeledSection() {
-        if(isNotEmpty() && !first()->hasLabel())
-            return first();
-        else
-            return NULL;
+        return _cachedLabels;
     }
 
     QString Block::toString(bool debug, short level) const {
         QString str;
         if(level > 0) str += "{\n";
-        str += join("\n", "", "", debug, level + 1);
+        str += sections()->join("\n", "", "", debug, level + 1);
         if(level > 0) str += "\n" + QString("    ").repeated(level) + "}";
         return str;
     }

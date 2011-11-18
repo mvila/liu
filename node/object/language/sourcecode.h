@@ -41,7 +41,10 @@ namespace Language {
 
         virtual Node *run(Node *receiver = context()) {
             LIU_PUSH_RUN(this);
-            return block() && block()->bodySection() ? block()->bodySection()->run(receiver) : NULL;
+            if(!block()) return NULL;
+            Section *body = block()->section("body");
+            if(!body) return NULL;
+            return body->run(receiver);
         }
 
         virtual QString toString(bool debug = false, short level = 0) const;
