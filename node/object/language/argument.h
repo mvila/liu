@@ -22,8 +22,9 @@ namespace Language {
         Primitive *label() const { return Primitive::cast(first()); }
         Primitive *hasLabel() const { return Primitive::cast(hasFirst()); }
         void setLabel(Primitive *label = NULL) { setFirst(label); }
-        QString labelName() const;
         LIU_DECLARE_PROPERTY(label);
+
+        QString labelName() const;
 
         Primitive *value() const { return Primitive::cast(second()); }
         Primitive *hasValue() const { return Primitive::cast(hasSecond()); }

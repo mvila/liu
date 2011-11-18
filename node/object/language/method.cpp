@@ -4,12 +4,42 @@
 LIU_BEGIN
 
 namespace Language {
-    LIU_DEFINE(Method, AbstractMethod, Language);
+    LIU_DEFINE_2(Method, AbstractMethod, Language);
+
+    Method *Method::init(Primitive *code) {
+        AbstractMethod::init();
+        setCode(code);
+        return this;
+    }
+
+    Method *Method::initCopy(const Method *other) {
+        AbstractMethod::initCopy(other);
+        setCode(other->_code);
+        return this;
+    }
+
+    Method::~Method() {
+        setCode();
+    }
 
     void Method::initRoot() {
+        setCode(Primitive::root());
+
         LIU_ADD_NATIVE_METHOD(Method, init);
 
         LIU_ADD_NATIVE_METHOD(Method, return);
+    }
+
+    LIU_DEFINE_NODE_ACCESSOR(Method, Primitive, code, Code);
+
+    void Method::codeWillChange() {}
+
+    void Method::codeHasChanged() {
+        if(_code) {
+            setIsAutoRunnable(true);
+            Block *block = Block::dynamicCast(code()->value());
+            if(block) block->runMetaSections(this);
+        }
     }
 
     LIU_DEFINE_NATIVE_METHOD(Method, init) {

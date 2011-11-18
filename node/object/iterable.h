@@ -35,7 +35,7 @@ public:
     virtual int size() const;
     LIU_DECLARE_NATIVE_METHOD(size);
 
-    virtual bool empty() const;
+    virtual bool isEmpty() const;
     LIU_DECLARE_NATIVE_METHOD(empty);
 
     virtual NodeQPair first(bool *wasFoundPtr = NULL) const;

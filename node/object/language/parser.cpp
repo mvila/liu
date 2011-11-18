@@ -62,17 +62,17 @@ namespace Language {
             Primitive *expression = scanExpression();
             if(expression)
                 if(OldPair *pair = OldPair::dynamicCast(expression->value())) {
-                    section = LIU_SECTION();
+                    section = Section::make();
                     section->setLabel(Primitive::cast(pair->first()));
                     expression = Primitive::cast(pair->second());
                     block->append(section);
                 }
             if(expression) {
                 if(!section) {
-                    section = LIU_SECTION();
+                    section = Section::make();
                     block->append(section);
                 }
-                section->append(expression);
+                section->lines()->append(expression);
             }
             consumeNewline();
         }

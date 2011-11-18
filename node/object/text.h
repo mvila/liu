@@ -51,7 +51,7 @@ public:
     virtual bool contains(Node *what) const;
     virtual int count(Node *what) const;
     virtual int size() const;
-    virtual bool empty() const;
+    virtual bool isEmpty() const;
 
     // --- Collection ---
 

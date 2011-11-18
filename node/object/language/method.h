@@ -7,47 +7,26 @@
 LIU_BEGIN
 
 namespace Language {
-    #define LIU_METHOD(ARGS...) \
-    new Language::Method(context()->child("Object", "Language", "Method"), ##ARGS)
-
     class Method : public AbstractMethod {
-        LIU_DECLARE(Method, AbstractMethod, Language);
+        LIU_DECLARE_2(Method, AbstractMethod, Language);
     public:
-        explicit Method(Node *origin, Primitive *code = NULL, ParameterList *inputs = NULL, ParameterList *outputs = NULL,
-                        const QString &codeInputName = "") :
-            AbstractMethod(origin, inputs, outputs, codeInputName), _code(NULL) { setCode(code); }
+        explicit Method(Node *origin = context()->child("Object", "Language", "Method")) :
+            AbstractMethod(origin), _code(NULL) {}
 
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD(Method);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(Method, LIU_FORK_IF_NOT_NULL(code()), LIU_FORK_IF_NOT_NULL(inputs(false)),
-                                           LIU_FORK_IF_NOT_NULL(outputs(false)), codeInputName());
+        static Method *make(Primitive *code) { return (new Method())->init(code); }
+
+        Method *init(Primitive *code = NULL);
+
+        LIU_DECLARE_NODE_ACCESSOR(Primitive, code, Code);
 
         LIU_DECLARE_NATIVE_METHOD(init);
-
-        Primitive *code() const { return _code; }
-
-        void setCode(Primitive *newCode) {
-            if(newCode != _code) {
-                if(_code) removeUnnamedChild(_code);
-                _code = newCode;
-                if(newCode) addUnnamedChild(_code);
-                hasChanged();
-            }
-        }
-
-        virtual void hasChanged() {
-            if(code()) {
-                setIsAutoRunnable(true);
-                Block *block = Block::dynamicCast(code()->value());
-                if(block) block->runMetaSections(this);
-            }
-        }
 
         virtual Node *run(Node *receiver = context()) {
             Q_UNUSED(receiver);
             runParameters();
             Method *forkedMethod = this; //->fork();
             Node *result = NULL;
-            if(code()) {
+            if(hasCode()) {
                 try {
                     LIU_PUSH_CONTEXT(forkedMethod);
                     LIU_PUSH_RUN(this);
@@ -57,7 +36,7 @@ namespace Language {
                 }
             } else
                 result = LIU_NODE();
-            if(!hasCodeInput())
+            if(!hasCodeInputName())
                 return result;
             else
                 Primitive::skip(result);
@@ -65,7 +44,7 @@ namespace Language {
 
         virtual QString toString(bool debug = false, short level = 0) const {
             QString str = signature(debug, level);
-            if(code()) str += " " + code()->toString(debug, level + 1);
+            if(hasCode()) str += " " + code()->toString(debug, level + 1);
             return str;
         }
     private:

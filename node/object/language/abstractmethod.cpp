@@ -20,7 +20,7 @@ namespace Language {
         Object::initCopy(other);
         setInputs(other->_inputs);
         setOutputs(other->_outputs);
-        setCodeInputName(other->_codeInputName;
+        setCodeInputName(other->_codeInputName);
         return this;
     }
 
@@ -31,8 +31,8 @@ namespace Language {
     }
 
     void AbstractMethod::initRoot() {
-        setInputs(ArgumentBunch::root());
-        setOutputs(ArgumentBunch::root());
+        setInputs(ParameterList::root());
+        setOutputs(ParameterList::root());
     }
 
     LIU_DEFINE_NODE_ACCESSOR(AbstractMethod, ParameterList, inputs, Inputs);
@@ -97,7 +97,7 @@ namespace Language {
             Node *val = parameter->isEscaped() ? parameter->defaultValue() : parameter->run();
             rcvr->addOrSetChild(parameter->label(), val);
         }
-        if(hasCodeInput()) {
+        if(hasCodeInputName()) {
             LIU_FIND_LAST_PRIMITIVE;
             Primitive *nextPrimitive = primitive->hasNext();
             forkedMethod->addOrSetChild(codeInputName(), nextPrimitive ? nextPrimitive : Primitive::make()); // FIXME: abstract primitive?

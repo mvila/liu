@@ -144,7 +144,7 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, size) {
     return Number::make(size());
 }
 
-bool Iterable::empty() const {
+bool Iterable::isEmpty() const {
     QScopedPointer<Iterator> i(iterator());
     return !i->hasNext();
 }
@@ -153,7 +153,7 @@ LIU_DEFINE_NATIVE_METHOD(Iterable, empty) {
     LIU_FIND_LAST_MESSAGE;
     LIU_CHECK_QUESTION_MARK;
     LIU_CHECK_INPUT_SIZE(0);
-    return Boolean::make(empty());
+    return Boolean::make(isEmpty());
 }
 
 NodeQPair Iterable::first(bool *wasFoundPtr) const {

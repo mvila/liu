@@ -35,7 +35,7 @@ void Node::initFork() {
     if(hasOrigin()) setIsAutoRunnable(origin()->isAutoRunnable());
 }
 
-Node *Node::init() { return this; }
+Node *Node::init() { Node::initFork(); return this; }
 
 Node *Node::initCopy(const Node *other) {
     setIsAutoRunnable(other->isAutoRunnable());
@@ -405,7 +405,7 @@ Node *Node::defineOrAssign(bool isDefine) {
     Node *value;
     Block *block = Block::dynamicCast(message->secondInput()->value()->value());
     if(block) { // if rhs is a block, we have a method definition shorthand
-        value = LIU_METHOD(message->secondInput()->value(), NULL, NULL, "");
+        value = Method::make(message->secondInput()->value());
     } else // rhs is not a block
         value = message->runSecondInput();
     if(Property *property = Property::dynamicCast(findChild(msg->name()))) {
@@ -424,7 +424,7 @@ void Node::hasBeenDefined(Message *message) {
         if(message->hasAnInput()) {
             Method *method = Method::dynamicCast(hasDirectChild("init"));
             if(!method) {
-                method = LIU_METHOD();
+                method = Method::make();
                 method->setIsAutoRunnable(true);
                 method->setNodeName("init");
                 addOrSetChild("init", method);

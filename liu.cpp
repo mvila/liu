@@ -47,7 +47,9 @@ void init() {
             P("-----------------------------------------------------------------------");
             source->inspect();
             P("-----------------------------------------------------------------------");
-            P("-> " + source->run()->toString(true));
+            Node *result = source->run();
+            if(!result) LIU_THROW_NULL_POINTER_EXCEPTION("result is NULL");
+            P("-> " + result->toString(true));
         }
         popContext();
     #ifdef LIU_CATCH_EXCEPTIONS
@@ -161,7 +163,7 @@ bool computeColumnAndLineForPosition(const QString &text, const int position, in
     return false;
 }
 
-QString preferSecondArgumentIfNotEmpty(const QString &a, const QString &b) {
+const QString &preferSecondArgumentIfNotEmpty(const QString &a, const QString &b) {
     return b.isEmpty() ? a : b;
 }
 

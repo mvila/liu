@@ -27,9 +27,9 @@ namespace Language {
                 AbstractMethod *method = AbstractMethod::dynamicCast(receiver);
                 if(!method) LIU_THROW_RUNTIME_EXCEPTION("'inputs' section is reserved to Method objects");
                 ArgumentBunch *inputs = LIU_ARGUMENT_BUNCH();
-                if(!inputsSection->isEmpty()) {
-                    if(inputsSection->size() > 1) LIU_THROW_RUNTIME_EXCEPTION("'inputs' section has more than one line");
-                    Primitive *prim = inputsSection->get(0);
+                if(!inputsSection->lines()->isEmpty()) {
+                    if(inputsSection->lines()->size() > 1) LIU_THROW_RUNTIME_EXCEPTION("'inputs' section has more than one line");
+                    Primitive *prim = Primitive::cast(inputsSection->lines()->first().second);
                     Primitive *prim2 = Primitive::dynamicCast(prim->value());
                     if(prim2) prim = prim2;
                     inputs->append(prim);
@@ -99,7 +99,7 @@ namespace Language {
     Section *Block::findSection(const QString &label) {
         Iterator i(this);
         while(Section *section = i.next()) {
-            if(section->label() && !section->label()->hasNext()) {
+            if(section->hasLabel() && !section->label()->hasNext()) {
                 Message *message = Message::dynamicCast(section->label()->value());
                 if(message && message->name() == label) return section;
             }
@@ -108,7 +108,7 @@ namespace Language {
     }
 
     Section *Block::hasUnlabeledSection() {
-        if(isNotEmpty() && !first()->label())
+        if(isNotEmpty() && !first()->hasLabel())
             return first();
         else
             return NULL;

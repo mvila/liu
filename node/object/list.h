@@ -22,7 +22,6 @@ public:
     LIU_DECLARE_NATIVE_METHOD(make);
 
     virtual void inspectInternal() const;
-
 private:
     class Operation;
 public:

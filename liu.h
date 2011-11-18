@@ -108,7 +108,7 @@ QString concatenateStrings(const QString &first, const QString &separator, const
 QString escapeTabsAndNewlines(QString text);
 QString extractLine(const QString &text, int requestedLine);
 bool computeColumnAndLineForPosition(const QString &text, const int position, int &column, int &line);
-QString preferSecondArgumentIfNotEmpty(const QString &a, const QString &b);
+const QString &preferSecondArgumentIfNotEmpty(const QString &a, const QString &b);
 
 #define LIU_DECLARE_THROW_FUNCTION(EXCEPTION) \
 void throw##EXCEPTION(const QString &message = "", const QString &file = "", \

@@ -168,7 +168,7 @@ int Text::size() const {
     return value().size();
 }
 
-bool Text::empty() const {
+bool Text::isEmpty() const {
     return value().isEmpty();
 }
 

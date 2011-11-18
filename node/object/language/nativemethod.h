@@ -6,30 +6,20 @@
 LIU_BEGIN
 
 namespace Language {
-    #define LIU_NATIVE_METHOD(ARGS...) \
-    new Language::NativeMethod(context()->child("Object", "Language", "NativeMethod"), ##ARGS)
-
     #define LIU_ADD_NATIVE_METHOD(CLASS, METHOD, NAME...) \
     addOrSetChild(preferSecondArgumentIfNotEmpty(#METHOD, #NAME), \
-        new NativeMethod(NativeMethod::root(), preferSecondArgumentIfNotEmpty(#METHOD, #NAME), \
+        (new Language::NativeMethod(NativeMethod::root()))->init(&preferSecondArgumentIfNotEmpty(#METHOD, #NAME), \
         static_cast<_MethodPointer_>(&CLASS::_##METHOD##_)))
 
     typedef Node *(Node::*_MethodPointer_)();
 
     class NativeMethod : public AbstractMethod {
-        LIU_DECLARE(NativeMethod, AbstractMethod, Language);
+        LIU_DECLARE_2(NativeMethod, AbstractMethod, Language);
     public:
-        explicit NativeMethod(Node *origin, const QString &name = "", const _MethodPointer_ &method = NULL,
-                              ParameterList *inputs = NULL, ParameterList *outputs = NULL,
-                                                     const QString &codeInputName = "") :
-            AbstractMethod(origin, inputs, outputs, codeInputName) {
-            setNodeName(name);
-            setMethod(method);
-        }
+        explicit NativeMethod(Node *origin = context()->child("Object", "Language", "NativeMethod")) :
+            AbstractMethod(origin), _method(NULL) {}
 
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD(NativeMethod);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(NativeMethod, nodeName(), method(), LIU_FORK_IF_NOT_NULL(inputs(false)),
-                                           LIU_FORK_IF_NOT_NULL(outputs(false)), codeInputName());
+        NativeMethod *init(const QString *name = NULL, const _MethodPointer_ method = NULL);
 
         _MethodPointer_ method() const { return _method; }
 
