@@ -8,52 +8,34 @@
 LIU_BEGIN
 
 namespace Language {
-    #define LIU_ABSTRACT_METHOD(ARGS...) \
-    new Language::AbstractMethod(context()->child("Object", "Language", "AbstractMethod"), ##ARGS)
-
     class AbstractMethod : public Object {
-        LIU_DECLARE(AbstractMethod, Object, Language);
+        LIU_DECLARE_2(AbstractMethod, Object, Language);
     public:
-        explicit AbstractMethod(Node *origin, ParameterList *inputs = NULL, ParameterList *outputs = NULL,
-                        const QString &codeInputName = "") :
-            Object(origin), _inputs(inputs), _outputs(outputs), _codeInputName(codeInputName) {}
+        explicit AbstractMethod(Node *origin = context()->child("Object", "Language", "AbstractMethod")) :
+            Object(origin), _inputs(NULL), _outputs(NULL), _codeInputName(NULL) {}
 
-        LIU_DECLARE_AND_DEFINE_COPY_METHOD(AbstractMethod);
-        LIU_DECLARE_AND_DEFINE_FORK_METHOD(AbstractMethod, LIU_FORK_IF_NOT_NULL(inputs(false)),
-                                             LIU_FORK_IF_NOT_NULL(outputs(false)), codeInputName());
+        AbstractMethod *init(ParameterList *inputs = NULL, ParameterList *outputs = NULL, const QString *codeInputName = NULL);
 
-        ParameterList *inputs(bool createIfNull = true) const {
-            if(!_inputs && createIfNull) constCast(this)->_inputs = LIU_PARAMETER_LIST();
-            return _inputs;
-        }
-
-        void setInputs(ParameterList *inputs) { _inputs = inputs; }
+        LIU_DECLARE_NODE_ACCESSOR(ParameterList, inputs, Inputs);
 
         void setInputs(ArgumentBunch *arguments) {
-            if(hasAnInput()) inputs()->clear();
+            inputs()->clear();
             ArgumentBunch::Iterator i(arguments);
             while(Argument *argument = i.next())
                 appendInput(argument);
         }
 
-        Parameter *input(short i) const { return inputs(false)->get(i); }
-        Parameter *input(const QString &label) const { return inputs(false)->get(label); }
-        bool hasInput(short i) const { return inputs(false) && inputs()->hasIndex(i); }
-        bool hasInput(const QString &label) const { return inputs(false) && inputs()->hasLabel(label); }
+        Parameter *input(short i) const { return inputs()->get(i); }
+        Parameter *input(const QString &label) const { return inputs()->get(label); }
+        bool hasInput(short i) const { return inputs()->hasIndex(i); }
+        bool hasInput(const QString &label) const { return inputs()->hasLabel(label); }
         bool hasAnInput() const { return hasInput(0); }
 
         void appendInput(Argument *argument);
 
-        ParameterList *outputs(bool createIfNull = true) const {
-            if(!_outputs && createIfNull) constCast(this)->_outputs = LIU_PARAMETER_LIST();
-            return _outputs;
-        }
+        LIU_DECLARE_NODE_ACCESSOR(ParameterList, outputs, Outputs);
 
-        void setOutputs(ParameterList *outputs) { _outputs = outputs; }
-
-        const QString &codeInputName() const { return _codeInputName; }
-        void setCodeInputName(const QString &name) { _codeInputName = name; }
-        bool hasCodeInput() const { return !_codeInputName.isEmpty(); }
+        LIU_DECLARE_ACCESSOR(QString, codeInputName, CodeInputName);
 
         void runParameters();
 
@@ -66,16 +48,16 @@ namespace Language {
         QString signature(bool debug = false, short level = 0) const {
             QString str = nodeName();
             str += "(";
-            if(inputs(false)) str += inputs()->toString(debug, level);
+            if(inputs()->isNotEmpty()) str += inputs()->toString(debug, level);
             str += ")";
-            if(hasCodeInput()) str += " " + codeInputName() + "...";
-            if(outputs(false) && outputs()->isNotEmpty()) str += " -> " + outputs()->toString(debug, level);
+            if(hasCodeInputName()) str += " " + codeInputName() + "...";
+            if(outputs()->isNotEmpty()) str += " -> " + outputs()->toString(debug, level);
             return str;
         }
     private:
         ParameterList *_inputs;
         ParameterList *_outputs;
-        QString _codeInputName;
+        QString *_codeInputName;
     };
 }
 

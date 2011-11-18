@@ -6,8 +6,37 @@ LIU_BEGIN
 namespace Language {
     LIU_DEFINE_2(AbstractMethod, Object, Language);
 
-    void AbstractMethod::initRoot() {
+    AbstractMethod *AbstractMethod::init(ParameterList *inputs,
+                                         ParameterList *outputs,
+                                         const QString *codeInputName) {
+        Object::init();
+        setInputs(inputs);
+        setOutputs(outputs);
+        setCodeInputName(codeInputName);
+        return this;
     }
+
+    AbstractMethod *AbstractMethod::initCopy(const AbstractMethod *other) {
+        Object::initCopy(other);
+        setInputs(other->_inputs);
+        setOutputs(other->_outputs);
+        setCodeInputName(other->_codeInputName;
+        return this;
+    }
+
+    AbstractMethod::~AbstractMethod() {
+        setInputs();
+        setOutputs();
+        setCodeInputName();
+    }
+
+    void AbstractMethod::initRoot() {
+        setInputs(ArgumentBunch::root());
+        setOutputs(ArgumentBunch::root());
+    }
+
+    LIU_DEFINE_NODE_ACCESSOR(AbstractMethod, ParameterList, inputs, Inputs);
+    LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(AbstractMethod, inputs);
 
     void AbstractMethod::appendInput(Argument *argument) {
         Primitive *label = argument->hasLabel();
@@ -24,6 +53,11 @@ namespace Language {
         inputs()->append(LIU_PARAMETER(labelMsg->name(), defaultValue,
                                          labelMsg->isEscaped(), labelMsg->isParented()));
     }
+
+    LIU_DEFINE_NODE_ACCESSOR(AbstractMethod, ParameterList, outputs, Outputs);
+    LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(AbstractMethod, outputs);
+
+    LIU_DEFINE_ACCESSOR(AbstractMethod, QString, codeInputName, CodeInputName,);
 
     void AbstractMethod::runParameters() {
         return;
