@@ -31,6 +31,7 @@ namespace Language {
                 LIU_THROW(DuplicateException, "duplicated label found in parameter list");
             _labels.insert(parameter->label(), parameter);
         }
+        GenericList<Parameter *>::hasChanged();
     }
 }
 

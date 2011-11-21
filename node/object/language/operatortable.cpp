@@ -18,6 +18,7 @@ namespace Language {
             _textsAndTypes.insert(QPair<QString, Operator::Type>(op->text, op->type), op);
             if(!_firstChars.contains(op->text.at(0))) _firstChars += op->text.at(0);
         }
+        GenericList<Operator *>::hasChanged();
     }
 }
 

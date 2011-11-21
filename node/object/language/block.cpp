@@ -42,6 +42,8 @@ namespace Language {
 
     void Block::hasChanged() {
         deleteCachedLabels();
+        _metaSectionsHaveBeenRun = false;
+        Object::hasChanged();
     }
 
     Node *Block::run(Node *receiver) {

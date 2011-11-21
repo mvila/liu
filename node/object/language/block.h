@@ -16,8 +16,6 @@ namespace Language {
 
         LIU_DECLARE_NODE_ACCESSOR(List, sections, Sections);
 
-        virtual bool isDefined(QSet<const Node *> *alreadySeen) const { Q_UNUSED(alreadySeen); return true; } // TODO
-
         virtual Node *unnamedChild(int index) const;
 
         virtual void hasChanged();

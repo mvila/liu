@@ -35,6 +35,18 @@ namespace Language {
     LIU_DEFINE_NODE_ACCESSOR(Section, List, lines, Lines);
     LIU_DEFINE_EMPTY_ACCESSOR_CALLBACKS(Section, lines);
 
+    Node *Section::unnamedChild(int index) const {
+        if(_label && _label->isReal()) {
+            if(index == 0) return _label;
+            index--;
+        }
+        if(_lines && _lines->isReal()) {
+            if(index == 0) return _lines;
+            index--;
+        }
+        return NULL;
+    }
+
     Node *Section::run(Node *receiver) {
         LIU_PUSH_RUN(this);
         Node *result = NULL;

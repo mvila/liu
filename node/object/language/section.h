@@ -19,6 +19,8 @@ namespace Language {
 
         LIU_DECLARE_NODE_ACCESSOR(List, lines, Lines);
 
+        virtual Node *unnamedChild(int index) const;
+
         virtual Node *run(Node *receiver = context());
 
         virtual QString toString(bool debug = false, short level = 0) const;
