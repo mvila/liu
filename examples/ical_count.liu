@@ -1,0 +1,31 @@
+//file := "file:///Network/Servers/serveur.bureau.alphavisa.com/Users/mvila/Desktop/Heures_Alpha_Visa.ics"
+file := "file:///Users/mvila/Desktop/Heures_Alpha_Visa.ics"
+days := Dictionary()
+source := Resource(file) get
+while(event := source extract_between!("BEGIN:VEVENT\r\n", "END:VEVENT\r\n")) {
+    fields := Dictionary()
+    Dictionary(event, "\r\n", ":") each(value, key) {
+        fields[key remove_after(";")] := value
+    }
+    day := fields["DTSTART"][0, 8]
+    hours := Number?(fields["SUMMARY"])
+    if(hours == 0) {
+        t1 := fields["DTSTART"][9, 4]
+        t1 := Number(t1[0, 2]) + Number(t1[2, 2]) / 60
+        t2 := fields["DTEND"][9, 4]
+        t2 := Number(t2[0, 2]) + Number(t2[2, 2]) / 60
+        hours = t2 - t1
+    }
+    if(hours < 0) {
+        "Décompte des heures inférieur à zéro !" alert
+        break
+    }
+    if(!days[day]?) days[day] := 0
+    days[day] = days[day] + hours
+//    fields inspect
+}
+days each(value, key) {
+    date := "{key[6, 2]}/{key[4, 2]}/{key[0, 4]}"
+    "{date}\t{value}" print
+}
+"[end]"

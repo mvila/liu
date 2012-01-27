@@ -156,4 +156,5 @@ OTHER_FILES += \
     node/object/language/childcollection.liu \
     node/object/language/parentset.liu \
     node/object/resource.liu \
-    examples/pancake.liu
+    examples/pancake.liu \
+    examples/ical_count.liu
